@@ -29,7 +29,7 @@ import (
 // remoteCmd represents the remote command
 var remoteCmd = &cobra.Command{
 	Use:     "remote",
-	Aliases: []string{"rmt"},
+	Aliases: []string{"rem", "remo"},
 	Short:   "remote(git) commands",
 }
 
