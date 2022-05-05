@@ -1,0 +1,33 @@
+{
+	"secrets": [
+		{
+			"name": "",
+			"value": ""
+		},
+		{
+			"name": "",
+			"value": ""
+		}
+	],
+	"remotes": [
+		{
+			"group": "",
+			"name": "GitHub",
+			"private": false,
+			"ssh": "",
+			"token": "",
+			"entrypoint": "https://api.github.com",
+			"vendor": "github"
+		},
+		{
+			"group": "",
+			"name": "MyServer",
+			"private": true,
+			"ssh": "",
+			"token": "",
+			"entrypoint": "https://gt.jsiu.dev/api/v1",
+			"user": "",
+			"vendor": "gitea"
+		}
+	]
+}
