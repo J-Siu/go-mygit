@@ -44,7 +44,7 @@ var repoNewCmd = &cobra.Command{
 			info.Name = helper.CurrentDirBase()
 			info.Private = remote.Private
 			gitApi := lib.GitApiFromRemote(&remote, &info)
-			gitApi.EndpointRepos()
+			gitApi.EndpointUserRepos()
 			go repoPostFunc(gitApi, &wg)
 		}
 		wg.Wait()
