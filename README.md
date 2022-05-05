@@ -431,6 +431,8 @@ Following configuration will be used in all examples:
   - Clean up func name
   - Clean up file name
   - Fix typos
+- v2.0.1
+  - upgrade go-helper and go-gitapi for bugfix
 
 ### License
 
