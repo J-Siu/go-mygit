@@ -41,9 +41,9 @@ var repoSecretSetCmd = &cobra.Command{
 			if remote.Vendor != "github" {
 				fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 			} else {
+				// "GET" remote repository public key
 				helper.Report("", remote.Name, false)
 				var pubkey gitapi.RepoPublicKey
-				// gitApi := lib.GitApiNew(&remote.Token, &remote.Uri, &remote.User, &pubkey)
 				gitApi := lib.GitApiFromRemote(&remote, &pubkey)
 				gitApi.EndpointReposSecretsPubkey()
 				success := gitApi.Get()
@@ -52,8 +52,8 @@ var repoSecretSetCmd = &cobra.Command{
 					os.Exit(1)
 				}
 				for _, secret := range Conf.Secrets {
+					// Encrypt and "PUT" secret into remote repository
 					epP := secret.Encrypt(&pubkey)
-					// gitApi := lib.GitApiNew(&remote.Token, &remote.Uri, &remote.User, epP)
 					gitApi := lib.GitApiFromRemote(&remote, epP)
 					gitApi.EndpointReposSecrets()
 					gitApi.In.Endpoint += "/" + secret.Name
