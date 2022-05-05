@@ -32,7 +32,7 @@ import (
 // repoCmd represents the repo command
 var repoCmd = &cobra.Command{
 	Use:     "repository",
-	Aliases: []string{"repo"},
+	Aliases: []string{"r", "rep", "repo"},
 	Short:   "Repository commands",
 	// Run: func(cmd *cobra.Command, args []string) {
 	// 	fmt.Println("repo called")
@@ -52,7 +52,7 @@ func repoDelFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGro
 func repoGetFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
 	defer wg.Done()
 	gitApi.Get()
-	helper.Report(gitApi.Output, gitApi.Name, true)
+	helper.Report(gitApi.Out.Output, gitApi.Name, true)
 }
 
 func repoPatchFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
