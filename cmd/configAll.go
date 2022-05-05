@@ -23,33 +23,30 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/lib"
+	"github.com/J-Siu/go-helper"
 	"github.com/spf13/cobra"
 )
 
-// addCmd represents the add command
-var repoTopicsSetCmd = &cobra.Command{
-	Use:     "set",
-	Aliases: []string{"s", "put"},
-	Short:   "Set remote repositoy topics",
+// remoteCmd represents the remote command
+var confAllCmd = &cobra.Command{
+	Use:     "all",
+	Aliases: []string{"a"},
+	Short:   "Print all configurations",
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		var info gitapi.RepoTopics
-		info.Topics = &args
-		info.Names = &args
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info)
-			gitApi.EndpointReposTopics()
-			go repoPutFunc(gitApi, &wg)
-		}
-		wg.Wait()
+		helper.Report(&Conf, "", true)
 	},
 }
 
 func init() {
-	topicCmd.AddCommand(repoTopicsSetCmd)
+	configCmd.AddCommand(confAllCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// remoteCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// remoteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

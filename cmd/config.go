@@ -29,7 +29,7 @@ import (
 var configCmd = &cobra.Command{
 	Use:     "config",
 	Aliases: []string{"c", "conf"},
-	Short:   "Print configuration",
+	Short:   "Print configurations",
 }
 
 func init() {

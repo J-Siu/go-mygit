@@ -30,10 +30,10 @@ import (
 )
 
 // listCmd represents the list command
-var repoVisbilityGetCmd = &cobra.Command{
-	Use:     "get",
-	Aliases: []string{"g", "l", "ls", "list"},
-	Short:   "Get remote repositoy visibility",
+var repoGetVisbilityCmd = &cobra.Command{
+	Use:     "visibility",
+	Aliases: []string{"v", "vis"},
+	Short:   "get visibility",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		for _, remote := range Conf.MergedRemotes {
@@ -48,7 +48,7 @@ var repoVisbilityGetCmd = &cobra.Command{
 }
 
 func init() {
-	repoVisibilityCmd.AddCommand(repoVisbilityGetCmd)
+	repoGetCmd.AddCommand(repoGetVisbilityCmd)
 
 	// Here you will define your flags and configuration settings.
 

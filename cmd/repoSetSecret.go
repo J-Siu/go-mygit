@@ -19,30 +19,62 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
-// repoVisibilityCmd represents the visibility command
-var repoVisibilityCmd = &cobra.Command{
-	Use:     "visibility",
-	Aliases: []string{"v", "vis"},
-	Short:   "Remote reposities visibility commands.",
+// setCmd represents the set command
+var repoSetSecretsCmd = &cobra.Command{
+	Use:     "secrets",
+	Aliases: []string{"s", "secret"},
+	Short:   "set action secrets",
+	Run: func(cmd *cobra.Command, args []string) {
+		for _, remote := range Conf.MergedRemotes {
+			if remote.Vendor != "github" {
+				fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
+			} else {
+				// "GET" public key
+				helper.Report("", remote.Name, false)
+				var pubkey gitapi.RepoPublicKey
+				gitApi := lib.GitApiFromRemote(&remote, &pubkey)
+				gitApi.EndpointReposSecretsPubkey()
+				success := gitApi.Get()
+				helper.ReportStatus(success, "Get Actions Public Key")
+				if !success {
+					os.Exit(1)
+				}
+				for _, secret := range Conf.Secrets {
+					// Encrypt and "PUT" secret into remote repository
+					epP := secret.Encrypt(&pubkey)
+					gitApi := lib.GitApiFromRemote(&remote, epP)
+					gitApi.EndpointReposSecrets()
+					gitApi.In.Endpoint += "/" + secret.Name
+					success := gitApi.Put()
+					helper.ReportStatus(success, secret.Name)
+				}
+			}
+		}
+	},
 }
 
 func init() {
-	repoCmd.AddCommand(repoVisibilityCmd)
+	repoSetCmd.AddCommand(repoSetSecretsCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// visibilityCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// setCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// visibilityCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// setCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

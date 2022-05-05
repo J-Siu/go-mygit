@@ -19,38 +19,37 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper"
-	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
-// newCmd represents the new command
-var repoNewCmd = &cobra.Command{
-	Use:     "new",
-	Aliases: []string{"n"},
-	Short:   "Create remote repositoy",
+// initCmd represents the init command
+var rootInitCmd = &cobra.Command{
+	Use:   "init",
+	Short: "Git init and set remotes",
+	Long:  "Git init. Reset and add remotes base on configuration and flags.",
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		helper.GitInit()
+		helper.GitRemoteRemoveAll()
 		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			var info gitapi.RepoInfo
-			info.Name = helper.CurrentDirBase()
-			info.Private = remote.Private
-			gitApi := lib.GitApiFromRemote(&remote, &info)
-			gitApi.EndpointUserRepos()
-			go repoPostFunc(gitApi, &wg)
+			remote.GitAdd()
 		}
-		wg.Wait()
 	},
 }
 
 func init() {
-	repoCmd.AddCommand(repoNewCmd)
+	rootCmd.AddCommand(rootInitCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

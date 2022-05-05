@@ -19,35 +19,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
-// publicCmd represents the public command
-var repoPrivateFalseCmd = &cobra.Command{
-	Use:     "false",
-	Aliases: []string{"f"},
-	Short:   "Set emote reposities to public",
-	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		var info gitapi.RepoPrivate
-		info.Private = false
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil())
-			gitApi.EndpointRepos()
-			go repoPatchFunc(gitApi, &wg)
-		}
-		wg.Wait()
-	},
+// lsCmd represents the ls command
+var repoSetCmd = &cobra.Command{
+	Use:     "set",
+	Aliases: []string{"s"},
+	Short:   "set info",
 }
 
 func init() {
-	repoPrivateCmd.AddCommand(repoPrivateFalseCmd)
+	repoCmd.AddCommand(repoSetCmd)
 }

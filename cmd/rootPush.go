@@ -19,45 +19,46 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
+	"log"
+	"os"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/lib"
+	"github.com/J-Siu/go-helper"
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
-var repoTopicsGetCmd = &cobra.Command{
-	Use:     "Get",
-	Aliases: []string{"g", "l", "ls", "list"},
-	Short:   "Get remote repositoy topics",
+// pushCmd represents the push command
+var rootPushCmd = &cobra.Command{
+	Use:   "push",
+	Short: "Push to all remote repositories",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
+		if Flag.PushAll && Flag.PushTag {
+			log.Fatal("--all/-a and --tags/-t cannot be used together")
+			os.Exit(1)
+		}
 		for _, remote := range Conf.MergedRemotes {
-			var info gitapi.RepoTopics
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info)
-			gitApi.EndpointReposTopics()
-			go repoGetFunc(gitApi, &wg)
+			title := remote.Name
+			args := []string{"push", title}
+			if Flag.PushAll {
+				args = append(args, "--all")
+			}
+			if Flag.PushTag {
+				args = append(args, "--tags")
+			}
+			go helper.MyCmdRunWg("git", &args, &title, &wg, true)
 		}
 		wg.Wait()
 	},
 }
 
 func init() {
-	topicCmd.AddCommand(repoTopicsGetCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(rootPushCmd)
+	rootPushCmd.Flags().BoolVarP(&Flag.PushAll, "all", "a", false, "Push all branches")
+	rootPushCmd.Flags().BoolVarP(&Flag.PushTag, "tags", "t", false, "Push all branches")
+	// rootPushCmd.MarkFlagsMutuallyExclusive("all","tags")
 }

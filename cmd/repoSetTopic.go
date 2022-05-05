@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
@@ -29,35 +30,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// privateCmd represents the private command
-var repoPrivateTrueCmd = &cobra.Command{
-	Use:     "true",
-	Aliases: []string{"t"},
-	Short:   "Set remote reposities to private",
+// addCmd represents the add command
+var repoSetTopicsCmd = &cobra.Command{
+	Use:     "topics",
+	Aliases: []string{"t", "topic"},
+	Short:   "set topics",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		var info gitapi.RepoPrivate
-		info.Private = true
+		var info gitapi.RepoTopics
+		info.Topics = &args
+		info.Names = &args
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil())
-			gitApi.EndpointRepos()
-			go repoPatchFunc(gitApi, &wg)
+			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi.EndpointReposTopics()
+			go repoPutFunc(gitApi, &wg)
 		}
 		wg.Wait()
 	},
 }
 
 func init() {
-	repoPrivateCmd.AddCommand(repoPrivateTrueCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// privateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// privateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	repoSetCmd.AddCommand(repoSetTopicsCmd)
 }

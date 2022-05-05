@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
@@ -26,26 +27,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// groupCmd represents the group command
-var confDockCmd = &cobra.Command{
-	Use:     "secret",
-	Aliases: []string{"s", "sec"},
-	Short:   "Print secret in configuration",
+// remoteCmd represents the remote command
+var confRemotesCmd = &cobra.Command{
+	Use:     "remote",
+	Aliases: []string{"r", "rmt"},
+	Short:   "Print remotes configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		helper.Report(&Conf.Secrets, "", true)
+		helper.Report(&Conf.Remotes, "", true)
 	},
 }
 
 func init() {
-	configCmd.AddCommand(confDockCmd)
+	configCmd.AddCommand(confRemotesCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// groupCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// remoteCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// groupCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// remoteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -19,30 +19,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
+	"github.com/J-Siu/go-helper"
 	"github.com/spf13/cobra"
 )
 
-// topicCmd represents the topic command
-var topicCmd = &cobra.Command{
-	Use:     "topic",
-	Aliases: []string{"t", "top"},
-	Short:   "Remote repository topics commands.",
+// addCmd represents the add command
+var remoteListCmd = &cobra.Command{
+	Use:     "list",
+	Aliases: []string{"l", "ls"},
+	Short:   "List git remotes in current repository",
+	Run: func(cmd *cobra.Command, args []string) {
+		helper.StrArrayPtrPrintln(helper.GitRemote(true))
+	},
 }
 
 func init() {
-	repoCmd.AddCommand(topicCmd)
+	remoteCmd.AddCommand(remoteListCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// topicCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// addCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// topicCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

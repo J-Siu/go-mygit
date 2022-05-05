@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
@@ -29,15 +30,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// publicCmd represents the public command
-var repoVisibilityPublicCmd = &cobra.Command{
-	Use:     "public",
-	Aliases: []string{"pub"},
-	Short:   "Set remote reposities to public",
+// descriptionCmd represents the description command
+var repoSetDescriptionCmd = &cobra.Command{
+	Use:     "description",
+	Aliases: []string{"des", "desc"},
+	Short:   "set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		var info gitapi.RepoVisibility
-		info.Visibility = "public"
+		var info gitapi.RepoDescription
+		if len(args) > 0 {
+			info.Description = args[0]
+		}
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
 			gitApi := lib.GitApiFromRemote(&remote, &info)
@@ -49,15 +52,15 @@ var repoVisibilityPublicCmd = &cobra.Command{
 }
 
 func init() {
-	repoVisibilityCmd.AddCommand(repoVisibilityPublicCmd)
+	repoSetCmd.AddCommand(repoSetDescriptionCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// publicCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// descriptionCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// publicCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// descriptionCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

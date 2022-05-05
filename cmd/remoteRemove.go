@@ -23,44 +23,29 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/lib"
+	"github.com/J-Siu/go-helper"
 	"github.com/spf13/cobra"
 )
 
-// descriptionCmd represents the description command
-var descriptionSetCmd = &cobra.Command{
-	Use:     "set",
-	Aliases: []string{"s"},
-	Short:   "Set remote repositoy description",
+var delAll bool
+
+// remoteDelCmd represents the delete command
+var remoteRemoveCmd = &cobra.Command{
+	Use:     "remove",
+	Aliases: []string{"r", "rm"},
+	Short:   "Delete remotes in current repository",
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		var info gitapi.RepoDescription
-		if len(args) > 0 {
-			info.Description = args[0]
+		if delAll {
+			helper.GitRemoteRemoveAll()
+		} else {
+			for _, remote := range Conf.MergedRemotes {
+				remote.GitRemove()
+			}
 		}
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info)
-			gitApi.EndpointRepos()
-			go repoPatchFunc(gitApi, &wg)
-		}
-		wg.Wait()
 	},
 }
 
 func init() {
-	descriptionCmd.AddCommand(descriptionSetCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// descriptionCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// descriptionCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	remoteCmd.AddCommand(remoteRemoveCmd)
+	remoteRemoveCmd.Flags().BoolVarP(&delAll, "all", "a", false, "Delete all remotes")
 }

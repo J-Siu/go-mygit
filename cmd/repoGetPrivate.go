@@ -19,7 +19,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
@@ -30,16 +29,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// lsCmd represents the ls command
-var repoGetCmd = &cobra.Command{
-	Use:     "get",
-	Aliases: []string{"g"},
-	Short:   "Get remote repositoy info",
+// listCmd represents the list command
+var repoGetPrivateCmd = &cobra.Command{
+	Use:     "private",
+	Aliases: []string{"p", "priv"},
+	Short:   "get private status",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil())
+			var info gitapi.RepoPrivate
+			gitApi := lib.GitApiFromRemote(&remote, &info)
 			gitApi.EndpointRepos()
 			go repoGetFunc(gitApi, &wg)
 		}
@@ -48,5 +48,5 @@ var repoGetCmd = &cobra.Command{
 }
 
 func init() {
-	repoCmd.AddCommand(repoGetCmd)
+	repoGetCmd.AddCommand(repoGetPrivateCmd)
 }

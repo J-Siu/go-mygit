@@ -22,30 +22,26 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/J-Siu/go-helper"
 	"github.com/spf13/cobra"
 )
 
-// groupCmd represents the group command
-var confGroupCmd = &cobra.Command{
-	Use:     "group",
-	Aliases: []string{"g", "grp"},
-	Short:   "Print groups in configuration",
-	Run: func(cmd *cobra.Command, args []string) {
-		helper.Report(&Conf.Groups, "", true)
-	},
+// privateCmd represents the private command
+var repoSetVisibilityCmd = &cobra.Command{
+	Use:     "visibility",
+	Aliases: []string{"v", "vis"},
+	Short:   "set visibility status",
 }
 
 func init() {
-	configCmd.AddCommand(confGroupCmd)
+	repoSetCmd.AddCommand(repoSetVisibilityCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// groupCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// privateCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// groupCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// privateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

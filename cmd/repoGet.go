@@ -23,37 +23,16 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
 // lsCmd represents the ls command
-var repolistCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l", "ls"},
-	Short:   "List all repositories in remote.",
-	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			var info gitapi.RepoInfoList
-			gitApi := lib.GitApiFromRemote(&remote, &info)
-			gitApi.EndpointUserRepos()
-			switch remote.Vendor {
-			case "github":
-				gitApi.In.Endpoint += "?per_page=100"
-			case "gitea":
-				gitApi.In.Endpoint += "?limit=100"
-			}
-			go repoGetFunc(gitApi, &wg)
-		}
-		wg.Wait()
-	},
+var repoGetCmd = &cobra.Command{
+	Use:     "get",
+	Aliases: []string{"g"},
+	Short:   "get info",
 }
 
 func init() {
-	repoCmd.AddCommand(repolistCmd)
+	repoCmd.AddCommand(repoGetCmd)
 }

@@ -2,7 +2,7 @@
 
 `go-mygit` is a command line tools for easy configuration of git remote, github/gites repositories.
 
-> This is a replacement of [mygit](https://github.com/J-Siu/mygit) which was written in bash.
+> This is a major upgrade of [mygit](https://github.com/J-Siu/mygit) which was written in bash.
 
 <!-- TOC -->
 
@@ -14,9 +14,9 @@
   - [go-mygit config](#go-mygit-config)
   - [go-mygit remote](#go-mygit-remote)
   - [go-mygit repository](#go-mygit-repository)
-  - [Configuration File](#configuration-file)
+  - [go-mygit repository get](#go-mygit-repository-get)
+  - [go-mygit repository set](#go-mygit-repository-set)
   - [Debug](#debug)
-  - [Info](#info)
   - [Selector](#selector)
     - [-g/--group](#-g--group)
     - [-r/--remote](#-r--remote)
@@ -25,6 +25,7 @@
     - [push](#push)
       - [--tags](#--tags)
       - [--all](#--all)
+- [Configuration File](#configuration-file)
 - [Repository](#repository)
 - [Contributors](#contributors)
 - [Change Log](#change-log)
@@ -40,38 +41,37 @@
 
 ### Features
 
-- Info
-  - [x] debug
-  - [x] remote
-  - [x] group
+- Configuration File
+  - [x] remotes
+  - [x] groups
+  - [x] secrets
 - Selector
   - [x] -g/--group
   - [x] -r/--remote
-- Git Base Commands
+- Base(git) Commands
   - [x] init
   - [x] push
-    - [x] --all
-    - [x] --tag
-- API(repo) Commands
-  - [x] repo/repository
-    - [x] delete
-    - [x] get
-    - [x] new
+  - [x] remote
+    - [x] add
+    - [x] list
+    - [x] remove
+- repository(api)
+  - [x] delete
+  - [x] get
+    - [x] all
     - [x] description
-      - [x] get
-      - [x] set
     - [x] private
-      - [x] get
-      - [x] private
-      - [x] public
-    - [x] secret
-      - [x] set
-    - [x] topic
-      - [x] get
-      - [x] set
+    - [x] publickey
+    - [x] topics
     - [x] visibility
-      - [x] get
-      - [x] set
+  - [x] list
+  - [x] new
+  - [x] set
+    - [x] description
+    - [x] private
+    - [x] secrets
+    - [x] topics
+    - [x] visibility
 
 ### Limitation
 
@@ -85,16 +85,18 @@
 
 #### go-mygit
 ```sh
+Git automation script support group action.
+
 Usage:
   go-mygit [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
-  config      Print configuration
+  config      Print configurations
   help        Help about any command
   init        Git init and set remotes
-  push        Push to all remotes
-  remote      go-mygit remote commands
+  push        Push to all remote repositories
+  remote      remote(git) commands
   repository  Repository commands
 
 Flags:
@@ -103,14 +105,12 @@ Flags:
   -g, --group stringArray    Specify group
   -h, --help                 help for go-mygit
   -r, --remote stringArray   Specify remotes
-  -t, --toggle               Help message for toggle
 
 Use "go-mygit [command] --help" for more information about a command.
 ```
-
 #### go-mygit config
 ```sh
-Print configuration
+Print configurations
 
 Usage:
   go-mygit config [command]
@@ -119,10 +119,10 @@ Aliases:
   config, c, conf
 
 Available Commands:
-  all         Print all configuration
-  group       Print groups in configuration
+  all         Print all configurations
+  group       Print groups configuration
   remote      Print remotes configuration
-  secret      Print secret in configuration
+  secret      Print secret configuration
 
 Flags:
   -h, --help   help for config
@@ -135,10 +135,9 @@ Global Flags:
 
 Use "go-mygit config [command] --help" for more information about a command.
 ```
-
 #### go-mygit remote
 ```sh
-go-mygit remote commands
+remote(git) commands
 
 Usage:
   go-mygit remote [command]
@@ -148,7 +147,7 @@ Aliases:
 
 Available Commands:
   add         Add git remotes base on configuration and flags
-  get         List git remotes in current repository
+  list        List git remotes in current repository
   remove      Delete remotes in current repository
 
 Flags:
@@ -162,10 +161,8 @@ Global Flags:
 
 Use "go-mygit remote [command] --help" for more information about a command.
 ```
-
 #### go-mygit repository
 ```sh
-# go-mygit repository
 Repository commands
 
 Usage:
@@ -175,15 +172,11 @@ Aliases:
   repository, repo
 
 Available Commands:
-  delete      Delete remote repositoy
-  description Remote repositories description command
-  get         Get remote repositoy info
-  list        List all repositories in remote.
-  new         Create remote repositoy
-  private     Repositories private commands
-  secret      Remote repository secret commands.
-  topic       Remote repository topics commands.
-  visibility  Remote reposities visibility commands.
+  delete      Delete remote repository
+  get         get info
+  list        List all remote repositories
+  new         Create remote repository
+  set         set info
 
 Flags:
   -h, --help   help for repository
@@ -196,47 +189,63 @@ Global Flags:
 
 Use "go-mygit repository [command] --help" for more information about a command.
 ```
+#### go-mygit repository get
+```sh
+get info
 
-#### Configuration File
+Usage:
+  go-mygit repository get [command]
 
-Following configuration will be used in all examples:
+Aliases:
+  get, g
 
-```json
-{
-	"secrets": [
-		{
-			"name": "",
-			"value": ""
-		},
-		{
-			"name": "",
-			"value": ""
-		}
-	],
-	"remotes": [
-		{
-			"group": "",
-			"name": "GitHub",
-			"private": false,
-			"ssh": "",
-			"token": "",
-			"entrypoint": "https://api.github.com",
-			"vendor": "github"
-		},
-		{
-			"group": "",
-			"name": "MyServer",
-			"private": true,
-			"ssh": "",
-			"token": "",
-			"entrypoint": "https://gt.jsiu.dev/api/v1",
-			"user": "",
-			"vendor": "gitea"
-		}
-	]
-}
+Available Commands:
+  all         get all info(json)
+  description get description
+  private     get private status
+  publickey   get public key
+  topics      get topics
+  visibility  get visibility
+
+Flags:
+  -h, --help   help for get
+
+Global Flags:
+      --config string        config file (default is $HOME/.go-mygit.json)
+  -d, --debug                Enable debug
+  -g, --group stringArray    Specify group
+  -r, --remote stringArray   Specify remotes
+
+Use "go-mygit repository get [command] --help" for more information about a command.
 ```
+#### go-mygit repository set
+```sh
+set info
 
+Usage:
+  go-mygit repository set [command]
+
+Aliases:
+  set, s
+
+Available Commands:
+  description set description
+  private     set private status
+  secrets     set action secrets
+  topics      set topics
+  visibility  set visibility status
+
+Flags:
+  -h, --help   help for set
+
+Global Flags:
+      --config string        config file (default is $HOME/.go-mygit.json)
+  -d, --debug                Enable debug
+  -g, --group stringArray    Specify group
+  -r, --remote stringArray   Specify remotes
+
+Use "go-mygit repository set [command] --help" for more information about a command.
+```
 #### Debug
 
 Use `-d` for debug output.
@@ -245,10 +254,6 @@ Example:
 ```sh
 go-mygit -d repo des get
 ```
-
-#### Info
-
-The `remote` and `group` command provide a quick way to see what is configured.
 
 #### Selector
 
@@ -339,7 +344,7 @@ server3 git@server3:/username3/mygit2.git (push)
 
 ##### push
 
-`go-mygit push` will do `git push` and `git push --tag` base on `-g`/`-r` selector. If no group nor remote are specified, all configured remotes will be pushed in sequence.
+`go-mygit push` base on `-g`/`-r` selector. If no group nor remote are specified, all configured remotes will be pushed in sequence.
 
 ```sh
 go-mygit push
@@ -349,7 +354,7 @@ go-mygit push
 go-mygit -r gh push
 ```
 
-`go-mygit push` support options `--master` and `--all`
+`go-mygit push` support options `--tags` and `--all`
 
 ###### --tags
 
@@ -367,6 +372,46 @@ If `--all` is used, `mygit push` will push all branches(`--all`).
 go-mygit -r gh push --all
 ```
 
+### Configuration File
+
+Following configuration will be used in all examples:
+
+```json
+{
+	"secrets": [
+		{
+			"name": "",
+			"value": ""
+		},
+		{
+			"name": "",
+			"value": ""
+		}
+	],
+	"remotes": [
+		{
+			"group": "",
+			"name": "GitHub",
+			"private": false,
+			"ssh": "",
+			"token": "",
+			"entrypoint": "https://api.github.com",
+			"vendor": "github"
+		},
+		{
+			"group": "",
+			"name": "MyServer",
+			"private": true,
+			"ssh": "",
+			"token": "",
+			"entrypoint": "https://gitea.myserver.com/api/v1",
+			"user": "",
+			"vendor": "gitea"
+		}
+	]
+}
+```
+
 ### Repository
 
 - [go-mygit](https://github.com/J-Siu/go-mygit)
@@ -381,6 +426,11 @@ go-mygit -r gh push --all
   - Feature complete
 - v1.0.1
   - Fix repo new endpoint
+- v2.0.0
+  - Command line restructure
+  - Clean up func name
+  - Clean up file name
+  - Fix typos
 
 ### License
 

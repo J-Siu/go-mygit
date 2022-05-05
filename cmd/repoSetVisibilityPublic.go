@@ -22,43 +22,42 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"log"
-	"os"
 	"sync"
 
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
-// pushCmd represents the push command
-var gitPushCmd = &cobra.Command{
-	Use:   "push",
-	Short: "Push to all remotes",
+// publicCmd represents the public command
+var repoSetVisibilityPublicCmd = &cobra.Command{
+	Use:     "public",
+	Aliases: []string{"pub"},
+	Short:   "set to public",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		if Flag.PushAll && Flag.PushTag {
-			log.Fatal("--all/-a and --tags/-t cannot be used together")
-			os.Exit(1)
-		}
+		var info gitapi.RepoVisibility
+		info.Visibility = "public"
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			title := remote.Name
-			args := []string{"push", title}
-			if Flag.PushAll {
-				args = append(args, "--all")
-			}
-			if Flag.PushTag {
-				args = append(args, "--tags")
-			}
-			go helper.MyCmdRunWg("git", &args, &title, &wg, true)
+			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi.EndpointRepos()
+			go repoPatchFunc(gitApi, &wg)
 		}
 		wg.Wait()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(gitPushCmd)
-	gitPushCmd.Flags().BoolVarP(&Flag.PushAll, "all", "a", false, "Push all branches")
-	gitPushCmd.Flags().BoolVarP(&Flag.PushTag, "tags", "t", false, "Push all branches")
-	// gitPushCmd.MarkFlagsMutuallyExclusive("all","tags")
+	repoSetVisibilityCmd.AddCommand(repoSetVisibilityPublicCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// publicCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// publicCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

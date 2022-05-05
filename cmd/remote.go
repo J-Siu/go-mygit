@@ -30,7 +30,7 @@ import (
 var remoteCmd = &cobra.Command{
 	Use:     "remote",
 	Aliases: []string{"rmt"},
-	Short:   "go-mygit remote commands",
+	Short:   "remote(git) commands",
 }
 
 func init() {

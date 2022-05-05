@@ -74,7 +74,6 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Groups, "group", "g", nil, "Specify group")
 	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Remotes, "remote", "r", nil, "Specify remotes")
 	rootCmd.PersistentFlags().BoolVarP(&Flag.Debug, "debug", "d", false, "Enable debug")

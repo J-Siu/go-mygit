@@ -22,26 +22,40 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"sync"
+
+	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
-// secretCmd represents the secret command
-var repoSecretCmd = &cobra.Command{
-	Use:     "secret",
-	Aliases: []string{"s", "sec"},
-	Short:   "Remote repository secret commands.",
+// deleteCmd represents the delete command
+var repoDeleteCmd = &cobra.Command{
+	Use:     "delete",
+	Aliases: []string{"del"},
+	Short:   "Delete remote repository",
+	Run: func(cmd *cobra.Command, args []string) {
+		var wg sync.WaitGroup
+		for _, remote := range Conf.MergedRemotes {
+			wg.Add(1)
+			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil())
+			gitApi.EndpointRepos()
+			go repoDelFunc(gitApi, &wg)
+		}
+		wg.Wait()
+	},
 }
 
 func init() {
-	repoCmd.AddCommand(repoSecretCmd)
+	repoCmd.AddCommand(repoDeleteCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// secretCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// deleteCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// secretCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// deleteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

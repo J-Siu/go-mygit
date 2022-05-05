@@ -23,29 +23,46 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/J-Siu/go-helper"
+	"fmt"
+	"sync"
+
+	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
-var delAll bool
-
-// remoteDelCmd represents the delete command
-var remoteDelCmd = &cobra.Command{
-	Use:     "remove",
-	Aliases: []string{"r", "rm"},
-	Short:   "Delete remotes in current repository",
+// topicCmd represents the topic command
+var repoGetPublickeyCmd = &cobra.Command{
+	Use:     "publickey",
+	Aliases: []string{"pk"},
+	Short:   "get public key",
 	Run: func(cmd *cobra.Command, args []string) {
-		if delAll {
-			helper.GitRemoteRemoveAll()
-		} else {
-			for _, remote := range Conf.MergedRemotes {
-				remote.GitRemove()
+		var wg sync.WaitGroup
+		for _, remote := range Conf.MergedRemotes {
+			if remote.Vendor != "github" {
+				fmt.Printf("%s:(%s) action secret not supported.\n", remote.Name, remote.Vendor)
+			} else {
+				wg.Add(1)
+				var info gitapi.RepoPublicKey
+				gitApi := lib.GitApiFromRemote(&remote, &info)
+				gitApi.EndpointReposSecretsPubkey()
+				go repoGetFunc(gitApi, &wg)
 			}
+			wg.Wait()
 		}
 	},
 }
 
 func init() {
-	remoteCmd.AddCommand(remoteDelCmd)
-	remoteDelCmd.Flags().BoolVarP(&delAll, "all", "a", false, "Delete all remotes")
+	repoGetCmd.AddCommand(repoGetPublickeyCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// topicCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// topicCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

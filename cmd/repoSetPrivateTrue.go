@@ -30,17 +30,17 @@ import (
 )
 
 // privateCmd represents the private command
-var repoVisibilityPrivateCmd = &cobra.Command{
-	Use:     "private",
-	Aliases: []string{"pri"},
-	Short:   "Set remote reposities to private",
+var repoSetPrivateTrueCmd = &cobra.Command{
+	Use:     "true",
+	Aliases: []string{"t"},
+	Short:   "set to true.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		var info gitapi.RepoVisibility
-		info.Visibility = "private"
+		var info gitapi.RepoPrivate
+		info.Private = true
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil())
 			gitApi.EndpointRepos()
 			go repoPatchFunc(gitApi, &wg)
 		}
@@ -49,7 +49,7 @@ var repoVisibilityPrivateCmd = &cobra.Command{
 }
 
 func init() {
-	repoVisibilityCmd.AddCommand(repoVisibilityPrivateCmd)
+	repoSetPrivateCmd.AddCommand(repoSetPrivateTrueCmd)
 
 	// Here you will define your flags and configuration settings.
 
