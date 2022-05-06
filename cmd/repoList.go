@@ -40,7 +40,7 @@ var repoListCmd = &cobra.Command{
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
 			var info gitapi.RepoInfoList
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointUserRepos()
 			switch remote.Vendor {
 			case "github":

@@ -33,7 +33,7 @@ import (
 // descriptionCmd represents the description command
 var repoSetDescriptionCmd = &cobra.Command{
 	Use:     "description",
-	Aliases: []string{"des", "desc"},
+	Aliases: []string{"d", "des", "desc"},
 	Short:   "set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
@@ -43,7 +43,7 @@ var repoSetDescriptionCmd = &cobra.Command{
 		}
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointRepos()
 			go repoPatchFunc(gitApi, &wg)
 		}

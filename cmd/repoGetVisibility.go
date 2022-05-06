@@ -39,7 +39,7 @@ var repoGetVisbilityCmd = &cobra.Command{
 		for _, remote := range Conf.MergedRemotes {
 			var info gitapi.RepoVisibility
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointRepos()
 			go repoGetFunc(gitApi, &wg)
 		}

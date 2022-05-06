@@ -39,7 +39,7 @@ var repoGetAllCmd = &cobra.Command{
 		var wg sync.WaitGroup
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil())
+			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil(), "")
 			gitApi.EndpointRepos()
 			go repoGetFunc(gitApi, &wg)
 		}

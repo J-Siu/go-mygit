@@ -44,7 +44,7 @@ var repoSetSecretsCmd = &cobra.Command{
 				// "GET" public key
 				helper.Report("", remote.Name, false)
 				var pubkey gitapi.RepoPublicKey
-				gitApi := lib.GitApiFromRemote(&remote, &pubkey)
+				gitApi := lib.GitApiFromRemote(&remote, &pubkey, "")
 				gitApi.EndpointReposSecretsPubkey()
 				success := gitApi.Get()
 				helper.ReportStatus(success, "Get Actions Public Key")
@@ -54,7 +54,7 @@ var repoSetSecretsCmd = &cobra.Command{
 				for _, secret := range Conf.Secrets {
 					// Encrypt and "PUT" secret into remote repository
 					epP := secret.Encrypt(&pubkey)
-					gitApi := lib.GitApiFromRemote(&remote, epP)
+					gitApi := lib.GitApiFromRemote(&remote, epP, "")
 					gitApi.EndpointReposSecrets()
 					gitApi.In.Endpoint += "/" + secret.Name
 					success := gitApi.Put()

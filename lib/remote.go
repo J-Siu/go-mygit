@@ -40,14 +40,21 @@ type Remote struct {
 }
 
 // Return a GitApi pointer base on Remote
-func GitApiFromRemote[T gitapi.GitApiInfo](remoteP *Remote, info T) *gitapi.GitApi[T] {
-	return gitapi.GitApiNew(
+func GitApiFromRemote[T gitapi.GitApiInfo](remoteP *Remote, info T, repo string) *gitapi.GitApi[T] {
+	if len(repo) == 0 {
+		repo = helper.CurrentDirBase()
+	}
+	api := gitapi.GitApiNew(
 		remoteP.Name,
 		remoteP.Token,
 		remoteP.Entrypoint,
 		remoteP.User,
 		remoteP.Vendor,
+		repo,
 		info)
+	// Set Github header
+	api.HeaderGithub()
+	return api
 }
 
 // Add all Remotes into git repository

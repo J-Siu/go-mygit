@@ -33,14 +33,14 @@ import (
 // descriptionCmd represents the description command
 var repoGetDescriptionCmd = &cobra.Command{
 	Use:     "description",
-	Aliases: []string{"des", "desc"},
+	Aliases: []string{"d", "des", "desc"},
 	Short:   "get description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
 			var info gitapi.RepoDescription
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointRepos()
 			go repoGetFunc(gitApi, &wg)
 		}

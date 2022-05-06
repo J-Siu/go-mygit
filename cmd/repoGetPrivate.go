@@ -39,7 +39,7 @@ var repoGetPrivateCmd = &cobra.Command{
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
 			var info gitapi.RepoPrivate
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointRepos()
 			go repoGetFunc(gitApi, &wg)
 		}

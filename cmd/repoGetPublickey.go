@@ -44,7 +44,7 @@ var repoGetPublickeyCmd = &cobra.Command{
 			} else {
 				wg.Add(1)
 				var info gitapi.RepoPublicKey
-				gitApi := lib.GitApiFromRemote(&remote, &info)
+				gitApi := lib.GitApiFromRemote(&remote, &info, "")
 				gitApi.EndpointReposSecretsPubkey()
 				go repoGetFunc(gitApi, &wg)
 			}

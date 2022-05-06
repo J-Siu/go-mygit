@@ -40,7 +40,7 @@ var repoSetVisibilityPrivateCmd = &cobra.Command{
 		info.Visibility = "private"
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointRepos()
 			go repoPatchFunc(gitApi, &wg)
 		}

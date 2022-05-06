@@ -40,7 +40,7 @@ var repoSetPrivateTrueCmd = &cobra.Command{
 		info.Private = true
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil())
+			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil(), "")
 			gitApi.EndpointRepos()
 			go repoPatchFunc(gitApi, &wg)
 		}

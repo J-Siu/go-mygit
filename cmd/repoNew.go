@@ -43,7 +43,7 @@ var repoNewCmd = &cobra.Command{
 			var info gitapi.RepoInfo
 			info.Name = helper.CurrentDirBase()
 			info.Private = remote.Private
-			gitApi := lib.GitApiFromRemote(&remote, &info)
+			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointUserRepos()
 			go repoPostFunc(gitApi, &wg)
 		}
