@@ -14,6 +14,7 @@
   - [go-mygit config](#go-mygit-config)
   - [go-mygit remote](#go-mygit-remote)
   - [go-mygit repository](#go-mygit-repository)
+  - [go-mygit repository del](#go-mygit-repository-del)
   - [go-mygit repository get](#go-mygit-repository-get)
   - [go-mygit repository set](#go-mygit-repository-set)
   - [Debug](#debug)
@@ -57,6 +58,8 @@
     - [x] remove
 - repository(api)
   - [x] delete
+    - [x] repository
+    - [x] secret
   - [x] get
     - [x] all
     - [x] description
@@ -172,7 +175,7 @@ Aliases:
   repository, repo
 
 Available Commands:
-  delete      Delete remote repository
+  del         Delete
   get         get info
   list        List all remote repositories
   new         Create remote repository
@@ -189,6 +192,33 @@ Global Flags:
 
 Use "go-mygit repository [command] --help" for more information about a command.
 ```
+
+#### go-mygit repository del
+```sh
+Delete
+
+Usage:
+  go-mygit repository del [command]
+
+Aliases:
+  del, delete
+
+Available Commands:
+  repository  Delete remote repository
+  secret      Delete remote repository secret
+
+Flags:
+  -h, --help   help for del
+
+Global Flags:
+      --config string        config file (default is $HOME/.go-mygit.json)
+  -d, --debug                Enable debug
+  -g, --group stringArray    Specify group
+  -r, --remote stringArray   Specify remotes
+
+Use "go-mygit repository del [command] --help" for more information about a command.
+```
+
 #### go-mygit repository get
 ```sh
 get info
@@ -435,6 +465,8 @@ Following configuration will be used in all examples:
   - upgrade go-helper and go-gitapi for bugfix
 - v2.1.0
   - Add repo name support for all repoGet* commands
+- v2.2.0
+  - Support deletion of github repository action secret
 
 ### License
 
