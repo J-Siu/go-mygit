@@ -32,16 +32,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var name string
-var value string
-
 // setCmd represents the set command
 var repoSetSecretsCmd = &cobra.Command{
 	Use:     "secrets",
 	Aliases: []string{"s", "secret"},
 	Short:   "set action secrets",
 	Run: func(cmd *cobra.Command, args []string) {
-		if name == "" && value != "" || name != "" && value == "" {
+		if Flag.Secret.Name == "" && Flag.Secret.Value != "" ||
+			Flag.Secret.Name != "" && Flag.Secret.Value == "" {
 			log.Fatal("-n/--name and -v/--value must be used together")
 			os.Exit(1)
 		}
@@ -60,14 +58,11 @@ var repoSetSecretsCmd = &cobra.Command{
 					os.Exit(1)
 				}
 
-				if name != "" && value != "" {
+				if Flag.Secret.Name != "" && Flag.Secret.Value != "" {
 					// Use command line value
-					var secret lib.ConfSecret
-					secret.Name = name
-					secret.Value = value
-					epP := secret.Encrypt(&pubkey)
+					epP := Flag.Secret.Encrypt(&pubkey)
 					gitApi := lib.GitApiFromRemote(&remote, epP, "")
-					repoPutSecret(gitApi, nil, &secret.Name)
+					repoPutSecret(gitApi, nil, &Flag.Secret.Name)
 				} else {
 					// Use config secrets
 					for _, secret := range Conf.Secrets {
@@ -84,6 +79,6 @@ var repoSetSecretsCmd = &cobra.Command{
 
 func init() {
 	repoSetCmd.AddCommand(repoSetSecretsCmd)
-	repoSetSecretsCmd.Flags().StringVarP(&name, "name", "n", "", "Secret name")
-	repoSetSecretsCmd.Flags().StringVarP(&value, "value", "v", "", "Secret value")
+	repoSetSecretsCmd.Flags().StringVarP(&Flag.Secret.Name, "name", "n", "", "Secret name")
+	repoSetSecretsCmd.Flags().StringVarP(&Flag.Secret.Value, "value", "v", "", "Secret value")
 }

@@ -30,8 +30,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var secrets []string
-
 // Delete repository action secret
 var repoDelSecretCmd = &cobra.Command{
 	Use:     "secret [repository ...]",
@@ -42,9 +40,9 @@ var repoDelSecretCmd = &cobra.Command{
 		var wg sync.WaitGroup
 
 		// Use secrets in conf if not specified in command line
-		if len(secrets) == 0 {
+		if len(Flag.SecretsDel) == 0 {
 			for _, s := range Conf.Secrets {
-				secrets = append(secrets, s.Name)
+				Flag.SecretsDel = append(Flag.SecretsDel, s.Name)
 			}
 		}
 
@@ -55,7 +53,7 @@ var repoDelSecretCmd = &cobra.Command{
 
 		for _, repo := range args {
 			for _, remote := range Conf.MergedRemotes {
-				for _, secret := range secrets {
+				for _, secret := range Flag.SecretsDel {
 					if remote.Vendor != gitapi.Vendor_Github {
 						fmt.Printf("%s: only (%s) action secret is supported.\n", remote.Name, gitapi.Vendor_Github)
 					} else {
@@ -74,5 +72,5 @@ var repoDelSecretCmd = &cobra.Command{
 
 func init() {
 	repoDelCmd.AddCommand(repoDelSecretCmd)
-	repoDelSecretCmd.Flags().StringArrayVarP(&secrets, "name", "n", []string{}, "Secret name")
+	repoDelSecretCmd.Flags().StringArrayVarP(&Flag.SecretsDel, "name", "n", []string{}, "Secret name")
 }
