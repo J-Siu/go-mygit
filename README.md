@@ -433,6 +433,8 @@ Following configuration will be used in all examples:
   - Fix typos
 - v2.0.1
   - upgrade go-helper and go-gitapi for bugfix
+- v2.1.0
+  - Add repo name support for all repoGet* commands
 
 ### License
 
