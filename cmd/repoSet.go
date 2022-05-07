@@ -19,14 +19,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// lsCmd represents the ls command
+// repo set
 var repoSetCmd = &cobra.Command{
 	Use:     "set",
 	Aliases: []string{"s"},

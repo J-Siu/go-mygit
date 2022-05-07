@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// privateCmd represents the private command
+// repo visibility
 var repoSetVisibilityCmd = &cobra.Command{
 	Use:     "visibility",
 	Aliases: []string{"v", "vis"},
@@ -34,14 +34,4 @@ var repoSetVisibilityCmd = &cobra.Command{
 
 func init() {
 	repoSetCmd.AddCommand(repoSetVisibilityCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// privateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// privateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

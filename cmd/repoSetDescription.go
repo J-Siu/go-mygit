@@ -30,7 +30,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// descriptionCmd represents the description command
+// repo description
 var repoSetDescriptionCmd = &cobra.Command{
 	Use:     "description",
 	Aliases: []string{"d"},
@@ -53,14 +53,4 @@ var repoSetDescriptionCmd = &cobra.Command{
 
 func init() {
 	repoSetCmd.AddCommand(repoSetDescriptionCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// descriptionCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// descriptionCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
