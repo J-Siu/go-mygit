@@ -19,7 +19,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
@@ -30,19 +29,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
+// Get repo topics
 var repoGetTopicsCmd = &cobra.Command{
-	Use:     "topics",
+	Use:     "topics [repository ...]",
 	Aliases: []string{"t", "topic"},
 	Short:   "get topics",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			var info gitapi.RepoTopics
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
-			gitApi.EndpointReposTopics()
-			go repoGetFunc(gitApi, &wg)
+		if len(args) == 0 {
+			args = append(args, "")
+		}
+		for _, repo := range args {
+			for _, remote := range Conf.MergedRemotes {
+				var info gitapi.RepoTopics
+				wg.Add(1)
+				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				gitApi.EndpointReposTopics()
+				go repoGetFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},
@@ -50,14 +54,4 @@ var repoGetTopicsCmd = &cobra.Command{
 
 func init() {
 	repoGetCmd.AddCommand(repoGetTopicsCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

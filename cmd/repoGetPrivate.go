@@ -29,19 +29,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
+// Get repo private status(bool)
 var repoGetPrivateCmd = &cobra.Command{
-	Use:     "private",
+	Use:     "private [repository ...]",
 	Aliases: []string{"p", "priv"},
 	Short:   "get private status",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			var info gitapi.RepoPrivate
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
-			gitApi.EndpointRepos()
-			go repoGetFunc(gitApi, &wg)
+		if len(args) == 0 {
+			args = append(args, "")
+		}
+		for _, repo := range args {
+			for _, remote := range Conf.MergedRemotes {
+				wg.Add(1)
+				var info gitapi.RepoPrivate
+				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				gitApi.EndpointRepos()
+				go repoGetFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},

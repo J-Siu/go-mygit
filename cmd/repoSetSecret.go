@@ -42,12 +42,12 @@ var repoSetSecretsCmd = &cobra.Command{
 				fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 			} else {
 				// "GET" public key
-				helper.Report("", remote.Name, false)
+				helper.Report("", remote.Name, false, false)
 				var pubkey gitapi.RepoPublicKey
 				gitApi := lib.GitApiFromRemote(&remote, &pubkey, "")
 				gitApi.EndpointReposSecretsPubkey()
 				success := gitApi.Get()
-				helper.ReportStatus(success, "Get Actions Public Key")
+				helper.ReportStatus(success, "Get Actions Public Key", true)
 				if !success {
 					os.Exit(1)
 				}
@@ -58,7 +58,7 @@ var repoSetSecretsCmd = &cobra.Command{
 					gitApi.EndpointReposSecrets()
 					gitApi.In.Endpoint += "/" + secret.Name
 					success := gitApi.Put()
-					helper.ReportStatus(success, secret.Name)
+					helper.ReportStatus(success, secret.Name, true)
 				}
 			}
 		}

@@ -47,9 +47,9 @@ var rootCmd = &cobra.Command{
 		Conf.Init(&Flag)
 		Conf.MergeRemotes(&Flag)
 		if Flag.Debug {
-			helper.Report(&Conf.File, "", true)
-			helper.Report(&Flag, "Flag", true)
-			helper.Report(&Conf.MergedRemotes, "Merged Remote", true)
+			helper.Report(&Conf.File, "", true, true)
+			helper.Report(&Flag, "Flag", true, false)
+			helper.Report(&Conf.MergedRemotes, "Merged Remote", true, false)
 		}
 	},
 }

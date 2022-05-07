@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
@@ -29,14 +30,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type errMsg struct {
+	Errors  string `json:"errors"`
+	Message string `json:"message"`
+	Url     string `json:"url"`
+}
+
 // repoCmd represents the repo command
 var repoCmd = &cobra.Command{
 	Use:     "repository",
 	Aliases: []string{"r", "rep", "repo"},
 	Short:   "Repository commands",
-	// Run: func(cmd *cobra.Command, args []string) {
-	// 	fmt.Println("repo called")
-	// },
 }
 
 func init() {
@@ -44,32 +48,61 @@ func init() {
 }
 
 func repoDelFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
-	defer wg.Done()
+	if wg != nil {
+		defer wg.Done()
+	}
 	success := gitApi.Del()
-	helper.ReportStatus(success, gitApi.Name)
+	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
 }
 
 func repoGetFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
-	defer wg.Done()
-	gitApi.Get()
-	helper.Report(gitApi.Out.Output, gitApi.Name, true)
+	if wg != nil {
+		defer wg.Done()
+	}
+	var success bool = gitApi.Get()
+
+	if success {
+		var singleLine bool
+		switch *gitApi.Out.Output {
+		case "true", "false", "public", "private":
+			singleLine = true
+		default:
+			singleLine = false
+		}
+		helper.Report(gitApi.Out.Output, gitApi.Name+"("+gitApi.Repo+")", true, singleLine)
+	} else {
+		// API failed, try to extract error message
+		var info errMsg
+		err := json.Unmarshal([]byte(*gitApi.Out.Output), &info)
+		if err == nil {
+			helper.Report(info.Message, gitApi.Name+"("+gitApi.Repo+")", true, true)
+		} else {
+			helper.Report(gitApi.Out.Output, gitApi.Name+"("+gitApi.Repo+")", true, false)
+		}
+	}
 }
 
 func repoPatchFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
-	defer wg.Done()
+	if wg != nil {
+		defer wg.Done()
+	}
 	success := gitApi.Patch()
-	helper.ReportStatus(success, gitApi.Name)
+	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
 }
 
 func repoPostFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
-	defer wg.Done()
+	if wg != nil {
+		defer wg.Done()
+	}
 	success := gitApi.Post()
-	helper.ReportStatus(success, gitApi.Name)
+	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
 }
 
 func repoPutFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
-	defer wg.Done()
+	if wg != nil {
+		defer wg.Done()
+	}
 	gitApi.Put()
 	success := gitApi.Put()
-	helper.ReportStatus(success, gitApi.Name)
+	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
 }

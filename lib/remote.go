@@ -23,6 +23,8 @@ THE SOFTWARE.
 package lib
 
 import (
+	"path"
+
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper"
 )
@@ -43,6 +45,8 @@ type Remote struct {
 func GitApiFromRemote[T gitapi.GitApiInfo](remoteP *Remote, info T, repo string) *gitapi.GitApi[T] {
 	if len(repo) == 0 {
 		repo = helper.CurrentDirBase()
+	} else {
+		repo = path.Base(repo)
 	}
 	api := gitapi.GitApiNew(
 		remoteP.Name,

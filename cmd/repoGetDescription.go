@@ -19,7 +19,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
@@ -30,19 +29,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// descriptionCmd represents the description command
+// Get repo description
 var repoGetDescriptionCmd = &cobra.Command{
-	Use:     "description",
-	Aliases: []string{"d", "des", "desc"},
+	Use:     "description [repository ...]",
+	Aliases: []string{"d"},
 	Short:   "get description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			var info gitapi.RepoDescription
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
-			gitApi.EndpointRepos()
-			go repoGetFunc(gitApi, &wg)
+		if len(args) == 0 {
+			args = append(args, "")
+		}
+		for _, repo := range args {
+			for _, remote := range Conf.MergedRemotes {
+				wg.Add(1)
+				var info gitapi.RepoDescription
+				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				gitApi.EndpointRepos()
+				go repoGetFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},
@@ -50,14 +54,4 @@ var repoGetDescriptionCmd = &cobra.Command{
 
 func init() {
 	repoGetCmd.AddCommand(repoGetDescriptionCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// descriptionCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// descriptionCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

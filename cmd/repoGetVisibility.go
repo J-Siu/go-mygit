@@ -29,19 +29,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
+// Get repo visibility
 var repoGetVisbilityCmd = &cobra.Command{
-	Use:     "visibility",
+	Use:     "visibility [repository ...]",
 	Aliases: []string{"v", "vis"},
 	Short:   "get visibility",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			var info gitapi.RepoVisibility
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
-			gitApi.EndpointRepos()
-			go repoGetFunc(gitApi, &wg)
+		if len(args) == 0 {
+			args = append(args, "")
+		}
+		for _, repo := range args {
+			for _, remote := range Conf.MergedRemotes {
+				var info gitapi.RepoVisibility
+				wg.Add(1)
+				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				gitApi.EndpointRepos()
+				go repoGetFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},
@@ -49,14 +54,4 @@ var repoGetVisbilityCmd = &cobra.Command{
 
 func init() {
 	repoGetCmd.AddCommand(repoGetVisbilityCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

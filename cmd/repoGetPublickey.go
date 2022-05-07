@@ -19,11 +19,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
@@ -31,22 +29,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// topicCmd represents the topic command
+// Get repo public key
 var repoGetPublickeyCmd = &cobra.Command{
-	Use:     "publickey",
+	Use:     "publickey [repository ...]",
 	Aliases: []string{"pk"},
 	Short:   "get public key",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			if remote.Vendor != "github" {
-				fmt.Printf("%s:(%s) action secret not supported.\n", remote.Name, remote.Vendor)
-			} else {
+		if len(args) == 0 {
+			args = append(args, "")
+		}
+		for _, repo := range args {
+			for _, remote := range Conf.MergedRemotes {
+				// if remote.Vendor != gitapi.Vendor_Github {
+				// 	fmt.Printf("%s:(%s) action secret not supported.\n", remote.Name, remote.Vendor)
+				// } else {
 				wg.Add(1)
 				var info gitapi.RepoPublicKey
-				gitApi := lib.GitApiFromRemote(&remote, &info, "")
+				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
 				gitApi.EndpointReposSecretsPubkey()
 				go repoGetFunc(gitApi, &wg)
+				// }
 			}
 			wg.Wait()
 		}
@@ -55,14 +58,4 @@ var repoGetPublickeyCmd = &cobra.Command{
 
 func init() {
 	repoGetCmd.AddCommand(repoGetPublickeyCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// topicCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// topicCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

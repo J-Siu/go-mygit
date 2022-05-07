@@ -32,7 +32,7 @@ var confSecretsCmd = &cobra.Command{
 	Aliases: []string{"s", "sec"},
 	Short:   "Print secret configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		helper.Report(&Conf.Secrets, "", true)
+		helper.Report(&Conf.Secrets, "", true, false)
 	},
 }
 

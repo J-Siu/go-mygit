@@ -32,7 +32,7 @@ var confGroupsCmd = &cobra.Command{
 	Aliases: []string{"g", "grp"},
 	Short:   "Print groups configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		helper.Report(&Conf.Groups, "", true)
+		helper.Report(&Conf.Groups, "", true, false)
 	},
 }
 

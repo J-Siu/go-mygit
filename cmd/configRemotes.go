@@ -33,7 +33,7 @@ var confRemotesCmd = &cobra.Command{
 	Aliases: []string{"r", "rmt"},
 	Short:   "Print remotes configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		helper.Report(&Conf.Remotes, "", true)
+		helper.Report(&Conf.Remotes, "", true, false)
 	},
 }
 

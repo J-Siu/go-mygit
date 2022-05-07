@@ -28,7 +28,7 @@ import (
 // publicCmd represents the public command
 var repoSetPrivateCmd = &cobra.Command{
 	Use:     "private",
-	Aliases: []string{"p", "priv"},
+	Aliases: []string{"p"},
 	Short:   "set private status",
 }
 

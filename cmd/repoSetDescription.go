@@ -33,7 +33,7 @@ import (
 // descriptionCmd represents the description command
 var repoSetDescriptionCmd = &cobra.Command{
 	Use:     "description",
-	Aliases: []string{"d", "des", "desc"},
+	Aliases: []string{"d"},
 	Short:   "set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
