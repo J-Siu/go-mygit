@@ -41,11 +41,12 @@ var repoListCmd = &cobra.Command{
 			var info gitapi.RepoInfoList
 			gitApi := lib.GitApiFromRemote(&remote, &info, "")
 			gitApi.EndpointUserRepos()
+			gitApi.In.UrlValInit()
 			switch remote.Vendor {
-			case "github":
-				gitApi.In.Endpoint += "?per_page=100"
-			case "gitea":
-				gitApi.In.Endpoint += "?limit=100"
+			case gitapi.Vendor_Github:
+				gitApi.In.UrlVal.Add("per_page", "100")
+			case gitapi.Vendor_Gitea:
+				gitApi.In.UrlVal.Add("limit", "100")
 			}
 			go repoGetFunc(gitApi, &wg)
 		}
