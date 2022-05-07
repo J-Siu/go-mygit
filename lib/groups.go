@@ -24,6 +24,7 @@ package lib
 
 import "github.com/J-Siu/go-helper"
 
+// Group names
 type Groups []string
 
 func (groupsP *Groups) Has(groupP *string) bool {

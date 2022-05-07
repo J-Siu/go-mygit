@@ -22,11 +22,12 @@ THE SOFTWARE.
 
 package lib
 
+// Holding all flages from command line
 type TypeFlag struct {
-	Debug      bool
-	Groups     []string
-	PushAll    bool
-	PushBranch []string
-	PushTag    bool
-	Remotes    []string
+	Debug      bool     // Enable debug output
+	Groups     []string // Groups specified in command line
+	PushAll    bool     // Flag for git push
+	PushBranch []string // Flag for git push
+	PushTag    bool     // Flag for git push
+	Remotes    []string // Remotes specified in command line
 }

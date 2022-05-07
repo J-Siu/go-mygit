@@ -38,12 +38,9 @@ var Flag lib.TypeFlag
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "go-mygit",
-	Short: "Git utility",
-	Long:  `Git automation script support group action.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: `Git and Repo automation made easy.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		helper.Debug = Flag.Debug
 		Conf.Init(&Flag)
 		Conf.MergeRemotes(&Flag)
 		if Flag.Debug {
@@ -66,14 +63,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-mygit.json)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
 	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Groups, "group", "g", nil, "Specify group")
 	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Remotes, "remote", "r", nil, "Specify remotes")
 	rootCmd.PersistentFlags().BoolVarP(&Flag.Debug, "debug", "d", false, "Enable debug")

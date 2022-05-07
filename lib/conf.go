@@ -26,10 +26,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/J-Siu/go-helper"
 	"github.com/spf13/viper"
 )
 
+/*
+File, Group, MergeRemotes are filled in at runtime
+
+Remotes, Secrets are read from config file by viper
+*/
 type TypeConf struct {
 	File          string       `json:"-"`
 	Groups        Groups       `json:"-"`
@@ -38,6 +42,7 @@ type TypeConf struct {
 	MergedRemotes Remotes      `json:"-"`
 }
 
+// Fill in conf struct from viper and extract all groups from `Remotes`
 func (c *TypeConf) Init(flag *TypeFlag) {
 	c.File = viper.ConfigFileUsed()
 	viper.Unmarshal(&c)
@@ -45,7 +50,6 @@ func (c *TypeConf) Init(flag *TypeFlag) {
 	for _, r := range c.Remotes {
 		c.Groups.Add(&r.Group)
 	}
-	helper.Debug = flag.Debug
 }
 
 // Calculate remotes base on flag
@@ -69,6 +73,7 @@ func (c *TypeConf) MergeRemotes(flag *TypeFlag) {
 			os.Exit(1)
 		}
 	}
+	// If no remote is specified from command line, use all remotes in config
 	if len(c.MergedRemotes) == 0 {
 		c.MergedRemotes = append(c.MergedRemotes, c.Remotes...)
 	}

@@ -32,8 +32,9 @@ import (
 
 // pushCmd represents the push command
 var rootPushCmd = &cobra.Command{
-	Use:   "push",
-	Short: "Push to all remote repositories",
+	Use:     "push",
+	Aliases: []string{"p"},
+	Short:   "Push to all remote repositories",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if Flag.PushAll && Flag.PushTag {

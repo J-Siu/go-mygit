@@ -27,6 +27,7 @@ import (
 	"github.com/J-Siu/go-helper"
 )
 
+// Secret entry in config file
 type ConfSecret struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
@@ -34,6 +35,7 @@ type ConfSecret struct {
 
 type ConfSecrets []ConfSecret
 
+// Do NACL box encryption
 func (secretP *ConfSecret) Encrypt(pubkeyP *gitapi.RepoPublicKey) *gitapi.RepoEncryptedPair {
 	var ep gitapi.RepoEncryptedPair
 	ep.Key_id = pubkeyP.Key_id
@@ -41,6 +43,7 @@ func (secretP *ConfSecret) Encrypt(pubkeyP *gitapi.RepoPublicKey) *gitapi.RepoEn
 	return &ep
 }
 
+// Check if secrete exist by name
 func (secretsP *ConfSecrets) Has(name *string) bool {
 	for _, s := range *secretsP {
 		if s.Name == *name {

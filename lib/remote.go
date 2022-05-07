@@ -29,10 +29,11 @@ import (
 	"github.com/J-Siu/go-helper"
 )
 
+// Remote entry in config file
 type Remote struct {
-	Name  string `json:"name"`
-	Group string `json:"group"`
-	Ssh   string `json:"ssh"`
+	Name  string `json:"name"`  // Name of remote entry, also use as git remote name
+	Group string `json:"group"` // Group name
+	Ssh   string `json:"ssh"`   // Ssh url for git server
 
 	Entrypoint string `json:"entrypoint"` // Api entrypoint url
 	Token      string `json:"token"`      // Api token
