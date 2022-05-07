@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
@@ -29,33 +30,49 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// deleteCmd represents the delete command
-var repoDeleteCmd = &cobra.Command{
-	Use:     "delete",
-	Aliases: []string{"del"},
-	Short:   "Delete remote repository",
+var secrets []string
+
+// Delete repository action secret
+var repoDelSecretCmd = &cobra.Command{
+	Use:     "secret [repository ...]",
+	Aliases: []string{"s"},
+	Short:   "Delete remote repository secret",
+	Long:    "Delete remote repository secret. If no repository is specified, current git root will be used as repository name. If --name, --value are not set, all secrets in conf will be added.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil(), "")
-			gitApi.EndpointRepos()
-			go repoDelFunc(gitApi, &wg)
+
+		// Use secrets in conf if not specified in command line
+		if len(secrets) == 0 {
+			for _, s := range Conf.Secrets {
+				secrets = append(secrets, s.Name)
+			}
+		}
+
+		// If no repo specified in command line, add a ""
+		if len(args) == 0 {
+			args = append(args, "")
+		}
+
+		for _, repo := range args {
+			for _, remote := range Conf.MergedRemotes {
+				for _, secret := range secrets {
+					if remote.Vendor != gitapi.Vendor_Github {
+						fmt.Printf("%s: only (%s) action secret is supported.\n", remote.Name, gitapi.Vendor_Github)
+					} else {
+						wg.Add(1)
+						gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil(), repo)
+						gitApi.EndpointReposSecrets()
+						gitApi.In.Endpoint += "/" + secret
+						go repoDelFunc(gitApi, &wg)
+					}
+				}
+			}
 		}
 		wg.Wait()
 	},
 }
 
 func init() {
-	repoCmd.AddCommand(repoDeleteCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// deleteCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// deleteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	repoDelCmd.AddCommand(repoDelSecretCmd)
+	repoDelSecretCmd.Flags().StringArrayVarP(&secrets, "name", "n", []string{}, "Secret name")
 }
