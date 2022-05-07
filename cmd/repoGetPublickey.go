@@ -34,6 +34,7 @@ var repoGetPublickeyCmd = &cobra.Command{
 	Use:     "publickey [repository ...]",
 	Aliases: []string{"pk"},
 	Short:   "get public key",
+	Long:    "Get public key. If no repository is specified, current git root will be used as repository name.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {

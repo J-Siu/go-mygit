@@ -34,6 +34,7 @@ var repoGetVisbilityCmd = &cobra.Command{
 	Use:     "visibility [repository ...]",
 	Aliases: []string{"v", "vis"},
 	Short:   "get visibility",
+	Long:    "Get visibility. If no repository is specified, current git root will be used as repository name.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {

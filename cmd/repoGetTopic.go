@@ -34,6 +34,7 @@ var repoGetTopicsCmd = &cobra.Command{
 	Use:     "topics [repository ...]",
 	Aliases: []string{"t", "topic"},
 	Short:   "get topics",
+	Long:    "Get topics. If no repository is specified, current git root will be used as repository name.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {

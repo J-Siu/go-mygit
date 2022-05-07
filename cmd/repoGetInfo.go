@@ -34,6 +34,7 @@ var repoGetInfoCmd = &cobra.Command{
 	Use:     "info [repository ...]",
 	Aliases: []string{"i"},
 	Short:   "get info(json)",
+	Long:    "Get info(json). If no repository is specified, current git root will be used as repository name.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {

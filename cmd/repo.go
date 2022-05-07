@@ -102,7 +102,25 @@ func repoPutFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGro
 	if wg != nil {
 		defer wg.Done()
 	}
-	gitApi.Put()
 	success := gitApi.Put()
 	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
+}
+
+// func repoPutSecret[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
+// 	if wg != nil {
+// 		defer wg.Done()
+// 	}
+// 	gitApi.Put()
+// 	success := gitApi.Put()
+// 	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
+// }
+
+func repoPutSecret[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup, secretName *string) {
+	if wg != nil {
+		defer wg.Done()
+	}
+	gitApi.EndpointReposSecrets()
+	gitApi.In.Endpoint += "/" + *secretName
+	success := gitApi.Put()
+	helper.ReportStatus(success, *secretName, true)
 }

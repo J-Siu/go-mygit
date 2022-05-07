@@ -34,6 +34,7 @@ var repoGetDescriptionCmd = &cobra.Command{
 	Use:     "description [repository ...]",
 	Aliases: []string{"d"},
 	Short:   "get description",
+	Long:    "Get description. If no repository is specified, current git root will be used as repository name.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {

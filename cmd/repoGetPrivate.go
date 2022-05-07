@@ -34,6 +34,7 @@ var repoGetPrivateCmd = &cobra.Command{
 	Use:     "private [repository ...]",
 	Aliases: []string{"p", "priv"},
 	Short:   "get private status",
+	Long:    "Get private status. If no repository is specified, current git root will be used as repository name.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
