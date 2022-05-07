@@ -23,6 +23,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/J-Siu/go-gitapi"
@@ -31,14 +32,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var name string
+var value string
+
 // setCmd represents the set command
 var repoSetSecretsCmd = &cobra.Command{
 	Use:     "secrets",
 	Aliases: []string{"s", "secret"},
 	Short:   "set action secrets",
 	Run: func(cmd *cobra.Command, args []string) {
+		if name == "" && value != "" || name != "" && value == "" {
+			log.Fatal("-n/--name and -v/--value must be used together")
+			os.Exit(1)
+		}
 		for _, remote := range Conf.MergedRemotes {
-			if remote.Vendor != "github" {
+			if remote.Vendor != gitapi.Vendor_Github {
 				fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 			} else {
 				// "GET" public key
@@ -51,14 +59,23 @@ var repoSetSecretsCmd = &cobra.Command{
 				if !success {
 					os.Exit(1)
 				}
-				for _, secret := range Conf.Secrets {
-					// Encrypt and "PUT" secret into remote repository
+
+				if name != "" && value != "" {
+					// Use command line value
+					var secret lib.ConfSecret
+					secret.Name = name
+					secret.Value = value
 					epP := secret.Encrypt(&pubkey)
 					gitApi := lib.GitApiFromRemote(&remote, epP, "")
-					gitApi.EndpointReposSecrets()
-					gitApi.In.Endpoint += "/" + secret.Name
-					success := gitApi.Put()
-					helper.ReportStatus(success, secret.Name, true)
+					repoPutSecret(gitApi, nil, &secret.Name)
+				} else {
+					// Use config secrets
+					for _, secret := range Conf.Secrets {
+						// Encrypt and "PUT" secret into remote repository
+						epP := secret.Encrypt(&pubkey)
+						gitApi := lib.GitApiFromRemote(&remote, epP, "")
+						repoPutSecret(gitApi, nil, &secret.Name)
+					}
 				}
 			}
 		}
@@ -67,14 +84,6 @@ var repoSetSecretsCmd = &cobra.Command{
 
 func init() {
 	repoSetCmd.AddCommand(repoSetSecretsCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// setCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// setCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	repoSetSecretsCmd.Flags().StringVarP(&name, "name", "n", "", "Secret name")
+	repoSetSecretsCmd.Flags().StringVarP(&value, "value", "v", "", "Secret value")
 }
