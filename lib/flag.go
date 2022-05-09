@@ -24,13 +24,14 @@ package lib
 
 // Holding all flages from command line
 type TypeFlag struct {
-	Debug      bool       // Enable debug output
-	Groups     []string   // Groups specified in command line
-	PushAll    bool       // Flag for git push
-	PushBranch []string   // Flag for git push
-	PushTag    bool       // Flag for git push
-	Remotes    []string   // Remotes specified in command line
-	Secret     ConfSecret // Secret specified in command line
-	SecretsDel []string   // Secrets specified in command line
-	Args       []string   // Args from command line
+	Args            []string   // Args from command line
+	Debug           bool       // Enable debug output
+	Groups          []string   // Groups specified in command line
+	PushAll         bool       // Flag for git push
+	PushBranch      []string   // Flag for git push
+	PushTag         bool       // Flag for git push
+	RemoteRemoveAll bool       // Flag for git remote remove all
+	Remotes         []string   // Remotes specified in command line
+	Secret          ConfSecret // Secret specified in command line
+	SecretsDel      []string   // Secrets specified in command line
 }
