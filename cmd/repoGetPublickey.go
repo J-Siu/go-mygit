@@ -38,7 +38,7 @@ var repoGetPublickeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
-			args = append(args, "")
+			args = []string{""}
 		}
 		for _, repo := range args {
 			for _, remote := range Conf.MergedRemotes {

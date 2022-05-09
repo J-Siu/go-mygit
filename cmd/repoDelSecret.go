@@ -48,7 +48,7 @@ var repoDelSecretCmd = &cobra.Command{
 
 		// If no repo specified in command line, add a ""
 		if len(args) == 0 {
-			args = append(args, "")
+			args = []string{""}
 		}
 
 		for _, repo := range args {
