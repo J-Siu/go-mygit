@@ -467,6 +467,8 @@ Following configuration will be used in all examples:
   - Add repo name support for all repoGet* commands
 - v2.2.0
   - Support deletion of github repository action secret
+- v2.3.0
+  - Add repo(dir) name support for init, push, repo new, and all remote* commands
 
 ### License
 

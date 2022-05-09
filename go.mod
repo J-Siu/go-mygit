@@ -3,8 +3,8 @@ module github.com/J-Siu/go-mygit
 go 1.18
 
 require (
-	github.com/J-Siu/go-gitapi v1.2.5
-	github.com/J-Siu/go-helper v0.9.8
+	github.com/J-Siu/go-gitapi v1.2.6
+	github.com/J-Siu/go-helper v1.0.0
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.11.0
 )
