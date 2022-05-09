@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"path"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
@@ -32,19 +33,25 @@ import (
 
 // repo new
 var repoNewCmd = &cobra.Command{
-	Use:     "new",
+	Use:     "new [repository ...]",
 	Aliases: []string{"n"},
 	Short:   "Create remote repository",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			var info gitapi.RepoInfo
-			info.Name = helper.CurrentDirBase()
-			info.Private = remote.Private
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
-			gitApi.EndpointUserRepos()
-			go repoPostFunc(gitApi, &wg)
+		// args == array of repos from command line
+		if len(args) == 0 {
+			args = append(args, *helper.CurrentDirBase())
+		}
+		for _, repo := range args {
+			for _, remote := range Conf.MergedRemotes {
+				wg.Add(1)
+				var info gitapi.RepoInfo
+				info.Name = path.Base(repo)
+				info.Private = remote.Private
+				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				gitApi.EndpointUserRepos()
+				go repoPostFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},

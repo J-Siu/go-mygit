@@ -23,31 +23,32 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"github.com/J-Siu/go-helper"
 	"github.com/spf13/cobra"
 )
 
 // addCmd represents the add command
 var remoteAddCmd = &cobra.Command{
-	Use:     "add",
+	Use:     "add [repository ...]",
 	Aliases: []string{"a"},
 	Short:   "Add git remotes base on configuration and flags",
+	Long:    "Add git remotes base on configuration and flags. If -r/-g not specified, all remotes in config file will be added.",
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, remote := range Conf.MergedRemotes {
-			remote.GitAdd()
+		if len(args) == 0 {
+			args = []string{*helper.CurrentPath()}
+		}
+		for _, path := range args {
+			if helper.GitRoot(&path) == "" {
+				helper.Report("is not a git repository.", path, true, true)
+				return
+			}
+			for _, remote := range Conf.MergedRemotes {
+				remote.GitAdd(&path)
+			}
 		}
 	},
 }
 
 func init() {
 	remoteCmd.AddCommand(remoteAddCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

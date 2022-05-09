@@ -28,14 +28,19 @@ import (
 
 // Git init
 var rootInitCmd = &cobra.Command{
-	Use:   "init",
+	Use:   "init [repository ...]",
 	Short: "Git init and set remotes",
 	Long:  "Git init. Reset and add remotes base on configuration and flags.",
 	Run: func(cmd *cobra.Command, args []string) {
-		helper.GitInit()
-		helper.GitRemoteRemoveAll()
-		for _, remote := range Conf.MergedRemotes {
-			remote.GitAdd()
+		if len(args) == 0 {
+			args = []string{*helper.CurrentPath()}
+		}
+		for _, path := range args {
+			helper.GitInit(&path)
+			helper.GitRemoteRemoveAll(&path)
+			for _, remote := range Conf.MergedRemotes {
+				remote.GitAdd(&path)
+			}
 		}
 	},
 }

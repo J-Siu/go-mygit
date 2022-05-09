@@ -24,6 +24,7 @@ package lib
 
 import (
 	"path"
+	"sync"
 
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper"
@@ -42,10 +43,11 @@ type Remote struct {
 	Vendor     string `json:"vendor"`     // Api vendor/brand
 }
 
-// Return a GitApi pointer base on Remote
+// Return a GitApi pointer base on Remote.
+// If 'repo' is empty, current directory will be used.
 func GitApiFromRemote[T gitapi.GitApiInfo](remoteP *Remote, info T, repo string) *gitapi.GitApi[T] {
 	if len(repo) == 0 {
-		repo = helper.CurrentDirBase()
+		repo = *helper.CurrentDirBase()
 	} else {
 		repo = path.Base(repo)
 	}
@@ -63,14 +65,40 @@ func GitApiFromRemote[T gitapi.GitApiInfo](remoteP *Remote, info T, repo string)
 }
 
 // Add all Remotes into git repository
-func (self *Remote) GitAdd() *helper.MyCmd {
-	self.GitRemove()
-	repo := helper.CurrentDirBase()
-	git := self.Ssh + ":/" + self.User + "/" + repo + ".git"
-	return helper.GitRemoteAdd(self.Name, git)
+func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
+	self.GitRemove(workpathP)
+	var fullpath string = *helper.FullPath(workpathP)
+	var gitroot string = helper.GitRoot(workpathP)
+	if gitroot == "" {
+		helper.Report("is not a git repository.", *workpathP, true, true)
+		return nil
+	}
+	var repo string = path.Base(gitroot)
+	var git string = self.Ssh + ":/" + self.User + "/" + repo + ".git"
+	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullpath, self.Name, git)
+	var title string = *workpathP + ": " + myCmd.CmdLn
+	helper.Report(myCmd.Stderr.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, true, false)
+	return myCmd
 }
 
 // Remove all Remotes in git repository
-func (self *Remote) GitRemove() *helper.MyCmd {
-	return helper.GitRemoteRemove(self.Name)
+func (self *Remote) GitRemove(workpathP *string) *helper.MyCmd {
+	var myCmd *helper.MyCmd = helper.GitRemoteRemove(workpathP, self.Name)
+	var title string = *workpathP + ": " + myCmd.CmdLn
+	helper.Report(myCmd.Stderr.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, true, false)
+	return myCmd
+}
+
+// Push all Remotes in git repository
+func GitPush(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+	if wgP != nil {
+		defer wgP.Done()
+	}
+	var myCmd *helper.MyCmd = helper.GitPush(workpathP, optionsP)
+	var title string = *workpathP + ": " + myCmd.CmdLn
+	helper.Report(myCmd.Stderr.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, true, false)
+	return myCmd
 }

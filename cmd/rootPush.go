@@ -22,36 +22,45 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"log"
-	"os"
 	"sync"
 
 	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
 // pushCmd represents the push command
 var rootPushCmd = &cobra.Command{
-	Use:     "push",
+	Use:     "push [repository ...]",
 	Aliases: []string{"p"},
 	Short:   "Push to all remote repositories",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		if Flag.PushAll && Flag.PushTag {
-			log.Fatal("--all/-a and --tags/-t cannot be used together")
-			os.Exit(1)
+		if len(args) == 0 {
+			args = []string{*helper.CurrentPath()}
 		}
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			title := remote.Name
-			args := []string{"push", title}
-			if Flag.PushAll {
-				args = append(args, "--all")
+		for _, path := range args {
+			if helper.GitRoot(&path) == "" {
+				helper.Report("is not a git repository.", path, true, true)
+				return
 			}
-			if Flag.PushTag {
-				args = append(args, "--tags")
+			for _, remote := range Conf.MergedRemotes {
+				var fullpath string = *helper.FullPath(&path)
+				args := []string{remote.Name}
+				if Flag.PushAll {
+					wg.Add(1)
+					a := append(args, "--all")
+					go lib.GitPush(&fullpath, &a, &wg)
+				} else {
+					wg.Add(1)
+					go lib.GitPush(&fullpath, &args, &wg)
+				}
+				if Flag.PushTag {
+					wg.Add(1)
+					a := append(args, "--tags")
+					go lib.GitPush(&fullpath, &a, &wg)
+				}
 			}
-			go helper.MyCmdRunWg("git", &args, &title, &wg, true)
 		}
 		wg.Wait()
 	},

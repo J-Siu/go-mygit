@@ -27,19 +27,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var delAll bool
-
 // remoteDelCmd represents the delete command
 var remoteRemoveCmd = &cobra.Command{
-	Use:     "remove",
+	Use:     "remove [repository ...]",
 	Aliases: []string{"r", "rm"},
 	Short:   "Delete remotes in current repository",
+	Long:    "Delete remotes in current repository. If -r/-g not specified, all remotes in config file will be removed. If -a is used, all remotes will be removed.",
 	Run: func(cmd *cobra.Command, args []string) {
-		if delAll {
-			helper.GitRemoteRemoveAll()
-		} else {
-			for _, remote := range Conf.MergedRemotes {
-				remote.GitRemove()
+		if len(args) == 0 {
+			args = []string{*helper.CurrentPath()}
+		}
+		for _, path := range args {
+			if helper.GitRoot(&path) == "" {
+				helper.Report("is not a git repository.", path, true, true)
+				return
+			}
+			if Flag.RemoteRemoveAll {
+				helper.GitRemoteRemoveAll(&path)
+			} else {
+				for _, remote := range Conf.MergedRemotes {
+					remote.GitRemove(&path)
+				}
 			}
 		}
 	},
@@ -47,5 +55,5 @@ var remoteRemoveCmd = &cobra.Command{
 
 func init() {
 	remoteCmd.AddCommand(remoteRemoveCmd)
-	remoteRemoveCmd.Flags().BoolVarP(&delAll, "all", "a", false, "Delete all remotes")
+	remoteRemoveCmd.Flags().BoolVarP(&Flag.RemoteRemoveAll, "all", "a", false, "Delete all remotes")
 }
