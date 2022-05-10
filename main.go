@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/J-Siu/go-mygit/cmd"
+import "github.com/J-Siu/go-mygit/v2/cmd"
 
 func main() {
 	cmd.Execute()

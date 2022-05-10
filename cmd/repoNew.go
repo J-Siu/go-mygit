@@ -27,7 +27,7 @@ import (
 
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper"
-	"github.com/J-Siu/go-mygit/lib"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 

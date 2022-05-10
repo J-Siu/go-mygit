@@ -27,6 +27,8 @@
       - [--tags](#--tags)
       - [--all](#--all)
 - [Configuration File](#configuration-file)
+- [Packages Used](#packages-used)
+- [Binary](#binary)
 - [Repository](#repository)
 - [Contributors](#contributors)
 - [Change Log](#change-log)
@@ -56,7 +58,7 @@
     - [x] add
     - [x] list
     - [x] remove
-- repository(api)
+- Repository(api)
   - [x] delete
     - [x] repository
     - [x] secret
@@ -75,7 +77,7 @@
     - [x] secrets
     - [x] topics
     - [x] visibility
-
+- Version
 ### Limitation
 
 - Current supported git servers
@@ -487,6 +489,8 @@ https://github.com/J-Siu/go-mygit/releases
   - lib.GitApiFromRemote() -> Remote.GetGitApi()
 - v2.4.1
   - Fix goreleaser
+- v2.4.2
+  - Proper go mod path for v2
 
 ### License
 
