@@ -30,7 +30,8 @@ import (
 var repoGetCmd = &cobra.Command{
 	Use:     "get",
 	Aliases: []string{"g"},
-	Short:   "get info",
+	Short:   "Get information",
+	Long:    "Get information.",
 }
 
 func init() {

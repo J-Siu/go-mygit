@@ -31,20 +31,20 @@ import (
 
 // Get repo visibility
 var repoGetVisbilityCmd = &cobra.Command{
-	Use:     "visibility [repository ...]",
+	Use:     "visibility " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"v", "vis"},
-	Short:   "get visibility",
-	Long:    "Get visibility. If no repository is specified, current git root will be used as repository name.",
+	Short:   "Get visibility",
+	Long:    "Get visibility. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
 			args = []string{""}
 		}
-		for _, repo := range args {
+		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
-				var info gitapi.RepoVisibility
 				wg.Add(1)
-				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				var info gitapi.RepoVisibility
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointRepos()
 				go repoGetFunc(gitApi, &wg)
 			}

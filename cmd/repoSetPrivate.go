@@ -29,7 +29,7 @@ import (
 var repoSetPrivateCmd = &cobra.Command{
 	Use:     "private",
 	Aliases: []string{"p"},
-	Short:   "set private status",
+	Short:   "Set private status",
 }
 
 func init() {

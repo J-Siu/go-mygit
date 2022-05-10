@@ -29,7 +29,8 @@ import (
 var repoSetCmd = &cobra.Command{
 	Use:     "set",
 	Aliases: []string{"s"},
-	Short:   "set info",
+	Short:   "Set information",
+	Long:    "Set information.",
 }
 
 func init() {

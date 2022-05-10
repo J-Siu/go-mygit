@@ -34,19 +34,20 @@ var repoListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l", "ls"},
 	Short:   "List all remote repositories",
+	Long:    "List all remote repositories. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
 			var info gitapi.RepoInfoList
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
+			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointUserRepos()
-			gitApi.In.UrlValInit()
+			gitApi.Req.UrlValInit()
 			switch remote.Vendor {
 			case gitapi.Vendor_Github:
-				gitApi.In.UrlVal.Add("per_page", "100")
+				gitApi.Req.UrlVal.Add("per_page", "100")
 			case gitapi.Vendor_Gitea:
-				gitApi.In.UrlVal.Add("limit", "100")
+				gitApi.Req.UrlVal.Add("limit", "100")
 			}
 			go repoGetFunc(gitApi, &wg)
 		}

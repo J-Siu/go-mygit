@@ -20,36 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package lib
 
-import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi"
-	"github.com/spf13/cobra"
+const (
+	TXT_REPO_DIR_USE  = "[repository/directory ...]"
+	TXT_REPO_DIR_LONG = "If no repository is specified, current git root will be used as repository name. "
+	TXT_FLAGS_USE     = "If -r/-g not specified, all remotes in config file will be used. "
 )
-
-// repo description
-var repoSetDescriptionCmd = &cobra.Command{
-	Use:     "description",
-	Aliases: []string{"d"},
-	Short:   "Set description",
-	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		var info gitapi.RepoDescription
-		if len(args) > 0 {
-			info.Description = args[0]
-		}
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
-			gitApi.EndpointRepos()
-			go repoPatchFunc(gitApi, &wg)
-		}
-		wg.Wait()
-	},
-}
-
-func init() {
-	repoSetCmd.AddCommand(repoSetDescriptionCmd)
-}

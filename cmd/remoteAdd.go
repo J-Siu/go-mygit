@@ -24,26 +24,27 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
 // addCmd represents the add command
 var remoteAddCmd = &cobra.Command{
-	Use:     "add [repository ...]",
+	Use:     "add " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"a"},
-	Short:   "Add git remotes base on configuration and flags",
-	Long:    "Add git remotes base on configuration and flags. If -r/-g not specified, all remotes in config file will be added.",
+	Short:   "Add git remote",
+	Long:    "Add git remote. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			args = []string{*helper.CurrentPath()}
 		}
-		for _, path := range args {
-			if helper.GitRoot(&path) == "" {
-				helper.Report("is not a git repository.", path, true, true)
+		for _, workpath := range args {
+			if helper.GitRoot(&workpath) == "" {
+				helper.Report("is not a git repository.", workpath, true, true)
 				return
 			}
 			for _, remote := range Conf.MergedRemotes {
-				remote.GitAdd(&path)
+				remote.GitAdd(&workpath)
 			}
 		}
 	},

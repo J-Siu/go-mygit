@@ -24,29 +24,30 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
 // remoteDelCmd represents the delete command
 var remoteRemoveCmd = &cobra.Command{
-	Use:     "remove [repository ...]",
+	Use:     "remove " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"r", "rm"},
-	Short:   "Delete remotes in current repository",
-	Long:    "Delete remotes in current repository. If -r/-g not specified, all remotes in config file will be removed. If -a is used, all remotes will be removed.",
+	Short:   "Delete git remote",
+	Long:    "Delete git remote. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			args = []string{*helper.CurrentPath()}
 		}
-		for _, path := range args {
-			if helper.GitRoot(&path) == "" {
-				helper.Report("is not a git repository.", path, true, true)
+		for _, workpath := range args {
+			if helper.GitRoot(&workpath) == "" {
+				helper.Report("is not a git repository.", workpath, true, true)
 				return
 			}
 			if Flag.RemoteRemoveAll {
-				helper.GitRemoteRemoveAll(&path)
+				helper.GitRemoteRemoveAll(&workpath)
 			} else {
 				for _, remote := range Conf.MergedRemotes {
-					remote.GitRemove(&path)
+					remote.GitRemove(&workpath)
 				}
 			}
 		}

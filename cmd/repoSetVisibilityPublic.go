@@ -31,18 +31,25 @@ import (
 
 // Set repo visibility to public
 var repoSetVisibilityPublicCmd = &cobra.Command{
-	Use:     "public",
+	Use:     "public " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"pub"},
-	Short:   "set to public",
+	Short:   "Set to public",
+	Long:    "Set to public. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		var info gitapi.RepoVisibility
 		info.Visibility = "public"
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
-			gitApi.EndpointRepos()
-			go repoPatchFunc(gitApi, &wg)
+		// If no repo/dir specified in command line, add a ""
+		if len(args) == 0 {
+			args = []string{""}
+		}
+		for _, workpath := range args {
+			for _, remote := range Conf.MergedRemotes {
+				wg.Add(1)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
+				gitApi.EndpointRepos()
+				go repoPatchFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},

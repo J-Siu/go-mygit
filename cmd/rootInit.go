@@ -23,23 +23,24 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
 // Git init
 var rootInitCmd = &cobra.Command{
-	Use:   "init [repository ...]",
+	Use:   "init " + lib.TXT_REPO_DIR_USE,
 	Short: "Git init and set remotes",
-	Long:  "Git init. Reset and add remotes base on configuration and flags.",
+	Long:  "Git init. Reset and add remotes. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			args = []string{*helper.CurrentPath()}
 		}
-		for _, path := range args {
-			helper.GitInit(&path)
-			helper.GitRemoteRemoveAll(&path)
+		for _, workpath := range args {
+			helper.GitInit(&workpath)
+			helper.GitRemoteRemoveAll(&workpath)
 			for _, remote := range Conf.MergedRemotes {
-				remote.GitAdd(&path)
+				remote.GitAdd(&workpath)
 			}
 		}
 	},

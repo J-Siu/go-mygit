@@ -31,18 +31,25 @@ import (
 
 // publicCmd represents the public command
 var repoSetPrivateFalseCmd = &cobra.Command{
-	Use:     "false",
+	Use:     "false " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"f"},
-	Short:   "set to false.",
+	Short:   "Set to false.",
+	Long:    "Set to false.  " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		var info gitapi.RepoPrivate
 		info.Private = false
-		for _, remote := range Conf.MergedRemotes {
-			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil(), "")
-			gitApi.EndpointRepos()
-			go repoPatchFunc(gitApi, &wg)
+		// If no repo/dir specified in command line, add a ""
+		if len(args) == 0 {
+			args = []string{""}
+		}
+		for _, workpath := range args {
+			for _, remote := range Conf.MergedRemotes {
+				wg.Add(1)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
+				gitApi.EndpointRepos()
+				go repoPatchFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},

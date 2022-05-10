@@ -31,21 +31,22 @@ import (
 
 // pushCmd represents the push command
 var rootPushCmd = &cobra.Command{
-	Use:     "push [repository ...]",
+	Use:     "push " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"p"},
-	Short:   "Push to all remote repositories",
+	Short:   "Git push",
+	Long:    "Git push. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
 			args = []string{*helper.CurrentPath()}
 		}
-		for _, path := range args {
-			if helper.GitRoot(&path) == "" {
-				helper.Report("is not a git repository.", path, true, true)
+		for _, workpath := range args {
+			if helper.GitRoot(&workpath) == "" {
+				helper.Report("is not a git repository.", workpath, true, true)
 				return
 			}
 			for _, remote := range Conf.MergedRemotes {
-				var fullpath string = *helper.FullPath(&path)
+				var fullpath string = *helper.FullPath(&workpath)
 				args := []string{remote.Name}
 				if Flag.PushAll {
 					wg.Add(1)

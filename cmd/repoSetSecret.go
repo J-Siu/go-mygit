@@ -23,43 +23,67 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"path"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-helper"
 	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
-// Delete repository action secret
-var repoDelSecretCmd = &cobra.Command{
+// setCmd represents the set command
+var repoSetSecretCmd = &cobra.Command{
 	Use:     "secret " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"s"},
-	Short:   "Delete action secret",
-	Long:    "Delete action secret. If --name is not set, all secrets in config will be used. " + lib.TXT_REPO_DIR_LONG,
+	Short:   "Set action secret",
+	Long:    "Set action secret. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		// If no repo specified in command line, add a ""
+		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{""}
 		}
-		// Use secrets in conf if not specified in command line
-		if len(Flag.SecretsDel) == 0 {
-			for _, s := range Conf.Secrets {
-				Flag.SecretsDel = append(Flag.SecretsDel, s.Name)
-			}
+		// --name/--value must be used together
+		if Flag.Secret.Name == "" && Flag.Secret.Value != "" ||
+			Flag.Secret.Name != "" && Flag.Secret.Value == "" {
+			log.Fatal("-n/--name and -v/--value must be used together")
+			os.Exit(1)
 		}
 		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
 				if remote.Vendor != gitapi.Vendor_Github {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
-					for _, secret := range Flag.SecretsDel {
+					// "GET" public key
+					helper.Report("", remote.Name, false, false)
+					var pubkey gitapi.RepoPublicKey
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &pubkey)
+					gitApi.EndpointReposSecretsPubkey()
+					success := gitApi.Get().Res.Ok()
+					helper.ReportStatus(success, "Get Actions Public Key", true)
+					if !success {
+						os.Exit(1)
+					}
+					// A list of secret to use
+					var secretsP *lib.ConfSecrets
+					if Flag.Secret.Name != "" && Flag.Secret.Value != "" {
+						// Use command line value
+						secretsP = &lib.ConfSecrets{Flag.Secret}
+					} else {
+						// Use Conf secrets
+						secretsP = &Conf.Secrets
+					}
+					// Use config secrets
+					for _, secret := range *secretsP {
 						wg.Add(1)
-						var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
+						var infoP *gitapi.RepoEncryptedPair = secret.Encrypt(&pubkey)
+						var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, infoP)
 						gitApi.EndpointReposSecrets()
-						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
-						go repoDelFunc(gitApi, &wg)
+						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
+						go repoPutFunc(gitApi, &wg)
 					}
 				}
 			}
@@ -69,6 +93,7 @@ var repoDelSecretCmd = &cobra.Command{
 }
 
 func init() {
-	repoDelCmd.AddCommand(repoDelSecretCmd)
-	repoDelSecretCmd.Flags().StringArrayVarP(&Flag.SecretsDel, "name", "n", []string{}, "Secret name")
+	repoSetCmd.AddCommand(repoSetSecretCmd)
+	repoSetSecretCmd.Flags().StringVarP(&Flag.Secret.Name, "name", "n", "", "Secret name")
+	repoSetSecretCmd.Flags().StringVarP(&Flag.Secret.Value, "value", "v", "", "Secret value")
 }

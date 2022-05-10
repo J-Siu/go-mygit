@@ -31,20 +31,20 @@ import (
 
 // Get repo private status(bool)
 var repoGetPrivateCmd = &cobra.Command{
-	Use:     "private [repository ...]",
+	Use:     "private " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"p", "priv"},
-	Short:   "get private status",
-	Long:    "Get private status. If no repository is specified, current git root will be used as repository name.",
+	Short:   "Get private status",
+	Long:    "Get private status. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
 			args = []string{""}
 		}
-		for _, repo := range args {
+		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
 				wg.Add(1)
 				var info gitapi.RepoPrivate
-				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointRepos()
 				go repoGetFunc(gitApi, &wg)
 			}

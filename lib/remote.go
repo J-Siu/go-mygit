@@ -43,25 +43,20 @@ type Remote struct {
 	Vendor     string `json:"vendor"`     // Api vendor/brand
 }
 
-// Return a GitApi pointer base on Remote.
-// If 'repo' is empty, current directory will be used.
-func GitApiFromRemote[T gitapi.GitApiInfo](remoteP *Remote, info T, repo string) *gitapi.GitApi[T] {
-	if len(repo) == 0 {
-		repo = *helper.CurrentDirBase()
-	} else {
-		repo = path.Base(repo)
-	}
-	api := gitapi.GitApiNew(
-		remoteP.Name,
-		remoteP.Token,
-		remoteP.Entrypoint,
-		remoteP.User,
-		remoteP.Vendor,
+func (self *Remote) GetGitApi(workpathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
+	var fullpath string = *helper.FullPath(workpathP)
+	var repo string = path.Base(fullpath)
+	apiP := gitapi.GitApiNew(
+		self.Name,
+		self.Token,
+		self.Entrypoint,
+		self.User,
+		self.Vendor,
 		repo,
 		info)
 	// Set Github header
-	api.HeaderGithub()
-	return api
+	apiP.HeaderGithub()
+	return apiP
 }
 
 // Add all Remotes into git repository

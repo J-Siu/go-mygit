@@ -31,10 +31,10 @@ import (
 
 // Delete repository
 var repoDelRepoCmd = &cobra.Command{
-	Use:     "repository [repository ...]",
+	Use:     "repository " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"repo"},
 	Short:   "Delete remote repository",
-	Long:    "Delete remote repository. If no repository is specified, current git root will be used as repository name.",
+	Long:    "Delete remote repository. " + lib.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 
@@ -43,10 +43,10 @@ var repoDelRepoCmd = &cobra.Command{
 			args = []string{""}
 		}
 
-		for _, repo := range args {
+		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
 				wg.Add(1)
-				gitApi := lib.GitApiFromRemote(&remote, gitapi.Nil(), repo)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
 				gitApi.EndpointRepos()
 				go repoDelFunc(gitApi, &wg)
 			}

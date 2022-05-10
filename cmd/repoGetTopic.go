@@ -30,21 +30,21 @@ import (
 )
 
 // Get repo topics
-var repoGetTopicsCmd = &cobra.Command{
-	Use:     "topics [repository ...]",
+var repoGetTopicCmd = &cobra.Command{
+	Use:     "topics " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"t", "topic"},
-	Short:   "get topics",
-	Long:    "Get topics. If no repository is specified, current git root will be used as repository name.",
+	Short:   "Get topics",
+	Long:    "Get topics. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
 			args = []string{""}
 		}
-		for _, repo := range args {
+		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
 				var info gitapi.RepoTopics
 				wg.Add(1)
-				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointReposTopics()
 				go repoGetFunc(gitApi, &wg)
 			}
@@ -54,5 +54,5 @@ var repoGetTopicsCmd = &cobra.Command{
 }
 
 func init() {
-	repoGetCmd.AddCommand(repoGetTopicsCmd)
+	repoGetCmd.AddCommand(repoGetTopicCmd)
 }

@@ -29,7 +29,7 @@ import (
 var repoSetVisibilityCmd = &cobra.Command{
 	Use:     "visibility",
 	Aliases: []string{"v", "vis"},
-	Short:   "set visibility status",
+	Short:   "Set visibility status",
 }
 
 func init() {

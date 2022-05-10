@@ -47,80 +47,59 @@ func init() {
 	rootCmd.AddCommand(repoCmd)
 }
 
-func repoDelFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
+func repoDelFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	success := gitApi.Del()
-	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
+	gitApi.Del()
+	helper.ReportStatus(gitApi.Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
 }
 
-func repoGetFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
+func repoGetFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	var success bool = gitApi.Get()
-
-	if success {
+	// var success bool = gitApi.Get().Res.Ok()
+	// if success {
+	if gitApi.Get().Res.Ok() {
+		// API GET OK
 		var singleLine bool
-		switch *gitApi.Out.Output {
+		switch *gitApi.Res.Output {
 		case "true", "false", "public", "private":
 			singleLine = true
 		default:
 			singleLine = false
 		}
-		helper.Report(gitApi.Out.Output, gitApi.Name+"("+gitApi.Repo+")", true, singleLine)
+		helper.Report(gitApi.Res.Output, gitApi.Repo+"("+gitApi.Name+")", !Flag.NoSkip, singleLine)
 	} else {
-		// API failed, try to extract error message
+		// API GET failed, try to extract error message
 		var info errMsg
-		err := json.Unmarshal([]byte(*gitApi.Out.Output), &info)
+		err := json.Unmarshal([]byte(*gitApi.Res.Output), &info)
 		if err == nil {
-			helper.Report(info.Message, gitApi.Name+"("+gitApi.Repo+")", true, true)
+			helper.Report(info.Message, gitApi.Repo+"("+gitApi.Name+")", true, true)
 		} else {
-			helper.Report(gitApi.Out.Output, gitApi.Name+"("+gitApi.Repo+")", true, false)
+			helper.Report(gitApi.Res.Output, gitApi.Repo+"("+gitApi.Name+")", true, false)
 		}
 	}
 }
 
-func repoPatchFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
+func repoPatchFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	success := gitApi.Patch()
-	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
+	helper.ReportStatus(gitApi.Patch().Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
 }
 
-func repoPostFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
+func repoPostFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	success := gitApi.Post()
-	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
+	helper.ReportStatus(gitApi.Post().Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
 }
 
-func repoPutFunc[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
+func repoPutFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	success := gitApi.Put()
-	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
-}
-
-// func repoPutSecret[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup) {
-// 	if wg != nil {
-// 		defer wg.Done()
-// 	}
-// 	gitApi.Put()
-// 	success := gitApi.Put()
-// 	helper.ReportStatus(success, gitApi.Name+"("+gitApi.Repo+")", true)
-// }
-
-func repoPutSecret[T gitapi.GitApiInfo](gitApi *gitapi.GitApi[T], wg *sync.WaitGroup, secretName *string) {
-	if wg != nil {
-		defer wg.Done()
-	}
-	gitApi.EndpointReposSecrets()
-	gitApi.In.Endpoint += "/" + *secretName
-	success := gitApi.Put()
-	helper.ReportStatus(success, *secretName, true)
+	helper.ReportStatus(gitApi.Put().Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
 }

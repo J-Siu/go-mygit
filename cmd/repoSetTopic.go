@@ -30,10 +30,11 @@ import (
 )
 
 // repo topics
-var repoSetTopicsCmd = &cobra.Command{
-	Use:     "topics",
-	Aliases: []string{"t", "topic"},
-	Short:   "set topics",
+var repoSetTopicCmd = &cobra.Command{
+	Use:     "topic",
+	Aliases: []string{"t"},
+	Short:   "Set topics",
+	Long:    "Set topic. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		var info gitapi.RepoTopics
@@ -41,7 +42,7 @@ var repoSetTopicsCmd = &cobra.Command{
 		info.Names = &args
 		for _, remote := range Conf.MergedRemotes {
 			wg.Add(1)
-			gitApi := lib.GitApiFromRemote(&remote, &info, "")
+			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointReposTopics()
 			go repoPutFunc(gitApi, &wg)
 		}
@@ -50,5 +51,5 @@ var repoSetTopicsCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetCmd.AddCommand(repoSetTopicsCmd)
+	repoSetCmd.AddCommand(repoSetTopicCmd)
 }

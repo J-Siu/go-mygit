@@ -33,22 +33,23 @@ import (
 
 // repo new
 var repoNewCmd = &cobra.Command{
-	Use:     "new [repository ...]",
+	Use:     "new " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"n"},
 	Short:   "Create remote repository",
+	Long:    "Create remote repository. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		// args == array of repos from command line
 		if len(args) == 0 {
 			args = append(args, *helper.CurrentDirBase())
 		}
-		for _, repo := range args {
+		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
 				wg.Add(1)
 				var info gitapi.RepoInfo
-				info.Name = path.Base(repo)
+				info.Name = path.Base(workpath)
 				info.Private = remote.Private
-				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointUserRepos()
 				go repoPostFunc(gitApi, &wg)
 			}

@@ -31,23 +31,23 @@ import (
 
 // Get repo public key
 var repoGetPublickeyCmd = &cobra.Command{
-	Use:     "publickey [repository ...]",
+	Use:     "publickey " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"pk"},
-	Short:   "get public key",
-	Long:    "Get public key. If no repository is specified, current git root will be used as repository name.",
+	Short:   "Get public key",
+	Long:    "Get public key. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
 			args = []string{""}
 		}
-		for _, repo := range args {
+		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
 				// if remote.Vendor != gitapi.Vendor_Github {
 				// 	fmt.Printf("%s:(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				// } else {
 				wg.Add(1)
 				var info gitapi.RepoPublicKey
-				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointReposSecretsPubkey()
 				go repoGetFunc(gitApi, &wg)
 				// }

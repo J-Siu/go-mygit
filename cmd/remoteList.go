@@ -23,22 +23,24 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/lib"
 	"github.com/spf13/cobra"
 )
 
 // addCmd represents the add command
 var remoteListCmd = &cobra.Command{
-	Use:     "list [repository ...]",
+	Use:     "list " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"l", "ls"},
-	Short:   "List git remotes in current repository",
+	Short:   "List git remote",
+	Long:    "List git remote. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, path := range args {
-			if helper.GitRoot(&path) == "" {
-				helper.Report("is not a git repository.", path, true, true)
+		for _, workpath := range args {
+			if helper.GitRoot(&workpath) == "" {
+				helper.Report("is not a git repository.", workpath, true, true)
 				return
 			}
-			var l *[]string = helper.GitRemote(&path, true)
-			helper.Report(l, *helper.FullPath(&path), true, false)
+			var gitRemoteList *[]string = helper.GitRemote(&workpath, true)
+			helper.Report(gitRemoteList, *helper.FullPath(&workpath), true, false)
 		}
 	},
 }

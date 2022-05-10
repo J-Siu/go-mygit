@@ -31,20 +31,20 @@ import (
 
 // Get repo description
 var repoGetDescriptionCmd = &cobra.Command{
-	Use:     "description [repository ...]",
+	Use:     "description " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"d"},
-	Short:   "get description",
-	Long:    "Get description. If no repository is specified, current git root will be used as repository name.",
+	Short:   "Get description",
+	Long:    "Get description. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
 			args = []string{""}
 		}
-		for _, repo := range args {
+		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {
 				wg.Add(1)
 				var info gitapi.RepoDescription
-				gitApi := lib.GitApiFromRemote(&remote, &info, repo)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointRepos()
 				go repoGetFunc(gitApi, &wg)
 			}
