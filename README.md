@@ -451,7 +451,7 @@ Following configuration will be used in all examples:
 
 ### Binary
 
-https://github.com/J-Siu/test-goreleaser/releases
+https://github.com/J-Siu/go-mygit/releases
 
 ### Repository
 
