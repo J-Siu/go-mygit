@@ -1,6 +1,6 @@
 ## go-MyGit - Git action with group, implement in Go
 
-`go-mygit` is a command line tools for easy configuration of git remote, github/gites repositories.
+`go-mygit` is a command line tools for easy mass configuration of git remote, and github/gites repositories API.
 
 > This is a major upgrade of [mygit](https://github.com/J-Siu/mygit) which was written in bash.
 
@@ -442,6 +442,13 @@ Following configuration will be used in all examples:
 }
 ```
 
+### Packages Used
+
+- [go-gitapi](https://github.com/J-Siu/go-gitapi)
+- [go-helper](https://github.com/J-Siu/go-helper)
+- [cobra](github.com/spf13/cobra)
+- [viper](github.com/spf13/viper)
+
 ### Repository
 
 - [go-mygit](https://github.com/J-Siu/go-mygit)
@@ -469,6 +476,11 @@ Following configuration will be used in all examples:
   - Support deletion of github repository action secret
 - v2.3.0
   - Add repo(dir) name support for init, push, repo new, and all remote* commands
+- v2.4.0
+  - Add global --noskip flag
+  - Improve commands Use, Short, Long
+  - Improve repo/dir handling from command line
+  - lib.GitApiFromRemote() -> Remote.GetGitApi()
 
 ### License
 
