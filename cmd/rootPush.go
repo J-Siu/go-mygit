@@ -32,7 +32,7 @@ import (
 // pushCmd represents the push command
 var rootPushCmd = &cobra.Command{
 	Use:     "push " + lib.TXT_REPO_DIR_USE,
-	Aliases: []string{"p"},
+	Aliases: []string{"p"}, // rootPushCmd
 	Short:   "Git push",
 	Long:    "Git push. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
