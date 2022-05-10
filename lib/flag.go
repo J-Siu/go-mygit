@@ -27,6 +27,7 @@ type TypeFlag struct {
 	Args            []string   // Args from command line
 	Debug           bool       // Enable debug output
 	Groups          []string   // Groups specified in command line
+	NoSkip          bool       // Flag for not skipping empty output
 	PushAll         bool       // Flag for git push
 	PushBranch      []string   // Flag for git push
 	PushTag         bool       // Flag for git push

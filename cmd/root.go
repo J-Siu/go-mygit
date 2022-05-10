@@ -62,11 +62,11 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-mygit.json)")
+	rootCmd.PersistentFlags().BoolVarP(&Flag.Debug, "debug", "d", false, "Enable debug")
+	rootCmd.PersistentFlags().BoolVarP(&Flag.NoSkip, "noskip", "", false, "Don't skip empty output")
 	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Groups, "group", "g", nil, "Specify group")
 	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Remotes, "remote", "r", nil, "Specify remotes")
-	rootCmd.PersistentFlags().BoolVarP(&Flag.Debug, "debug", "d", false, "Enable debug")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-mygit.json)")
 }
 
 // initConfig reads in config file and ENV variables if set.
