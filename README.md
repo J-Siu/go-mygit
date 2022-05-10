@@ -446,8 +446,12 @@ Following configuration will be used in all examples:
 
 - [go-gitapi](https://github.com/J-Siu/go-gitapi)
 - [go-helper](https://github.com/J-Siu/go-helper)
-- [cobra](github.com/spf13/cobra)
-- [viper](github.com/spf13/viper)
+- [cobra](//github.com/spf13/cobra)
+- [viper](//github.com/spf13/viper)
+
+### Binary
+
+https://github.com/J-Siu/test-goreleaser/releases
 
 ### Repository
 
@@ -481,6 +485,8 @@ Following configuration will be used in all examples:
   - Improve commands Use, Short, Long
   - Improve repo/dir handling from command line
   - lib.GitApiFromRemote() -> Remote.GetGitApi()
+- v2.4.1
+  - Fix goreleaser
 
 ### License
 
