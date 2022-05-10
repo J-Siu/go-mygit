@@ -35,11 +35,11 @@ File, Group, MergeRemotes are filled in at runtime
 Remotes, Secrets are read from config file by viper
 */
 type TypeConf struct {
-	File          string       `json:"-"`
-	Groups        Groups       `json:"-"`
-	Remotes       Remotes      `json:"remotes"`
-	Secrets       []ConfSecret `json:"secrets"`
-	MergedRemotes Remotes      `json:"-"`
+	File          string      `json:"-"`
+	Groups        Groups      `json:"-"`
+	Remotes       Remotes     `json:"remotes"`
+	Secrets       ConfSecrets `json:"secrets"`
+	MergedRemotes Remotes     `json:"-"`
 }
 
 // Fill in conf struct from viper and extract all groups from `Remotes`
