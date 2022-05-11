@@ -89,6 +89,6 @@ func GitPush(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper
 	var myCmd *helper.MyCmd = helper.GitPush(workpathP, optionsP)
 	var title string = *workpathP + ": " + myCmd.CmdLn
 	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, false, false)
+	helper.Report(myCmd.Stdout.String(), title, true, false)
 	return myCmd
 }
