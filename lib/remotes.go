@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 package lib
 
+import "github.com/J-Siu/go-helper"
+
 // Array of Remote
 type Remotes []Remote
 
@@ -50,7 +52,7 @@ func (self *Remotes) AddArray(raP *Remotes) {
 }
 
 // Get Remote by name
-func (self *Remotes) Get(nameP *string) *Remote {
+func (self *Remotes) GetByName(nameP *string) *Remote {
 	for _, r := range *self {
 		if r.Name == *nameP {
 			return &r
@@ -68,4 +70,15 @@ func (self *Remotes) GetByGroup(groupP *string) *Remotes {
 		}
 	}
 	return &remotes
+}
+
+// Get all Remote names
+func (self *Remotes) GetNames() *[]string {
+	var names []string
+	for _, r := range *self {
+		if !helper.StrArrayPtrContain(&names, &r.Name) {
+			names = append(names, r.Name)
+		}
+	}
+	return &names
 }

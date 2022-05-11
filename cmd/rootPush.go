@@ -38,28 +38,39 @@ var rootPushCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
-			args = []string{*helper.CurrentPath()}
+			args = []string{""}
 		}
 		for _, workpath := range args {
 			if helper.GitRoot(&workpath) == "" {
 				helper.Report("is not a git repository.", workpath, true, true)
 				return
 			}
+
+			// Create queue base on local remote
+			var remoteLocal []string = *helper.GitRemote(&workpath, false)
+			var remoteQueue []string
 			for _, remote := range Conf.MergedRemotes {
+				// Only add to queue if exist locally
+				if helper.StrArrayPtrContain(&remoteLocal, &remote.Name) {
+					remoteQueue = append(remoteQueue, remote.Name)
+				}
+			}
+
+			for _, remote := range remoteQueue {
 				var fullpath string = *helper.FullPath(&workpath)
-				args := []string{remote.Name}
+				options1 := []string{remote}
 				if Flag.PushAll {
 					wg.Add(1)
-					a := append(args, "--all")
-					go lib.GitPush(&fullpath, &a, &wg)
+					options2 := append(options1, "--all")
+					go lib.GitPush(&fullpath, &options2, &wg)
 				} else {
 					wg.Add(1)
-					go lib.GitPush(&fullpath, &args, &wg)
+					go lib.GitPush(&fullpath, &options1, &wg)
 				}
 				if Flag.PushTag {
 					wg.Add(1)
-					a := append(args, "--tags")
-					go lib.GitPush(&fullpath, &a, &wg)
+					options2 := append(options1, "--tags")
+					go lib.GitPush(&fullpath, &options2, &wg)
 				}
 			}
 		}

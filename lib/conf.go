@@ -67,7 +67,7 @@ func (c *TypeConf) MergeRemotes(flag *TypeFlag) {
 	// Merge remote from flag "remote"
 	for _, r := range flag.Remotes {
 		if c.Remotes.Has(&r) {
-			c.MergedRemotes.Add(c.Remotes.Get(&r))
+			c.MergedRemotes.Add(c.Remotes.GetByName(&r))
 		} else {
 			log.Fatal("Remote not in config: " + r)
 			os.Exit(1)
