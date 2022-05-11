@@ -68,7 +68,7 @@ func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
 	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullpath, self.Name, git)
 	var title string = *workpathP + ": " + myCmd.CmdLn
 	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, false, false)
 	return myCmd
 }
 
@@ -76,8 +76,8 @@ func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
 func (self *Remote) GitRemove(workpathP *string) *helper.MyCmd {
 	var myCmd *helper.MyCmd = helper.GitRemoteRemove(workpathP, self.Name)
 	var title string = *workpathP + ": " + myCmd.CmdLn
-	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, true, false)
+	// helper.Report(myCmd.Stderr.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, false, false)
 	return myCmd
 }
 
@@ -89,6 +89,6 @@ func GitPush(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper
 	var myCmd *helper.MyCmd = helper.GitPush(workpathP, optionsP)
 	var title string = *workpathP + ": " + myCmd.CmdLn
 	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, false, false)
 	return myCmd
 }
