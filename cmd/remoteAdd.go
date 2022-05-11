@@ -36,7 +36,7 @@ var remoteAddCmd = &cobra.Command{
 	Long:    "Add git remote. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			args = []string{*helper.CurrentPath()}
+			args = []string{""}
 		}
 		for _, workpath := range args {
 			if helper.GitRoot(&workpath) == "" {
