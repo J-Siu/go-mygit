@@ -31,7 +31,7 @@ import (
 var rootInitCmd = &cobra.Command{
 	Use:     "init " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"i"}, // rootInitCmd
-	Short:   "Git init and set remotes",
+	Short:   "Git init and reset remotes",
 	Long:    "Git init. Reset and add remotes. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
