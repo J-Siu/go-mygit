@@ -40,7 +40,7 @@ var repoDelRepoCmd = &cobra.Command{
 
 		// If no repo specified in command line, add a ""
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 
 		for _, workpath := range args {

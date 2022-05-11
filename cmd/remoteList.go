@@ -35,7 +35,7 @@ var remoteListCmd = &cobra.Command{
 	Long:    "List git remote. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 		for _, workpath := range args {
 			if helper.GitRoot(&workpath) == "" {

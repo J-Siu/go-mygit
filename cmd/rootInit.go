@@ -35,7 +35,7 @@ var rootInitCmd = &cobra.Command{
 	Long:    "Git init. Reset and add remotes. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 		for _, workpath := range args {
 			helper.GitInit(&workpath)

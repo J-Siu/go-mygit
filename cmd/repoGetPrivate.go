@@ -38,7 +38,7 @@ var repoGetPrivateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {

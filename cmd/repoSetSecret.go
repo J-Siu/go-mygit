@@ -44,7 +44,7 @@ var repoSetSecretCmd = &cobra.Command{
 		var wg sync.WaitGroup
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 		// --name/--value must be used together
 		if Flag.Secret.Name == "" && Flag.Secret.Value != "" ||

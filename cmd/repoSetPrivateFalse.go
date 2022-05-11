@@ -41,7 +41,7 @@ var repoSetPrivateFalseCmd = &cobra.Command{
 		info.Private = false
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 		for _, workpath := range args {
 			for _, remote := range Conf.MergedRemotes {

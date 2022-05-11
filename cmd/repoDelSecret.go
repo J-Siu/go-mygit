@@ -41,7 +41,7 @@ var repoDelSecretCmd = &cobra.Command{
 		var wg sync.WaitGroup
 		// If no repo specified in command line, add a ""
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 		// Use secrets in conf if not specified in command line
 		if len(Flag.SecretsDel) == 0 {

@@ -38,7 +38,7 @@ var rootPushCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
-			args = []string{""}
+			args = []string{"."}
 		}
 		for _, workpath := range args {
 			if helper.GitRoot(&workpath) == "" {
@@ -57,20 +57,22 @@ var rootPushCmd = &cobra.Command{
 			}
 
 			for _, remote := range remoteQueue {
-				var fullpath string = *helper.FullPath(&workpath)
+				// var fullpath string = *helper.FullPath(&workpath)
+				// make a local copy of workpath for go routine
+				var wp string = workpath
 				options1 := []string{remote}
 				if Flag.PushAll {
 					wg.Add(1)
 					options2 := append(options1, "--all")
-					go lib.GitPush(&fullpath, &options2, &wg)
+					go lib.GitPush(&wp, &options2, &wg)
 				} else {
 					wg.Add(1)
-					go lib.GitPush(&fullpath, &options1, &wg)
+					go lib.GitPush(&wp, &options1, &wg)
 				}
 				if Flag.PushTag {
 					wg.Add(1)
 					options2 := append(options1, "--tags")
-					go lib.GitPush(&fullpath, &options2, &wg)
+					go lib.GitPush(&wp, &options2, &wg)
 				}
 			}
 		}
