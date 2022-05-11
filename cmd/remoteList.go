@@ -34,6 +34,9 @@ var remoteListCmd = &cobra.Command{
 	Short:   "List git remote",
 	Long:    "List git remote. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			args = []string{""}
+		}
 		for _, workpath := range args {
 			if helper.GitRoot(&workpath) == "" {
 				helper.Report("is not a git repository.", workpath, true, true)
