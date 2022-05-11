@@ -63,12 +63,7 @@ func (self *Remote) GetGitApi(workpathP *string, info gitapi.GitApiInfo) *gitapi
 func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
 	self.GitRemove(workpathP)
 	var fullpath string = *helper.FullPath(workpathP)
-	var gitroot string = helper.GitRoot(workpathP)
-	if gitroot == "" {
-		helper.Report("is not a git repository.", *workpathP, true, true)
-		return nil
-	}
-	var repo string = path.Base(gitroot)
+	var repo string = path.Base(fullpath)
 	var git string = self.Ssh + ":/" + self.User + "/" + repo + ".git"
 	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullpath, self.Name, git)
 	var title string = *workpathP + ": " + myCmd.CmdLn
