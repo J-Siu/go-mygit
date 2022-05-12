@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../go-gitapi"
+		},
+		{
+			"path": "../go-helper"
+		}
+	],
+	"settings": {}
+}
