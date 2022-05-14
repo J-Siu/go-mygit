@@ -26,6 +26,7 @@ Config file is in json format.
 			"ssh": "",
 			"token": "",
 			"entrypoint": "https://api.github.com",
+			"user": ""
 			"vendor": "github"
 		},
 		{
@@ -34,7 +35,7 @@ Config file is in json format.
 			"private": true,
 			"ssh": "",
 			"token": "",
-			"entrypoint": "https://gt.jsiu.dev/api/v1",
+			"entrypoint": "https://<domain>/api/v1",
 			"user": "",
 			"vendor": "gitea"
 		}
