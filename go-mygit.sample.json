@@ -17,6 +17,7 @@
 			"ssh": "",
 			"token": "",
 			"entrypoint": "https://api.github.com",
+			"user": "",
 			"vendor": "github"
 		},
 		{
