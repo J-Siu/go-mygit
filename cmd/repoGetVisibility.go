@@ -30,7 +30,7 @@ import (
 )
 
 // Get repo visibility
-var repoGetVisbilityCmd = &cobra.Command{
+var repoGetVisibilityCmd = &cobra.Command{
 	Use:     "visibility " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"v", "vis"},
 	Short:   "Get visibility",
@@ -54,5 +54,5 @@ var repoGetVisbilityCmd = &cobra.Command{
 }
 
 func init() {
-	repoGetCmd.AddCommand(repoGetVisbilityCmd)
+	repoGetCmd.AddCommand(repoGetVisibilityCmd)
 }
