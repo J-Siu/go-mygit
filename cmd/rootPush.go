@@ -43,7 +43,7 @@ var rootPushCmd = &cobra.Command{
 		for _, workpath := range args {
 			if helper.GitRoot(&workpath) == "" {
 				helper.Report("is not a git repository.", workpath, true, true)
-				return
+				continue
 			}
 
 			// Create queue base on local remote
