@@ -38,8 +38,8 @@ cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3f
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/J-Siu/go-gitapi v1.3.1 h1:m030IERMbvCtro4fNACHG1cSmJmpEoC7mtvDG9qlGHw=
-github.com/J-Siu/go-gitapi v1.3.1/go.mod h1:QtbKATxcLM0jifn+tOZbjX75a/5pJeEauCVxSyixIHk=
+github.com/J-Siu/go-gitapi v1.3.2 h1:baBLxBFKRi41p9t/bXGkw+abNjlp8QmOctG1OQsGC4o=
+github.com/J-Siu/go-gitapi v1.3.2/go.mod h1:QtbKATxcLM0jifn+tOZbjX75a/5pJeEauCVxSyixIHk=
 github.com/J-Siu/go-helper v1.0.1 h1:2TZbVGCveQ6pqhLlZMF3I0ll0mA1pP4d4r7DnZVvej8=
 github.com/J-Siu/go-helper v1.0.1/go.mod h1:mAVy/565qS6DuPlTUrVT2w/OyACpN8y9CVI96o9MO4A=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
@@ -154,6 +154,8 @@ github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.6.1 h1:/FiVV8dS/e+YqF2JvO3yXRFbBLTIuSDkuC7aBOAvL+k=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8 h1:ajJQhvqPSQFJJ4aV5mDAMx8F7iFi6Dxfo6y62wymLNs=
+github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8/go.mod h1:Nw/CCOXNyF5JDd6UpYxBwG5WWZ2FOJ/d5QnXL4KQ6vY=
 github.com/spf13/afero v1.8.2 h1:xehSyVa0YnHWsJ49JFljMpg1HX19V6NDZ1fkm1Xznbo=
 github.com/spf13/afero v1.8.2/go.mod h1:CtAatgMJh6bJEIs48Ay/FOnkljP3WeGUG0MC1RfAqwo=
 github.com/spf13/cast v1.5.0 h1:rj3WzYc11XZaIZMPKmwP96zkFEnnAmV8s6XbB2aY32w=
