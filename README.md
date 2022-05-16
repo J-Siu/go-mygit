@@ -1,11 +1,13 @@
-## go-MyGit - Git action with group, implement in Go
+# go-MyGit [![Paypal donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?business=HZF49NM9D35SJ&no_recurring=0&currency_code=CAD)
 
-`go-mygit` is a command line tools for easy mass configuration of git remote, and github/gites repositories API.
+Command line tool for easy mass configuration of git remotes, and working with Github/Gites repositories API.
 
-> This is a major upgrade of [mygit](https://github.com/J-Siu/mygit) which was written in bash.
+> This replaces [mygit](https://github.com/J-Siu/mygit), implemented in Bash.
 
+### Table Of Content
 <!-- TOC -->
 
+- [Table Of Content](#table-of-content)
 - [Highlight](#highlight)
   - [Push multiple repository](#push-multiple-repository)
   - [Set Private](#set-private)
@@ -321,7 +323,7 @@ https://github.com/J-Siu/go-mygit/releases
   - Improve repo/dir handling from command line
   - lib.GitApiFromRemote() -> Remote.GetGitApi()
 - v2.4.1
-  - Fix goreleaser
+  - Fix `goreleaser`
 - v2.4.2
   - Proper go mod path for v2
 
