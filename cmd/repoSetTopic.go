@@ -44,10 +44,10 @@ var repoSetTopicCmd = &cobra.Command{
 			wg.Add(1)
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointReposTopics()
-			if !lib.Flag.NoParallel {
-				go repoPutFunc(gitApi, &wg)
-			} else {
+			if lib.Flag.NoParallel {
 				repoPutFunc(gitApi, &wg)
+			} else {
+				go repoPutFunc(gitApi, &wg)
 			}
 		}
 		wg.Wait()

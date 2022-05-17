@@ -49,19 +49,19 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 				if remote.Vendor == gitapi.Vendor_Github {
 					// Github need graph api
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, nil)
-					if !lib.Flag.NoParallel {
-						go repoUnarchiveGithub(gitApi, &wg)
-					} else {
+					if lib.Flag.NoParallel {
 						repoUnarchiveGithub(gitApi, &wg)
+					} else {
+						go repoUnarchiveGithub(gitApi, &wg)
 					}
 				}
 				if remote.Vendor == gitapi.Vendor_Gitea {
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 					gitApi.EndpointRepos()
-					if !lib.Flag.NoParallel {
-						go repoPatchFunc(gitApi, &wg)
-					} else {
+					if lib.Flag.NoParallel {
 						repoPatchFunc(gitApi, &wg)
+					} else {
+						go repoPatchFunc(gitApi, &wg)
 					}
 				}
 			}

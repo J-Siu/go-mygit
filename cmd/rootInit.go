@@ -27,7 +27,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Git init
+// Mass git init
 var rootInitCmd = &cobra.Command{
 	Use:     "init " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"i"}, // rootInitCmd

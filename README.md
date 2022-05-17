@@ -2,8 +2,6 @@
 
 Command line tool for easy mass configuration of git remotes, and working with Github/Gites repositories API.
 
-> This replaces [mygit](https://github.com/J-Siu/mygit), implemented in Bash.
-
 ### Table Of Content
 <!-- TOC -->
 
@@ -37,6 +35,10 @@ Command line tool for easy mass configuration of git remotes, and working with G
 - [License](#license)
 
 <!-- /TOC -->
+
+<!--more-->
+
+> This replaces [mygit](https://github.com/J-Siu/mygit), implemented in Bash.
 
 ### Highlight
 

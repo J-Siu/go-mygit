@@ -101,3 +101,37 @@ func GitPush(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper
 	helper.Report(myCmd.Stdout.String(), title, true, false)
 	return myCmd
 }
+
+// Push all Remotes in git repository
+func GitPull(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+	if wgP != nil {
+		defer wgP.Done()
+	}
+
+	var myCmd *helper.MyCmd = helper.GitPull(workpathP, optionsP)
+
+	var title string
+	if !Flag.NoTitle {
+		title = *workpathP + ": " + myCmd.CmdLn
+	}
+	helper.Report(myCmd.Stderr.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, true, false)
+	return myCmd
+}
+
+// git clone to current directory
+func GitClone(optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+	if wgP != nil {
+		defer wgP.Done()
+	}
+
+	var myCmd *helper.MyCmd = helper.GitClone(nil, optionsP)
+
+	var title string
+	if !Flag.NoTitle {
+		title = myCmd.CmdLn
+	}
+	helper.Report(myCmd.Stderr.String(), title, true, false)
+	helper.Report(myCmd.Stdout.String(), title, true, false)
+	return myCmd
+}

@@ -22,36 +22,63 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"os"
+	"strings"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-helper"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
-// Set repo visibility to private
-var repoSetVisibilityPrivateCmd = &cobra.Command{
-	Use:     "private " + lib.TXT_REPO_DIR_USE,
-	Aliases: []string{"pri"},
-	Short:   "Set to private",
-	Long:    "Set to private. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
+// Mass git pull
+var rootPullCmd = &cobra.Command{
+	Use:   "pull " + lib.TXT_REPO_DIR_USE,
+	Short: "Git pull",
+	Long:  "Git pull. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		var info gitapi.RepoVisibility
-		info.Visibility = "private"
-		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
 		}
+
+		// Check flag
+		if len(lib.Flag.Groups) != 0 || // should not have --group
+			len(lib.Flag.Remotes) != 1 { // need exactly 1 --remote
+			helper.Report(lib.TXT_REPO_CLONE_LONG, "", true, true)
+			os.Exit(1)
+		}
+		// Check remote name exist
+		var remote *lib.Remote = lib.Conf.Remotes.GetByName(&lib.Flag.Remotes[0])
+		if remote == nil {
+			helper.Report(lib.Flag.Remotes[0], "Remote not configured", true, true)
+			os.Exit(1)
+		}
+
 		for _, workpath := range args {
-			for _, remote := range lib.Conf.MergedRemotes {
+			if helper.GitRoot(&workpath) == "" {
+				helper.Report("is not a git repository.", workpath, true, true)
+				continue
+			}
+			wg.Add(1)
+
+			var wp string = workpath
+			var branch string = strings.TrimSpace(helper.GitBranchCurrent(&wp).Stdout.String())
+			var options []string = []string{remote.Name, branch}
+
+			if lib.Flag.NoParallel {
+				lib.GitPull(&wp, &options, &wg)
+			} else {
+				go lib.GitPull(&wp, &options, &wg)
+			}
+
+			if lib.Flag.PushTag {
 				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
-				gitApi.EndpointRepos()
+				var options_tag []string = append(options, "--tags")
 				if lib.Flag.NoParallel {
-					repoPatchFunc(gitApi, &wg)
+					lib.GitPull(&wp, &options_tag, &wg)
 				} else {
-					go repoPatchFunc(gitApi, &wg)
+					go lib.GitPull(&wp, &options_tag, &wg)
 				}
 			}
 		}
@@ -60,5 +87,7 @@ var repoSetVisibilityPrivateCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetVisibilityCmd.AddCommand(repoSetVisibilityPrivateCmd)
+	rootCmd.AddCommand(rootPullCmd)
+	// Re-use push flags
+	rootPullCmd.Flags().BoolVarP(&lib.Flag.PushTag, "tags", "t", false, "Pull all tags")
 }

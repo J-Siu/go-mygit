@@ -48,10 +48,10 @@ var repoDelRepoCmd = &cobra.Command{
 				wg.Add(1)
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
 				gitApi.EndpointRepos()
-				if !lib.Flag.NoParallel {
-					go repoDelFunc(gitApi, &wg)
-				} else {
+				if lib.Flag.NoParallel {
 					repoDelFunc(gitApi, &wg)
+				} else {
+					go repoDelFunc(gitApi, &wg)
 				}
 			}
 		}

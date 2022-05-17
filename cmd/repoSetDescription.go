@@ -45,10 +45,10 @@ var repoSetDescriptionCmd = &cobra.Command{
 			wg.Add(1)
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointRepos()
-			if !lib.Flag.NoParallel {
-				go repoPatchFunc(gitApi, &wg)
-			} else {
+			if lib.Flag.NoParallel {
 				repoPatchFunc(gitApi, &wg)
+			} else {
+				go repoPatchFunc(gitApi, &wg)
 			}
 		}
 		wg.Wait()

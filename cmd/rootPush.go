@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// pushCmd represents the push command
+// Mass git push
 var rootPushCmd = &cobra.Command{
 	Use:     "push " + lib.TXT_REPO_DIR_USE,
 	Aliases: []string{"p"}, // rootPushCmd
@@ -64,26 +64,26 @@ var rootPushCmd = &cobra.Command{
 				if lib.Flag.PushAll {
 					wg.Add(1)
 					options2 := append(options1, "--all")
-					if !lib.Flag.NoParallel {
-						go lib.GitPush(&wp, &options2, &wg)
-					} else {
+					if lib.Flag.NoParallel {
 						lib.GitPush(&wp, &options2, &wg)
+					} else {
+						go lib.GitPush(&wp, &options2, &wg)
 					}
 				} else {
 					wg.Add(1)
-					if !lib.Flag.NoParallel {
-						go lib.GitPush(&wp, &options1, &wg)
-					} else {
+					if lib.Flag.NoParallel {
 						lib.GitPush(&wp, &options1, &wg)
+					} else {
+						go lib.GitPush(&wp, &options1, &wg)
 					}
 				}
 				if lib.Flag.PushTag {
 					wg.Add(1)
 					options2 := append(options1, "--tags")
-					if !lib.Flag.NoParallel {
-						go lib.GitPush(&wp, &options2, &wg)
-					} else {
+					if lib.Flag.NoParallel {
 						lib.GitPush(&wp, &options2, &wg)
+					} else {
+						go lib.GitPush(&wp, &options2, &wg)
 					}
 				}
 			}

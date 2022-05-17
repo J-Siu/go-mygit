@@ -49,10 +49,10 @@ var repoGetPublickeyCmd = &cobra.Command{
 				var info gitapi.RepoPublicKey
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointReposSecretsPubkey()
-				if !lib.Flag.NoParallel {
-					go repoGetFunc(gitApi, &wg)
-				} else {
+				if lib.Flag.NoParallel {
 					repoGetFunc(gitApi, &wg)
+				} else {
+					go repoGetFunc(gitApi, &wg)
 				}
 				// }
 			}

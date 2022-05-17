@@ -32,7 +32,7 @@ import (
 // Get repo info(json)
 var repoGetInfoCmd = &cobra.Command{
 	Use:     "info " + lib.TXT_REPO_DIR_USE,
-	Aliases: []string{"i"},
+	Aliases: []string{"i", "j"},
 	Short:   "Get info(json)",
 	Long:    "Get info(json). " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,10 +45,10 @@ var repoGetInfoCmd = &cobra.Command{
 				wg.Add(1)
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
 				gitApi.EndpointRepos()
-				if !lib.Flag.NoParallel {
-					go repoGetFunc(gitApi, &wg)
-				} else {
+				if lib.Flag.NoParallel {
 					repoGetFunc(gitApi, &wg)
+				} else {
+					go repoGetFunc(gitApi, &wg)
 				}
 			}
 		}
