@@ -88,11 +88,10 @@ go-mygit repo set topic golang go project
 ### What It Does
 
 > These are the reasons "mygit" got created.
-
-- Set up same set of git remote repeatedly
+- Parallel processing multiple repository, eg. pushing 10 repos at the same time
 - Pushing same repo to multiple git servers which are not mirrored
-- Update some repository info on git server
-- Parallel processing, eg. pushing 10 repos at the same time
+- Set up same set of git remote repeatedly
+- Update repository info on git server(api)
 
 ### What It Does Not
 
@@ -109,7 +108,9 @@ go-mygit repo set topic golang go project
   - [x] -g/--group
   - [x] -r/--remote
 - Base(git) Commands
+  - [x] clone
   - [x] init
+  - [x] pull
   - [x] push
   - [x] remote
     - [x] add
@@ -353,6 +354,10 @@ https://github.com/J-Siu/go-mygit/releases
   - Fix push to use git directory remotes
 - v2.5.1
   - Remove Go workspace file
+- v2.6.0
+  - Detect if no configuration file
+  - Add git clone
+  - Add git pull
 
 ### License
 
