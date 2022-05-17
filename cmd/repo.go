@@ -196,7 +196,7 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	}
 	// No error, print result
 	helper.ReportDebug(isArchived, "isArchived", false, true)
-	helper.Report(helper.BoolStatus(string(isArchived) == "false"), title, false, true)
+	helper.Report(helper.BoolStatus(string(isArchived) == "false"), title, !lib.Flag.NoSkip, true)
 }
 
 type RepoArchived struct {

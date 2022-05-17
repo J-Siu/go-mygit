@@ -50,6 +50,15 @@ go-mygit push
 go-mygit push docker_*
 ```
 
+#### Set Archived
+
+```sh
+# Set archived to true
+go-mygit repo set archived true
+# Set archived to false
+go-mygit repo set archived false
+```
+
 #### Set Private
 
 ```sh
@@ -80,11 +89,12 @@ go-mygit repo set topic golang go project
 - Set up same set of git remote repeatedly
 - Pushing same repo to multiple git servers which are not mirrored
 - Update some repository info on git server
+- Parallel processing, eg. pushing 10 repos at the same time
 
 ### What It Does Not
 
-- Replacing `git` command. (`git` command is required for git function to work.)
-- Replacing Github cli `gh` (`go-mygit` only cover very few api in comparison.)
+- Replace `git` command. (`git` command is required for git function to work.)
+- Replace Github cli `gh` (`go-mygit` only cover very few api in comparison.)
 
 ### Features
 
@@ -106,6 +116,7 @@ go-mygit repo set topic golang go project
   - [x] list all repo on server
   - [x] create repo on server
   - [x] get / set
+    - [x] archived
     - [x] description
     - [x] private
     - [x] public key(get only)
@@ -126,18 +137,18 @@ go-mygit repo set topic golang go project
 ### Usage
 
 ```sh
-Git automation script support group action.
+Git and Repo automation made easy.
 
 Usage:
   go-mygit [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
-  config       Print configurations
+  config      Print configurations
   help        Help about any command
-  init        Git init and set remotes
-  push        Push to all remote repositories
-  remote      remote(git) commands
+  init        Git init and reset remotes
+  push        Git push
+  remote      Git remote commands
   repository  Repository commands
 
 Flags:
@@ -145,6 +156,9 @@ Flags:
   -d, --debug                Enable debug
   -g, --group stringArray    Specify group
   -h, --help                 help for go-mygit
+      --no-parallel          Don't process in parallel
+      --no-skip              Don't skip empty output
+      --no-title             Don't print title for most output
   -r, --remote stringArray   Specify remotes
 
 Use "go-mygit [command] --help" for more information about a command.
@@ -326,6 +340,14 @@ https://github.com/J-Siu/go-mygit/releases
   - Fix `goreleaser`
 - v2.4.2
   - Proper go mod path for v2
+- v2.5.0
+  - Add global flag
+    - `--no-parallel`, don't process in parallel
+    - `--no-title`, don't print title in output
+  - Add support for handling `archived` status
+  - Fix exiting on non-git directory
+  - Fix remote listing not work for current directory
+  - Fix push to use git directory remotes
 
 ### License
 
