@@ -348,6 +348,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Fix exiting on non-git directory
   - Fix remote listing not work for current directory
   - Fix push to use git directory remotes
+- v2.5.1
+  - Remove Go workspace file
 
 ### License
 
