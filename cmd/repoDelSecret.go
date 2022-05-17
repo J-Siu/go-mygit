@@ -59,7 +59,11 @@ var repoDelSecretCmd = &cobra.Command{
 						var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
-						go repoDelFunc(gitApi, &wg)
+						if !lib.Flag.NoParallel {
+							go repoDelFunc(gitApi, &wg)
+						} else {
+							repoDelFunc(gitApi, &wg)
+						}
 					}
 				}
 			}

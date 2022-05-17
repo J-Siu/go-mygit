@@ -30,8 +30,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var page int
-
 // repo list
 var repoListCmd = &cobra.Command{
 	Use:     "list",
@@ -52,8 +50,12 @@ var repoListCmd = &cobra.Command{
 			case gitapi.Vendor_Gitea:
 				gitApi.Req.UrlVal.Add("limit", "100")
 			}
-			gitApi.Req.UrlVal.Add("page", strconv.Itoa(page))
-			go repoGetFunc(gitApi, &wg)
+			gitApi.Req.UrlVal.Add("page", strconv.Itoa(lib.Flag.Page))
+			if !lib.Flag.NoParallel {
+				go repoGetFunc(gitApi, &wg)
+			} else {
+				repoGetFunc(gitApi, &wg)
+			}
 		}
 		wg.Wait()
 	},
@@ -61,5 +63,5 @@ var repoListCmd = &cobra.Command{
 
 func init() {
 	repoCmd.AddCommand(repoListCmd)
-	repoListCmd.Flags().IntVarP(&page, "page", "p", 1, "Page number")
+	repoListCmd.Flags().IntVarP(&lib.Flag.Page, "page", "p", 1, "Page number")
 }

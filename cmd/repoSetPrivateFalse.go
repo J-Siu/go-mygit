@@ -48,7 +48,11 @@ var repoSetPrivateFalseCmd = &cobra.Command{
 				wg.Add(1)
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
 				gitApi.EndpointRepos()
-				go repoPatchFunc(gitApi, &wg)
+				if !lib.Flag.NoParallel {
+					go repoPatchFunc(gitApi, &wg)
+				} else {
+					repoPatchFunc(gitApi, &wg)
+				}
 			}
 		}
 		wg.Wait()

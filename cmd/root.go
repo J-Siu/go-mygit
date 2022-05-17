@@ -62,6 +62,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.Debug, "debug", "d", false, "Enable debug")
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoSkip, "no-skip", "", false, "Don't skip empty output")
+	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoParallel, "no-parallel", "", false, "Don't process in parallel")
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
 	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Groups, "group", "g", nil, "Specify group")
 	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Remotes, "remote", "r", nil, "Specify remotes")

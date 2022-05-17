@@ -64,15 +64,27 @@ var rootPushCmd = &cobra.Command{
 				if lib.Flag.PushAll {
 					wg.Add(1)
 					options2 := append(options1, "--all")
-					go lib.GitPush(&wp, &options2, &wg)
+					if !lib.Flag.NoParallel {
+						go lib.GitPush(&wp, &options2, &wg)
+					} else {
+						lib.GitPush(&wp, &options2, &wg)
+					}
 				} else {
 					wg.Add(1)
-					go lib.GitPush(&wp, &options1, &wg)
+					if !lib.Flag.NoParallel {
+						go lib.GitPush(&wp, &options1, &wg)
+					} else {
+						lib.GitPush(&wp, &options1, &wg)
+					}
 				}
 				if lib.Flag.PushTag {
 					wg.Add(1)
 					options2 := append(options1, "--tags")
-					go lib.GitPush(&wp, &options2, &wg)
+					if !lib.Flag.NoParallel {
+						go lib.GitPush(&wp, &options2, &wg)
+					} else {
+						lib.GitPush(&wp, &options2, &wg)
+					}
 				}
 			}
 		}

@@ -27,8 +27,10 @@ type TypeFlag struct {
 	Args            []string   // Args from command line
 	Debug           bool       // Enable debug output
 	Groups          []string   // Groups specified in command line
+	NoParallel      bool       // Do not process in parallel(go routine)
 	NoSkip          bool       // Flag for not skipping empty output
 	NoTitle         bool       // Do not print title in output
+	Page            int        // Page number of repository listing
 	PushAll         bool       // Flag for git push
 	PushBranch      []string   // Flag for git push
 	PushTag         bool       // Flag for git push

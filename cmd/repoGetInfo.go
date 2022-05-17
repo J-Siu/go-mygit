@@ -45,7 +45,11 @@ var repoGetInfoCmd = &cobra.Command{
 				wg.Add(1)
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
 				gitApi.EndpointRepos()
-				go repoGetFunc(gitApi, &wg)
+				if !lib.Flag.NoParallel {
+					go repoGetFunc(gitApi, &wg)
+				} else {
+					repoGetFunc(gitApi, &wg)
+				}
 			}
 		}
 		wg.Wait()
