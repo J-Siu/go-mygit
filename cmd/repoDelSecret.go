@@ -44,17 +44,17 @@ var repoDelSecretCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		// Use secrets in conf if not specified in command line
-		if len(Flag.SecretsDel) == 0 {
-			for _, s := range Conf.Secrets {
-				Flag.SecretsDel = append(Flag.SecretsDel, s.Name)
+		if len(lib.Flag.SecretsDel) == 0 {
+			for _, s := range lib.Conf.Secrets {
+				lib.Flag.SecretsDel = append(lib.Flag.SecretsDel, s.Name)
 			}
 		}
 		for _, workpath := range args {
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				if remote.Vendor != gitapi.Vendor_Github {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
-					for _, secret := range Flag.SecretsDel {
+					for _, secret := range lib.Flag.SecretsDel {
 						wg.Add(1)
 						var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
 						gitApi.EndpointReposSecrets()
@@ -70,5 +70,5 @@ var repoDelSecretCmd = &cobra.Command{
 
 func init() {
 	repoDelCmd.AddCommand(repoDelSecretCmd)
-	repoDelSecretCmd.Flags().StringArrayVarP(&Flag.SecretsDel, "name", "n", []string{}, "Secret name")
+	repoDelSecretCmd.Flags().StringArrayVarP(&lib.Flag.SecretsDel, "name", "n", []string{}, "Secret name")
 }

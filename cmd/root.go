@@ -32,21 +32,19 @@ import (
 )
 
 var cfgFile string
-var Conf lib.TypeConf
-var Flag lib.TypeFlag
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "go-mygit",
 	Short: `Git and Repo automation made easy.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		helper.Debug = Flag.Debug
-		Conf.Init(&Flag)
-		Conf.MergeRemotes(&Flag)
-		if Flag.Debug {
-			helper.Report(&Conf.File, "", true, true)
-			helper.Report(&Flag, "Flag", true, false)
-			helper.Report(&Conf.MergedRemotes, "Merged Remote", true, false)
+		helper.Debug = lib.Flag.Debug
+		lib.Conf.Init(&lib.Flag)
+		lib.Conf.MergeRemotes(&lib.Flag)
+		if lib.Flag.Debug {
+			helper.Report(&lib.Conf.File, "", true, true)
+			helper.Report(&lib.Flag, "Flag", true, false)
+			helper.Report(&lib.Conf.MergedRemotes, "Merged Remote", true, false)
 		}
 	},
 }
@@ -62,10 +60,11 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().BoolVarP(&Flag.Debug, "debug", "d", false, "Enable debug")
-	rootCmd.PersistentFlags().BoolVarP(&Flag.NoSkip, "noskip", "", false, "Don't skip empty output")
-	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Groups, "group", "g", nil, "Specify group")
-	rootCmd.PersistentFlags().StringArrayVarP(&Flag.Remotes, "remote", "r", nil, "Specify remotes")
+	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.Debug, "debug", "d", false, "Enable debug")
+	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoSkip, "no-skip", "", false, "Don't skip empty output")
+	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
+	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Groups, "group", "g", nil, "Specify group")
+	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Remotes, "remote", "r", nil, "Specify remotes")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-mygit.json)")
 }
 

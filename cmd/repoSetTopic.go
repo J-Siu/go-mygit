@@ -40,7 +40,7 @@ var repoSetTopicCmd = &cobra.Command{
 		var info gitapi.RepoTopics
 		info.Topics = &args
 		info.Names = &args
-		for _, remote := range Conf.MergedRemotes {
+		for _, remote := range lib.Conf.MergedRemotes {
 			wg.Add(1)
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointReposTopics()

@@ -41,7 +41,7 @@ var repoGetPublickeyCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		for _, workpath := range args {
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				// if remote.Vendor != gitapi.Vendor_Github {
 				// 	fmt.Printf("%s:(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				// } else {

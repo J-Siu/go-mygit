@@ -43,7 +43,11 @@ var remoteListCmd = &cobra.Command{
 				return
 			}
 			var gitRemoteList *[]string = helper.GitRemote(&workpath, true)
-			helper.Report(gitRemoteList, workpath, true, false)
+			var title string
+			if !lib.Flag.NoTitle {
+				title = workpath
+			}
+			helper.Report(gitRemoteList, title, true, false)
 		}
 	},
 }

@@ -22,12 +22,13 @@ THE SOFTWARE.
 
 package lib
 
-// Holding all flages from command line
+// Holding all flags from command line
 type TypeFlag struct {
 	Args            []string   // Args from command line
 	Debug           bool       // Enable debug output
 	Groups          []string   // Groups specified in command line
 	NoSkip          bool       // Flag for not skipping empty output
+	NoTitle         bool       // Do not print title in output
 	PushAll         bool       // Flag for git push
 	PushBranch      []string   // Flag for git push
 	PushTag         bool       // Flag for git push
@@ -36,3 +37,5 @@ type TypeFlag struct {
 	Secret          ConfSecret // Secret specified in command line
 	SecretsDel      []string   // Secrets specified in command line
 }
+
+var Flag TypeFlag

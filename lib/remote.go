@@ -39,7 +39,7 @@ type Remote struct {
 	Entrypoint string `json:"entrypoint"` // Api entrypoint url
 	Token      string `json:"token"`      // Api token
 	User       string `json:"user"`       // Api user
-	Private    bool   `json:"private"`    // Default private vaule
+	Private    bool   `json:"private"`    // Default private value
 	Vendor     string `json:"vendor"`     // Api vendor/brand
 }
 
@@ -66,7 +66,10 @@ func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
 	var repo string = path.Base(fullpath)
 	var git string = self.Ssh + ":/" + self.User + "/" + repo + ".git"
 	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullpath, self.Name, git)
-	var title string = *workpathP + ": " + myCmd.CmdLn
+	var title string
+	if !Flag.NoTitle {
+		title = *workpathP + ": " + myCmd.CmdLn
+	}
 	helper.Report(myCmd.Stderr.String(), title, true, false)
 	helper.Report(myCmd.Stdout.String(), title, false, false)
 	return myCmd
@@ -75,8 +78,11 @@ func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
 // Remove all Remotes in git repository
 func (self *Remote) GitRemove(workpathP *string) *helper.MyCmd {
 	var myCmd *helper.MyCmd = helper.GitRemoteRemove(workpathP, self.Name)
-	var title string = *workpathP + ": " + myCmd.CmdLn
-	// helper.Report(myCmd.Stderr.String(), title, true, false)
+	var title string
+	if !Flag.NoTitle {
+		title = *workpathP + ": " + myCmd.CmdLn
+	}
+	helper.Report(myCmd.Stderr.String(), title, true, false)
 	helper.Report(myCmd.Stdout.String(), title, false, false)
 	return myCmd
 }
@@ -87,7 +93,10 @@ func GitPush(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper
 		defer wgP.Done()
 	}
 	var myCmd *helper.MyCmd = helper.GitPush(workpathP, optionsP)
-	var title string = *workpathP + ": " + myCmd.CmdLn
+	var title string
+	if !Flag.NoTitle {
+		title = *workpathP + ": " + myCmd.CmdLn
+	}
 	helper.Report(myCmd.Stderr.String(), title, true, false)
 	helper.Report(myCmd.Stdout.String(), title, true, false)
 	return myCmd

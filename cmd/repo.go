@@ -27,6 +27,7 @@ import (
 
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/savaki/jq"
 	"github.com/spf13/cobra"
 )
@@ -53,13 +54,23 @@ func repoDelFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 		defer wg.Done()
 	}
 	gitApi.Del()
-	helper.ReportStatus(gitApi.Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
+	var title string
+	if !lib.Flag.NoTitle {
+		title = gitApi.Repo + "(" + gitApi.Name + ")"
+	}
+	helper.ReportStatus(gitApi.Res.Ok(), title, true)
 }
 
 func repoGetFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
+
+	var title string
+	if !lib.Flag.NoTitle {
+		title = gitApi.Repo + "(" + gitApi.Name + ")"
+	}
+
 	// var success bool = gitApi.Get().Res.Ok()
 	// if success {
 	if gitApi.Get().Res.Ok() {
@@ -71,15 +82,15 @@ func repoGetFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 		default:
 			singleLine = false
 		}
-		helper.Report(gitApi.Res.Output, gitApi.Repo+"("+gitApi.Name+")", !Flag.NoSkip, singleLine)
+		helper.Report(gitApi.Res.Output, title, !lib.Flag.NoSkip, singleLine)
 	} else {
 		// API GET failed, try to extract error message
 		var info ErrMsg
 		err := json.Unmarshal([]byte(*gitApi.Res.Output), &info)
 		if err == nil {
-			helper.Report(info.Message, gitApi.Repo+"("+gitApi.Name+")", true, true)
+			helper.Report(info.Message, title, true, true)
 		} else {
-			helper.Report(gitApi.Res.Output, gitApi.Repo+"("+gitApi.Name+")", true, false)
+			helper.Report(gitApi.Res.Output, title, true, false)
 		}
 	}
 }
@@ -88,27 +99,51 @@ func repoPatchFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	helper.ReportStatus(gitApi.Patch().Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
+
+	var title string
+	if !lib.Flag.NoTitle {
+		title = gitApi.Repo + "(" + gitApi.Name + ")"
+	}
+
+	helper.ReportStatus(gitApi.Patch().Res.Ok(), title, true)
 }
 
 func repoPostFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	helper.ReportStatus(gitApi.Post().Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
+
+	var title string
+	if !lib.Flag.NoTitle {
+		title = gitApi.Repo + "(" + gitApi.Name + ")"
+	}
+
+	helper.ReportStatus(gitApi.Post().Res.Ok(), title, true)
 }
 
 func repoPutFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	helper.ReportStatus(gitApi.Put().Res.Ok(), gitApi.Repo+"("+gitApi.Name+")", true)
+
+	var title string
+	if !lib.Flag.NoTitle {
+		title = gitApi.Repo + "(" + gitApi.Name + ")"
+	}
+
+	helper.ReportStatus(gitApi.Put().Res.Ok(), title, true)
 }
 
 func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	if wg != nil {
 		defer wg.Done()
 	}
+
+	var title string
+	if !lib.Flag.NoTitle {
+		title = gitApi.Repo + "(" + gitApi.Name + ")"
+	}
+
 	// Get Repo Node_Id and Name
 	var info RepoNodeId
 	gitApi.EndpointRepos()
@@ -120,9 +155,9 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 		var errMsg ErrMsg
 		err := json.Unmarshal([]byte(*gitApi.Res.Output), &errMsg)
 		if err == nil {
-			helper.Report(errMsg.Message, gitApi.Repo+"("+gitApi.Name+")", true, true)
+			helper.Report(errMsg.Message, title, true, true)
 		} else {
-			helper.Report(gitApi.Res.Output, gitApi.Repo+"("+gitApi.Name+")", true, false)
+			helper.Report(gitApi.Res.Output, title, true, false)
 		}
 		return
 	}
@@ -151,17 +186,17 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	// Use jq to extract isArchived and description
 	op, err = jq.Parse(".data.unarchiveRepository.repository.isArchived")
 	if err != nil {
-		helper.Report(err.Error(), gitApi.Repo+"("+gitApi.Name+")", false, true)
+		helper.Report(err.Error(), title, false, true)
 		return
 	}
 	isArchived, err := op.Apply(*gitApi.Res.Body)
 	if err != nil {
-		helper.Report(err.Error(), gitApi.Repo+"("+gitApi.Name+")", false, true)
+		helper.Report(err.Error(), title, false, true)
 		return
 	}
 	// No error, print result
 	helper.ReportDebug(isArchived, "isArchived", false, true)
-	helper.Report(helper.BoolStatus(string(isArchived) == "false"), gitApi.Repo+"("+gitApi.Name+")", false, true)
+	helper.Report(helper.BoolStatus(string(isArchived) == "false"), title, false, true)
 }
 
 type RepoArchived struct {

@@ -43,10 +43,10 @@ var remoteRemoveCmd = &cobra.Command{
 				helper.Report("is not a git repository.", workpath, true, true)
 				return
 			}
-			if Flag.RemoteRemoveAll {
+			if lib.Flag.RemoteRemoveAll {
 				helper.GitRemoteRemoveAll(&workpath)
 			} else {
-				for _, remote := range Conf.MergedRemotes {
+				for _, remote := range lib.Conf.MergedRemotes {
 					remote.GitRemove(&workpath)
 				}
 			}
@@ -56,5 +56,5 @@ var remoteRemoveCmd = &cobra.Command{
 
 func init() {
 	remoteCmd.AddCommand(remoteRemoveCmd)
-	remoteRemoveCmd.Flags().BoolVarP(&Flag.RemoteRemoveAll, "all", "a", false, "Delete all remotes")
+	remoteRemoveCmd.Flags().BoolVarP(&lib.Flag.RemoteRemoveAll, "all", "a", false, "Delete all remotes")
 }

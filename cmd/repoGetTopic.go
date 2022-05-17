@@ -41,7 +41,7 @@ var repoGetTopicCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		for _, workpath := range args {
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				var info gitapi.RepoTopics
 				wg.Add(1)
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)

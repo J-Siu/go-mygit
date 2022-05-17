@@ -44,7 +44,7 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		for _, workpath := range args {
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				wg.Add(1)
 				if remote.Vendor == gitapi.Vendor_Github {
 					// Github need graph api

@@ -47,13 +47,13 @@ var repoSetSecretCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		// --name/--value must be used together
-		if Flag.Secret.Name == "" && Flag.Secret.Value != "" ||
-			Flag.Secret.Name != "" && Flag.Secret.Value == "" {
+		if lib.Flag.Secret.Name == "" && lib.Flag.Secret.Value != "" ||
+			lib.Flag.Secret.Name != "" && lib.Flag.Secret.Value == "" {
 			log.Fatal("-n/--name and -v/--value must be used together")
 			os.Exit(1)
 		}
 		for _, workpath := range args {
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				if remote.Vendor != gitapi.Vendor_Github {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
@@ -69,12 +69,12 @@ var repoSetSecretCmd = &cobra.Command{
 					}
 					// A list of secret to use
 					var secretsP *lib.ConfSecrets
-					if Flag.Secret.Name != "" && Flag.Secret.Value != "" {
+					if lib.Flag.Secret.Name != "" && lib.Flag.Secret.Value != "" {
 						// Use command line value
-						secretsP = &lib.ConfSecrets{Flag.Secret}
+						secretsP = &lib.ConfSecrets{lib.Flag.Secret}
 					} else {
 						// Use Conf secrets
-						secretsP = &Conf.Secrets
+						secretsP = &lib.Conf.Secrets
 					}
 					// Use config secrets
 					for _, secret := range *secretsP {
@@ -94,6 +94,6 @@ var repoSetSecretCmd = &cobra.Command{
 
 func init() {
 	repoSetCmd.AddCommand(repoSetSecretCmd)
-	repoSetSecretCmd.Flags().StringVarP(&Flag.Secret.Name, "name", "n", "", "Secret name")
-	repoSetSecretCmd.Flags().StringVarP(&Flag.Secret.Value, "value", "v", "", "Secret value")
+	repoSetSecretCmd.Flags().StringVarP(&lib.Flag.Secret.Name, "name", "n", "", "Secret name")
+	repoSetSecretCmd.Flags().StringVarP(&lib.Flag.Secret.Value, "value", "v", "", "Secret value")
 }

@@ -43,7 +43,7 @@ var remoteAddCmd = &cobra.Command{
 				helper.Report("is not a git repository.", workpath, true, true)
 				return
 			}
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				remote.GitAdd(&workpath)
 			}
 		}

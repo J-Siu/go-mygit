@@ -24,6 +24,7 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +34,7 @@ var confRemotesCmd = &cobra.Command{
 	Aliases: []string{"r", "rmt"},
 	Short:   "Print remotes configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		helper.Report(&Conf.Remotes, "", true, false)
+		helper.Report(&lib.Conf.Remotes, "", true, false)
 	},
 }
 

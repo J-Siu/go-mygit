@@ -37,7 +37,7 @@ var repoListCmd = &cobra.Command{
 	Long:    "List all remote repositories. " + lib.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range Conf.MergedRemotes {
+		for _, remote := range lib.Conf.MergedRemotes {
 			wg.Add(1)
 			var info gitapi.RepoInfoList
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)

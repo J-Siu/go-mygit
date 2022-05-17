@@ -42,6 +42,8 @@ type TypeConf struct {
 	MergedRemotes Remotes     `json:"-"`
 }
 
+var Conf TypeConf
+
 // Fill in conf struct from viper and extract all groups from `Remotes`
 func (c *TypeConf) Init(flag *TypeFlag) {
 	c.File = viper.ConfigFileUsed()

@@ -44,7 +44,7 @@ var repoNewCmd = &cobra.Command{
 			args = append(args, *helper.CurrentDirBase())
 		}
 		for _, workpath := range args {
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				wg.Add(1)
 				var info gitapi.RepoInfo
 				info.Name = path.Base(workpath)

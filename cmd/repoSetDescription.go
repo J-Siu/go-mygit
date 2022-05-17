@@ -26,6 +26,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +41,7 @@ var repoSetDescriptionCmd = &cobra.Command{
 		if len(args) > 0 {
 			info.Description = args[0]
 		}
-		for _, remote := range Conf.MergedRemotes {
+		for _, remote := range lib.Conf.MergedRemotes {
 			wg.Add(1)
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointRepos()

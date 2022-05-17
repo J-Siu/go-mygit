@@ -49,7 +49,7 @@ var rootPushCmd = &cobra.Command{
 			// Create queue base on local remote
 			var remoteLocal []string = *helper.GitRemote(&workpath, false)
 			var remoteQueue []string
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				// Only add to queue if exist locally
 				if helper.StrArrayPtrContain(&remoteLocal, &remote.Name) {
 					remoteQueue = append(remoteQueue, remote.Name)
@@ -61,7 +61,7 @@ var rootPushCmd = &cobra.Command{
 				// make a local copy of workpath for go routine
 				var wp string = workpath
 				options1 := []string{remote}
-				if Flag.PushAll {
+				if lib.Flag.PushAll {
 					wg.Add(1)
 					options2 := append(options1, "--all")
 					go lib.GitPush(&wp, &options2, &wg)
@@ -69,7 +69,7 @@ var rootPushCmd = &cobra.Command{
 					wg.Add(1)
 					go lib.GitPush(&wp, &options1, &wg)
 				}
-				if Flag.PushTag {
+				if lib.Flag.PushTag {
 					wg.Add(1)
 					options2 := append(options1, "--tags")
 					go lib.GitPush(&wp, &options2, &wg)
@@ -82,7 +82,7 @@ var rootPushCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(rootPushCmd)
-	rootPushCmd.Flags().BoolVarP(&Flag.PushAll, "all", "a", false, "Push all branches")
-	rootPushCmd.Flags().BoolVarP(&Flag.PushTag, "tags", "t", false, "Push all branches")
+	rootPushCmd.Flags().BoolVarP(&lib.Flag.PushAll, "all", "a", false, "Push all branches")
+	rootPushCmd.Flags().BoolVarP(&lib.Flag.PushTag, "tags", "t", false, "Push all branches")
 	// rootPushCmd.MarkFlagsMutuallyExclusive("all","tags")
 }

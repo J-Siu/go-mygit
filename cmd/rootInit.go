@@ -40,7 +40,7 @@ var rootInitCmd = &cobra.Command{
 		for _, workpath := range args {
 			helper.GitInit(&workpath)
 			helper.GitRemoteRemoveAll(&workpath)
-			for _, remote := range Conf.MergedRemotes {
+			for _, remote := range lib.Conf.MergedRemotes {
 				remote.GitAdd(&workpath)
 			}
 		}
