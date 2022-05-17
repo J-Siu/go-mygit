@@ -22,12 +22,15 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"strconv"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
+
+var page int
 
 // repo list
 var repoListCmd = &cobra.Command{
@@ -49,6 +52,7 @@ var repoListCmd = &cobra.Command{
 			case gitapi.Vendor_Gitea:
 				gitApi.Req.UrlVal.Add("limit", "100")
 			}
+			gitApi.Req.UrlVal.Add("page", strconv.Itoa(page))
 			go repoGetFunc(gitApi, &wg)
 		}
 		wg.Wait()
@@ -57,4 +61,5 @@ var repoListCmd = &cobra.Command{
 
 func init() {
 	repoCmd.AddCommand(repoListCmd)
+	repoListCmd.Flags().IntVarP(&page, "page", "p", 1, "Page number")
 }
