@@ -39,5 +39,3 @@ type TypeFlag struct {
 	Secret          ConfSecret // Secret specified in command line
 	SecretsDel      []string   // Secrets specified in command line
 }
-
-var Flag TypeFlag
