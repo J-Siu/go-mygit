@@ -10,6 +10,7 @@ Command line tool for easy mass configuration of git remotes, and working with G
 - [Table Of Content](#table-of-content)
 - [Highlight](#highlight)
   - [Push multiple repository](#push-multiple-repository)
+  - [Set Archived](#set-archived)
   - [Set Private](#set-private)
   - [Update Description](#update-description)
   - [Update Topics](#update-topics)
