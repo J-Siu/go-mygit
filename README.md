@@ -138,6 +138,12 @@ go-mygit repo set topic golang go project
   - gitea
   - gogs(not tested)
 
+### Go Install
+
+```sh
+go install github.com/J-Siu/go-mygit/v2@latest
+```
+
 ### Usage
 
 ```sh
@@ -147,10 +153,12 @@ Usage:
   go-mygit [command]
 
 Available Commands:
+  clone       Git clone
   completion  Generate the autocompletion script for the specified shell
   config      Print configurations
   help        Help about any command
   init        Git init and reset remotes
+  pull        Git pull
   push        Git push
   remote      Git remote commands
   repository  Repository commands
