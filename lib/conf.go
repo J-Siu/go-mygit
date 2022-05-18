@@ -26,6 +26,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/J-Siu/go-helper"
 	"github.com/spf13/viper"
 )
 
@@ -43,38 +44,42 @@ type TypeConf struct {
 }
 
 // Fill in conf struct from viper and extract all groups from `Remotes`
-func (c *TypeConf) Init(flag *TypeFlag) {
-	c.File = viper.ConfigFileUsed()
-	viper.Unmarshal(&c)
+func (self *TypeConf) Init() {
+	helper.Debug = Flag.Debug
+	self.File = viper.ConfigFileUsed()
+	viper.Unmarshal(&self)
 	// Fill in ConfGroup
-	for _, r := range c.Remotes {
-		c.Groups.Add(&r.Group)
+	for _, r := range self.Remotes {
+		self.Groups.Add(&r.Group)
 	}
+	helper.ReportDebug(&Conf.File, "", true, true)
+	helper.ReportDebug(&Flag, "Flag", true, false)
 }
 
 // Calculate remotes base on flag
-func (c *TypeConf) MergeRemotes(flag *TypeFlag) {
+func (self *TypeConf) MergeRemotes() {
 	// Merge remote from flag "group"
-	for _, g := range flag.Groups {
+	for _, g := range Flag.Groups {
 		group := &g
-		if c.Groups.Has(group) {
-			c.MergedRemotes.AddArray(c.Remotes.GetByGroup(group))
+		if self.Groups.Has(group) {
+			self.MergedRemotes.AddArray(self.Remotes.GetByGroup(group))
 		} else {
 			log.Fatal("Group not in config: " + g)
 			os.Exit(1)
 		}
 	}
 	// Merge remote from flag "remote"
-	for _, r := range flag.Remotes {
-		if c.Remotes.Has(&r) {
-			c.MergedRemotes.Add(c.Remotes.GetByName(&r))
+	for _, r := range Flag.Remotes {
+		if self.Remotes.Has(&r) {
+			self.MergedRemotes.Add(self.Remotes.GetByName(&r))
 		} else {
 			log.Fatal("Remote not in config: " + r)
 			os.Exit(1)
 		}
 	}
 	// If no remote is specified from command line, use all remotes in config
-	if len(c.MergedRemotes) == 0 {
-		c.MergedRemotes = append(c.MergedRemotes, c.Remotes...)
+	if len(self.MergedRemotes) == 0 {
+		self.MergedRemotes = append(self.MergedRemotes, self.Remotes...)
 	}
+	helper.ReportDebug(&Conf.MergedRemotes, "Merged Remote", true, false)
 }

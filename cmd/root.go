@@ -31,21 +31,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "go-mygit",
 	Short: `Git and Repo automation made easy.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		helper.Debug = lib.Flag.Debug
-		lib.Conf.Init(&lib.Flag)
-		lib.Conf.MergeRemotes(&lib.Flag)
-		if lib.Flag.Debug {
-			helper.Report(&lib.Conf.File, "", true, true)
-			helper.Report(&lib.Flag, "Flag", true, false)
-			helper.Report(&lib.Conf.MergedRemotes, "Merged Remote", true, false)
-		}
+		lib.Conf.Init()
+		lib.Conf.MergeRemotes()
 	},
 }
 
@@ -66,14 +58,14 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
 	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Groups, "group", "g", nil, "Specify group")
 	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Remotes, "remote", "r", nil, "Specify remotes")
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-mygit.json)")
+	rootCmd.PersistentFlags().StringVar(&lib.Conf.File, "config", "", "config file (default is $HOME/.go-mygit.json)")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
+	if lib.Conf.File != "" {
 		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
+		viper.SetConfigFile(lib.Conf.File)
 	} else {
 		// Find home directory.
 		home, err := os.UserHomeDir()
