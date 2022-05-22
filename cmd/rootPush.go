@@ -53,6 +53,8 @@ var rootPushCmd = &cobra.Command{
 				// Only add to queue if exist locally
 				if helper.StrArrayPtrContain(&remoteLocal, &remote.Name) {
 					remoteQueue = append(remoteQueue, remote.Name)
+				} else {
+					helper.Report(remote.Name, workPath+": Remote not setup", false, true)
 				}
 			}
 
