@@ -43,9 +43,9 @@ type Remote struct {
 	Vendor     string `json:"vendor"`     // Api vendor/brand
 }
 
-func (self *Remote) GetGitApi(workpathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
-	var fullpath string = *helper.FullPath(workpathP)
-	var repo string = path.Base(fullpath)
+func (self *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
+	var fullPath string = *helper.FullPath(workPathP)
+	var repo string = path.Base(fullPath)
 	apiP := gitapi.GitApiNew(
 		self.Name,
 		self.Token,
@@ -60,15 +60,15 @@ func (self *Remote) GetGitApi(workpathP *string, info gitapi.GitApiInfo) *gitapi
 }
 
 // Add all Remotes into git repository
-func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
-	self.GitRemove(workpathP)
-	var fullpath string = *helper.FullPath(workpathP)
-	var repo string = path.Base(fullpath)
+func (self *Remote) GitAdd(workPathP *string) *helper.MyCmd {
+	self.GitRemove(workPathP)
+	var fullPath string = *helper.FullPath(workPathP)
+	var repo string = path.Base(fullPath)
 	var git string = self.Ssh + ":/" + self.User + "/" + repo + ".git"
-	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullpath, self.Name, git)
+	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullPath, self.Name, git)
 	var title string
 	if !Flag.NoTitle {
-		title = *workpathP + ": " + myCmd.CmdLn
+		title = *workPathP + ": " + myCmd.CmdLn
 	}
 	helper.Report(myCmd.Stderr.String(), title, true, false)
 	helper.Report(myCmd.Stdout.String(), title, false, false)
@@ -76,26 +76,29 @@ func (self *Remote) GitAdd(workpathP *string) *helper.MyCmd {
 }
 
 // Remove all Remotes in git repository
-func (self *Remote) GitRemove(workpathP *string) *helper.MyCmd {
-	var myCmd *helper.MyCmd = helper.GitRemoteRemove(workpathP, self.Name)
-	var title string
-	if !Flag.NoTitle {
-		title = *workpathP + ": " + myCmd.CmdLn
+func (self *Remote) GitRemove(workPathP *string) *helper.MyCmd {
+	var myCmd *helper.MyCmd
+	if helper.GitRemoteExist(workPathP, self.Name) {
+		myCmd = helper.GitRemoteRemove(workPathP, self.Name)
 	}
-	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, false, false)
+	var title string
+	if myCmd != nil && !Flag.NoTitle {
+		title = *workPathP + ": " + myCmd.CmdLn
+		helper.Report(myCmd.Stderr.String(), title, true, false)
+		helper.Report(myCmd.Stdout.String(), title, false, false)
+	}
 	return myCmd
 }
 
 // Push all Remotes in git repository
-func GitPush(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
-	var myCmd *helper.MyCmd = helper.GitPush(workpathP, optionsP)
+	var myCmd *helper.MyCmd = helper.GitPush(workPathP, optionsP)
 	var title string
 	if !Flag.NoTitle {
-		title = *workpathP + ": " + myCmd.CmdLn
+		title = *workPathP + ": " + myCmd.CmdLn
 	}
 	helper.Report(myCmd.Stderr.String(), title, true, false)
 	helper.Report(myCmd.Stdout.String(), title, true, false)
@@ -103,16 +106,16 @@ func GitPush(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper
 }
 
 // Push all Remotes in git repository
-func GitPull(workpathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
 
-	var myCmd *helper.MyCmd = helper.GitPull(workpathP, optionsP)
+	var myCmd *helper.MyCmd = helper.GitPull(workPathP, optionsP)
 
 	var title string
 	if !Flag.NoTitle {
-		title = *workpathP + ": " + myCmd.CmdLn
+		title = *workPathP + ": " + myCmd.CmdLn
 	}
 	helper.Report(myCmd.Stderr.String(), title, true, false)
 	helper.Report(myCmd.Stdout.String(), title, true, false)
