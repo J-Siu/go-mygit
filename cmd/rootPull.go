@@ -55,14 +55,14 @@ var rootPullCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		for _, workpath := range args {
-			if helper.GitRoot(&workpath) == "" {
-				helper.Report("is not a git repository.", workpath, true, true)
+		for _, workPath := range args {
+			if helper.GitRoot(&workPath) == "" {
+				helper.Report("is not a git repository.", workPath, true, true)
 				continue
 			}
 			wg.Add(1)
 
-			var wp string = workpath
+			var wp string = workPath
 			var branch string = strings.TrimSpace(helper.GitBranchCurrent(&wp).Stdout.String())
 			var options []string = []string{remote.Name, branch}
 

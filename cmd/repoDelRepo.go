@@ -43,10 +43,10 @@ var repoDelRepoCmd = &cobra.Command{
 			args = []string{"."}
 		}
 
-		for _, workpath := range args {
+		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {
 				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, gitapi.Nil())
 				gitApi.EndpointRepos()
 				if lib.Flag.NoParallel {
 					repoDelFunc(gitApi, &wg)

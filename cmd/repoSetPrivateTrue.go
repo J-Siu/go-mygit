@@ -43,10 +43,10 @@ var repoSetPrivateTrueCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workpath := range args {
+		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {
 				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 				gitApi.EndpointRepos()
 				if lib.Flag.NoParallel {
 					repoPatchFunc(gitApi, &wg)

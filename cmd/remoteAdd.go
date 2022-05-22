@@ -38,13 +38,13 @@ var remoteAddCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workpath := range args {
-			if helper.GitRoot(&workpath) == "" {
-				helper.Report("is not a git repository.", workpath, true, true)
+		for _, workPath := range args {
+			if helper.GitRoot(&workPath) == "" {
+				helper.Report("is not a git repository.", workPath, true, true)
 				return
 			}
 			for _, remote := range lib.Conf.MergedRemotes {
-				remote.GitAdd(&workpath)
+				remote.GitAdd(&workPath)
 			}
 		}
 	},

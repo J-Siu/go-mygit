@@ -52,7 +52,7 @@ var repoSetSecretCmd = &cobra.Command{
 			log.Fatal("-n/--name and -v/--value must be used together")
 			os.Exit(1)
 		}
-		for _, workpath := range args {
+		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {
 				if remote.Vendor != gitapi.Vendor_Github {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
@@ -60,7 +60,7 @@ var repoSetSecretCmd = &cobra.Command{
 					// "GET" public key
 					helper.Report("", remote.Name, false, false)
 					var pubkey gitapi.RepoPublicKey
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &pubkey)
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey)
 					gitApi.EndpointReposSecretsPubkey()
 					success := gitApi.Get().Res.Ok()
 					helper.ReportStatus(success, "Get Actions Public Key", true)
@@ -80,7 +80,7 @@ var repoSetSecretCmd = &cobra.Command{
 					for _, secret := range *secretsP {
 						wg.Add(1)
 						var infoP *gitapi.RepoEncryptedPair = secret.Encrypt(&pubkey)
-						var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, infoP)
+						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP)
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
 						if lib.Flag.NoParallel {

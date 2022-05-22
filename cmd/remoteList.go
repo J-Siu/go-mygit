@@ -37,15 +37,15 @@ var remoteListCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workpath := range args {
-			if helper.GitRoot(&workpath) == "" {
-				helper.Report("is not a git repository.", workpath, true, true)
+		for _, workPath := range args {
+			if helper.GitRoot(&workPath) == "" {
+				helper.Report("is not a git repository.", workPath, true, true)
 				return
 			}
-			var gitRemoteList *[]string = helper.GitRemote(&workpath, true)
+			var gitRemoteList *[]string = helper.GitRemote(&workPath, true)
 			var title string
 			if !lib.Flag.NoTitle {
-				title = workpath
+				title = workPath
 			}
 			helper.Report(gitRemoteList, title, true, false)
 		}

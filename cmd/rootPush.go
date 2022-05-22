@@ -40,14 +40,14 @@ var rootPushCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workpath := range args {
-			if helper.GitRoot(&workpath) == "" {
-				helper.Report("is not a git repository.", workpath, true, true)
+		for _, workPath := range args {
+			if helper.GitRoot(&workPath) == "" {
+				helper.Report("is not a git repository.", workPath, true, true)
 				continue
 			}
 
 			// Create queue base on local remote
-			var remoteLocal []string = *helper.GitRemote(&workpath, false)
+			var remoteLocal []string = *helper.GitRemote(&workPath, false)
 			var remoteQueue []string
 			for _, remote := range lib.Conf.MergedRemotes {
 				// Only add to queue if exist locally
@@ -57,9 +57,8 @@ var rootPushCmd = &cobra.Command{
 			}
 
 			for _, remote := range remoteQueue {
-				// var fullpath string = *helper.FullPath(&workpath)
-				// make a local copy of workpath for go routine
-				var wp string = workpath
+				// make a local copy of workPath for go routine
+				var wp string = workPath
 				options1 := []string{remote}
 				if lib.Flag.PushAll {
 					wg.Add(1)

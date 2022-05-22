@@ -38,16 +38,16 @@ var remoteRemoveCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workpath := range args {
-			if helper.GitRoot(&workpath) == "" {
-				helper.Report("is not a git repository.", workpath, true, true)
+		for _, workPath := range args {
+			if helper.GitRoot(&workPath) == "" {
+				helper.Report("is not a git repository.", workPath, true, true)
 				return
 			}
 			if lib.Flag.RemoteRemoveAll {
-				helper.GitRemoteRemoveAll(&workpath)
+				helper.GitRemoteRemoveAll(&workPath)
 			} else {
 				for _, remote := range lib.Conf.MergedRemotes {
-					remote.GitRemove(&workpath)
+					remote.GitRemove(&workPath)
 				}
 			}
 		}

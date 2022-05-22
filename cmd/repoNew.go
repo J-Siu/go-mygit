@@ -43,13 +43,13 @@ var repoNewCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = append(args, *helper.CurrentDirBase())
 		}
-		for _, workpath := range args {
+		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {
 				wg.Add(1)
 				var info gitapi.RepoInfo
-				info.Name = path.Base(workpath)
+				info.Name = path.Base(workPath)
 				info.Private = remote.Private
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 				gitApi.EndpointUserRepos()
 				go repoPostFunc(gitApi, &wg)
 			}

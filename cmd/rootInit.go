@@ -37,11 +37,11 @@ var rootInitCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workpath := range args {
-			helper.GitInit(&workpath)
-			helper.GitRemoteRemoveAll(&workpath)
+		for _, workPath := range args {
+			helper.GitInit(&workPath)
+			helper.GitRemoteRemoveAll(&workPath)
 			for _, remote := range lib.Conf.MergedRemotes {
-				remote.GitAdd(&workpath)
+				remote.GitAdd(&workPath)
 			}
 		}
 	},

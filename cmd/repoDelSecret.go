@@ -49,14 +49,14 @@ var repoDelSecretCmd = &cobra.Command{
 				lib.Flag.SecretsDel = append(lib.Flag.SecretsDel, s.Name)
 			}
 		}
-		for _, workpath := range args {
+		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {
 				if remote.Vendor != gitapi.Vendor_Github {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
 					for _, secret := range lib.Flag.SecretsDel {
 						wg.Add(1)
-						var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, gitapi.Nil())
+						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, gitapi.Nil())
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
 						if lib.Flag.NoParallel {

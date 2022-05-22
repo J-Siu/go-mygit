@@ -43,12 +43,12 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workpath := range args {
+		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {
 				wg.Add(1)
 				if remote.Vendor == gitapi.Vendor_Github {
 					// Github need graph api
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, nil)
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil)
 					if lib.Flag.NoParallel {
 						repoUnarchiveGithub(gitApi, &wg)
 					} else {
@@ -56,7 +56,7 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 					}
 				}
 				if remote.Vendor == gitapi.Vendor_Gitea {
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workpath, &info)
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 					gitApi.EndpointRepos()
 					if lib.Flag.NoParallel {
 						repoPatchFunc(gitApi, &wg)
