@@ -28,7 +28,8 @@
 			"token": "",
 			"entrypoint": "https://gt.jsiu.dev/api/v1",
 			"user": "",
-			"vendor": "gitea"
+			"vendor": "gitea",
+			"skipverify": false
 		}
 	]
 }

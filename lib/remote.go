@@ -41,6 +41,7 @@ type Remote struct {
 	User       string `json:"user"`       // Api user
 	Private    bool   `json:"private"`    // Default private value
 	Vendor     string `json:"vendor"`     // Api vendor/brand
+	SkipVerify bool   `json:"skipverify"` // Api request skip cert verify (allow self-signed cert)
 }
 
 func (self *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
@@ -52,6 +53,7 @@ func (self *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi
 		self.Entrypoint,
 		self.User,
 		self.Vendor,
+		self.SkipVerify,
 		repo,
 		info)
 	// Set Github header
