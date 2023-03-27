@@ -16,6 +16,7 @@ Command line tool for easy mass configuration of git remotes, and working with G
 - [What It Does Not](#what-it-does-not)
 - [Features](#features)
 - [Limitation](#limitation)
+- [Go Install](#go-install)
 - [Usage](#usage)
   - [Debug](#debug)
   - [Selector](#selector)
@@ -366,12 +367,17 @@ https://github.com/J-Siu/go-mygit/releases
   - Detect if no configuration file
   - Add git clone
   - Add git pull
+- v2.7.0
+  - upgrade go-helper to v1.1.6
+  - upgrade go-gitapi to v1.4.0
+  - Add "skipverify" in "remotes" config
+    - support site with self-signed cert
 
 ### License
 
 The MIT License (MIT)
 
-Copyright © 2022 John, Sing Dao, Siu <john.sd.siu@gmail.com>
+Copyright © 2023 John, Sing Dao, Siu <john.sd.siu@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
