@@ -372,6 +372,9 @@ https://github.com/J-Siu/go-mygit/releases
   - upgrade go-gitapi to v1.4.0
   - Add "skipverify" in "remotes" config
     - support site with self-signed cert
+- v2.7.1
+  - Fix github workflows
+  - GitAPI partial fix
 
 ### License
 
