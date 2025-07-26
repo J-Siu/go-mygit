@@ -85,12 +85,17 @@ func repoGetFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 		helper.Report(gitApi.Res.Output, title, !lib.Flag.NoSkip, singleLine)
 	} else {
 		// API GET failed, try to extract error message
-		var info ErrMsg
-		err := json.Unmarshal([]byte(*gitApi.Res.Output), &info)
-		if err == nil {
-			helper.Report(info.Message, title, true, true)
-		} else {
-			helper.Report(gitApi.Res.Output, title, true, false)
+		if gitApi.Res.Output != nil {
+			var info ErrMsg
+			err := json.Unmarshal([]byte(*gitApi.Res.Output), &info)
+			if err == nil {
+				helper.Report(info.Message, title, true, true)
+			} else {
+				helper.Report(gitApi.Res.Output, title, true, false)
+			}
+		}
+		if gitApi.Res.Status != "" {
+			helper.Report(gitApi.Res.Status, title, true, false)
 		}
 	}
 }
@@ -203,13 +208,13 @@ type RepoArchived struct {
 	Archived bool `json:"archived"`
 }
 
-func (self *RepoArchived) StringP() *string {
-	var str string = helper.BoolString(self.Archived)
+func (s *RepoArchived) StringP() *string {
+	var str string = helper.BoolString(s.Archived)
 	return &str
 }
 
-func (self *RepoArchived) String() string {
-	return *self.StringP()
+func (s *RepoArchived) String() string {
+	return *s.StringP()
 }
 
 type RepoNodeId struct {
@@ -217,10 +222,10 @@ type RepoNodeId struct {
 	Node_Id string `json:"node_id"`
 }
 
-func (self *RepoNodeId) StringP() *string {
-	return &self.Node_Id
+func (s *RepoNodeId) StringP() *string {
+	return &s.Node_Id
 }
 
-func (self *RepoNodeId) String() string {
-	return *self.StringP()
+func (s *RepoNodeId) String() string {
+	return *s.StringP()
 }
