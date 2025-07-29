@@ -1,6 +1,6 @@
 module github.com/J-Siu/go-mygit/v2
 
-go 1.24.5
+go 1.23
 
 require (
 	github.com/J-Siu/go-gitapi v1.4.1
