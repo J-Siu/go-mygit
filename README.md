@@ -380,7 +380,7 @@ https://github.com/J-Siu/go-mygit/releases
   - Upgrade go-helper to v1.1.7
   - Use proper receiver name
   - Fix `repo get info` error
-- v2.7.2
+- v2.7.3
   - Set go version to 1.23
 
 ### License
