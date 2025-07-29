@@ -368,13 +368,18 @@ https://github.com/J-Siu/go-mygit/releases
   - Add git clone
   - Add git pull
 - v2.7.0
-  - upgrade go-helper to v1.1.6
-  - upgrade go-gitapi to v1.4.0
+  - Upgrade go-helper to v1.1.6
+  - Upgrade go-gitapi to v1.4.0
   - Add "skipverify" in "remotes" config
     - support site with self-signed cert
 - v2.7.1
   - Fix github workflows
   - GitAPI partial fix
+- v2.7.2
+  - Upgrade go-gitapi to v1.4.1
+  - Upgrade go-helper to v1.1.7
+  - Use proper receiver name
+  - Fix `repo get info` error
 
 ### License
 

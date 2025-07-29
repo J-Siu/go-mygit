@@ -85,17 +85,12 @@ func repoGetFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 		helper.Report(gitApi.Res.Output, title, !lib.Flag.NoSkip, singleLine)
 	} else {
 		// API GET failed, try to extract error message
-		if gitApi.Res.Output != nil {
-			var info ErrMsg
-			err := json.Unmarshal([]byte(*gitApi.Res.Output), &info)
-			if err == nil {
-				helper.Report(info.Message, title, true, true)
-			} else {
-				helper.Report(gitApi.Res.Output, title, true, false)
-			}
-		}
-		if gitApi.Res.Status != "" {
-			helper.Report(gitApi.Res.Status, title, true, false)
+		var info ErrMsg
+		err := json.Unmarshal([]byte(*gitApi.Res.Output), &info)
+		if err == nil {
+			helper.Report(info.Message, title, true, true)
+		} else {
+			helper.Report(gitApi.Res.Output, title, true, false)
 		}
 	}
 }
