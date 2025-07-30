@@ -1,9 +1,9 @@
 module github.com/J-Siu/go-mygit/v2
 
-go 1.23
+go 1.24.5
 
 require (
-	github.com/J-Siu/go-gitapi v1.4.1
+	github.com/J-Siu/go-gitapi v1.6.0
 	github.com/J-Siu/go-helper v1.1.7
 	github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8
 	github.com/spf13/cobra v1.6.1

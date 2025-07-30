@@ -382,6 +382,9 @@ https://github.com/J-Siu/go-mygit/releases
   - Fix `repo get info` error
 - v2.7.3
   - Set go version to 1.23
+- v2.7.4
+  - Upgrade go-gitapi to v1.6.0
+  - Consolidate repo*Func() to repoDo()
 
 ### License
 

@@ -38,8 +38,8 @@ cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3f
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/J-Siu/go-gitapi v1.4.1 h1:Uq1nP++GvWNa+80A9Pde1m5rRJZD5DjeqFzT3TR+4fE=
-github.com/J-Siu/go-gitapi v1.4.1/go.mod h1:ZAIYbQvsXvxTqiCD39nIbXV/j7bd+1pK3U2YNBJ+eXc=
+github.com/J-Siu/go-gitapi v1.6.0 h1:isHmvr961CGiDwonbeiE8u8JhpVNTFeXjAayni05iXo=
+github.com/J-Siu/go-gitapi v1.6.0/go.mod h1:ZAIYbQvsXvxTqiCD39nIbXV/j7bd+1pK3U2YNBJ+eXc=
 github.com/J-Siu/go-helper v1.1.7 h1:8POi+Lqkhs90fu0yMKC2qcnWMbN/woLbJvP9NrA6YMk=
 github.com/J-Siu/go-helper v1.1.7/go.mod h1:PkBVY3EdVhAPE29H1Mx+nz1j01ymxy91VZV7VwHlsbA=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
