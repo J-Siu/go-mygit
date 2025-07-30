@@ -51,10 +51,11 @@ var repoListCmd = &cobra.Command{
 				gitApi.Req.UrlVal.Add("limit", "100")
 			}
 			gitApi.Req.UrlVal.Add("page", strconv.Itoa(lib.Flag.Page))
+			gitApi.SetGet()
 			if lib.Flag.NoParallel {
-				repoGetFunc(gitApi, &wg)
+				repoDo(gitApi, &wg, false)
 			} else {
-				go repoGetFunc(gitApi, &wg)
+				go repoDo(gitApi, &wg, false)
 			}
 		}
 		wg.Wait()

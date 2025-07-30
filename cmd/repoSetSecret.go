@@ -62,9 +62,9 @@ var repoSetSecretCmd = &cobra.Command{
 					var pubkey gitapi.RepoPublicKey
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey)
 					gitApi.EndpointReposSecretsPubkey()
-					success := gitApi.Get().Res.Ok()
-					helper.ReportStatus(success, "Get Actions Public Key", true)
-					if !success {
+					ok := gitApi.SetGet().Do().Ok()
+					helper.ReportStatus(ok, "Get Actions Public Key", true)
+					if !ok {
 						os.Exit(1)
 					}
 					// A list of secret to use
@@ -83,10 +83,11 @@ var repoSetSecretCmd = &cobra.Command{
 						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP)
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
+						gitApi.SetPut()
 						if lib.Flag.NoParallel {
-							repoPutFunc(gitApi, &wg)
+							repoDo(gitApi, &wg, true)
 						} else {
-							go repoPutFunc(gitApi, &wg)
+							go repoDo(gitApi, &wg, true)
 						}
 					}
 				}

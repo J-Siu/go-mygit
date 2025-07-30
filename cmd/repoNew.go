@@ -51,7 +51,12 @@ var repoNewCmd = &cobra.Command{
 				info.Private = remote.Private
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 				gitApi.EndpointUserRepos()
-				go repoPostFunc(gitApi, &wg)
+				gitApi.SetPost()
+				if lib.Flag.NoParallel {
+					repoDo(gitApi, &wg, true)
+				} else {
+					go repoDo(gitApi, &wg, true)
+				}
 			}
 		}
 		wg.Wait()

@@ -42,19 +42,16 @@ var repoGetPublickeyCmd = &cobra.Command{
 		}
 		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {
-				// if remote.Vendor != gitapi.Vendor_Github {
-				// 	fmt.Printf("%s:(%s) action secret not supported.\n", remote.Name, remote.Vendor)
-				// } else {
 				wg.Add(1)
 				var info gitapi.RepoPublicKey
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 				gitApi.EndpointReposSecretsPubkey()
+				gitApi.SetGet()
 				if lib.Flag.NoParallel {
-					repoGetFunc(gitApi, &wg)
+					repoDo(gitApi, &wg, false)
 				} else {
-					go repoGetFunc(gitApi, &wg)
+					go repoDo(gitApi, &wg, false)
 				}
-				// }
 			}
 			wg.Wait()
 		}

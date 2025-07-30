@@ -46,10 +46,11 @@ var repoGetArchivedCmd = &cobra.Command{
 				var info RepoArchived
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 				gitApi.EndpointRepos()
+				gitApi.SetGet()
 				if lib.Flag.NoParallel {
-					repoGetFunc(gitApi, &wg)
+					repoDo(gitApi, &wg, false)
 				} else {
-					go repoGetFunc(gitApi, &wg)
+					go repoDo(gitApi, &wg, false)
 				}
 			}
 		}

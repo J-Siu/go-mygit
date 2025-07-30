@@ -58,10 +58,11 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 				if remote.Vendor == gitapi.Vendor_Gitea {
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 					gitApi.EndpointRepos()
+					gitApi.SetPatch()
 					if lib.Flag.NoParallel {
-						repoPatchFunc(gitApi, &wg)
+						repoDo(gitApi, &wg, true)
 					} else {
-						go repoPatchFunc(gitApi, &wg)
+						go repoDo(gitApi, &wg, true)
 					}
 				}
 			}

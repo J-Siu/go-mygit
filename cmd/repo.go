@@ -22,7 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"encoding/json"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
@@ -31,12 +30,6 @@ import (
 	"github.com/savaki/jq"
 	"github.com/spf13/cobra"
 )
-
-type ErrMsg struct {
-	Errors  string `json:"errors"`
-	Message string `json:"message"`
-	Url     string `json:"url"`
-}
 
 // repoCmd represents the repo command
 var repoCmd = &cobra.Command{
@@ -49,89 +42,34 @@ func init() {
 	rootCmd.AddCommand(repoCmd)
 }
 
-func repoDelFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
+func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	gitApi.Del()
-	var title string
-	if !lib.Flag.NoTitle {
-		title = gitApi.Repo + "(" + gitApi.Name + ")"
-	}
-	helper.ReportStatus(gitApi.Res.Ok(), title, true)
-}
-
-func repoGetFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
-	if wg != nil {
-		defer wg.Done()
-	}
-
 	var title string
 	if !lib.Flag.NoTitle {
 		title = gitApi.Repo + "(" + gitApi.Name + ")"
 	}
 
-	// var success bool = gitApi.Get().Res.Ok()
-	// if success {
-	if gitApi.Get().Res.Ok() {
-		// API GET OK
-		var singleLine bool
-		switch *gitApi.Res.Output {
-		case "true", "false", "public", "private":
-			singleLine = true
-		default:
-			singleLine = false
-		}
-		helper.Report(gitApi.Res.Output, title, !lib.Flag.NoSkip, singleLine)
-	} else {
-		// API GET failed, try to extract error message
-		var info ErrMsg
-		err := json.Unmarshal([]byte(*gitApi.Res.Output), &info)
-		if err == nil {
-			helper.Report(info.Message, title, true, true)
+	status := gitApi.Do().Ok()
+	if status {
+		if statusOnly {
+			helper.ReportStatus(status, title, true)
 		} else {
-			helper.Report(gitApi.Res.Output, title, true, false)
+			singleLine := false
+			output := gitApi.Output()
+			switch *output {
+			case "true", "false", "public", "private":
+				singleLine = true
+			default:
+				singleLine = false
+			}
+			helper.Report(output, title, !lib.Flag.NoSkip, singleLine)
 		}
+	} else {
+		// API or HTTP GET failed, try to extract error message
+		helper.Report(gitApi.Err(), title, true, true)
 	}
-}
-
-func repoPatchFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
-	if wg != nil {
-		defer wg.Done()
-	}
-
-	var title string
-	if !lib.Flag.NoTitle {
-		title = gitApi.Repo + "(" + gitApi.Name + ")"
-	}
-
-	helper.ReportStatus(gitApi.Patch().Res.Ok(), title, true)
-}
-
-func repoPostFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
-	if wg != nil {
-		defer wg.Done()
-	}
-
-	var title string
-	if !lib.Flag.NoTitle {
-		title = gitApi.Repo + "(" + gitApi.Name + ")"
-	}
-
-	helper.ReportStatus(gitApi.Post().Res.Ok(), title, true)
-}
-
-func repoPutFunc(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
-	if wg != nil {
-		defer wg.Done()
-	}
-
-	var title string
-	if !lib.Flag.NoTitle {
-		title = gitApi.Repo + "(" + gitApi.Name + ")"
-	}
-
-	helper.ReportStatus(gitApi.Put().Res.Ok(), title, true)
 }
 
 func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
@@ -150,15 +88,8 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	gitApi.Info = &info
 	// Cannot use repoGetFunc(gitApi, nil), as we don't want print out here
 	gitApi.Get()
-	if !gitApi.Res.Ok() {
-		// API GET failed, try to extract error message
-		var errMsg ErrMsg
-		err := json.Unmarshal([]byte(*gitApi.Res.Output), &errMsg)
-		if err == nil {
-			helper.Report(errMsg.Message, title, true, true)
-		} else {
-			helper.Report(gitApi.Res.Output, title, true, false)
-		}
+	if !gitApi.Ok() {
+		helper.Report(gitApi.Err(), title, true, true)
 		return
 	}
 
