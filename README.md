@@ -385,6 +385,8 @@ https://github.com/J-Siu/go-mygit/releases
 - v2.7.4
   - Upgrade go-gitapi to v1.6.0
   - Consolidate repo*Func() to repoDo()
+- v2.7.5
+  - Fix Github workflow
 
 ### License
 
