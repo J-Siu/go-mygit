@@ -33,8 +33,9 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "go-mygit",
-	Short: `Git and Repo automation made easy.`,
+	Use:     "go-mygit",
+	Short:   `Git and Repo automation made easy.`,
+	Version: lib.Version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		lib.Conf.Init()
 		lib.Conf.MergeRemotes()

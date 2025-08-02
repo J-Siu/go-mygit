@@ -30,5 +30,11 @@ const (
 	TXT_REPO_DIR_USE    = "[repository/directory ...]"
 )
 
-var Conf TypeConf
-var Flag TypeFlag
+var (
+	Conf TypeConf
+	Flag TypeFlag
+)
+
+const (
+	Version = "v2.7.5"
+)
