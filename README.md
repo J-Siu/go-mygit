@@ -5,7 +5,6 @@ Command line tool for easy mass configuration of git remotes, and working with G
 ### Table Of Content
 <!-- TOC -->
 
-- [Table Of Content](#table-of-content)
 - [Highlight](#highlight)
   - [Push multiple repository](#push-multiple-repository)
   - [Set Archived](#set-archived)
@@ -387,6 +386,11 @@ https://github.com/J-Siu/go-mygit/releases
   - Consolidate repo*Func() to repoDo()
 - v2.7.5
   - Fix Github workflow
+- v2.7.6
+  - Upgrade go-helper to v1.1.8
+  - Fix config logic
+  - Fix debug logic
+  - Fix receiver name
 
 ### License
 

@@ -97,5 +97,4 @@ func init() {
 	rootCmd.AddCommand(rootPushCmd)
 	rootPushCmd.Flags().BoolVarP(&lib.Flag.PushAll, "all", "a", false, "Push all branches")
 	rootPushCmd.Flags().BoolVarP(&lib.Flag.PushTag, "tags", "t", false, "Push with tags")
-	// rootPushCmd.MarkFlagsMutuallyExclusive("all","tags")
 }

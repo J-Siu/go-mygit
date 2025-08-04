@@ -31,12 +31,12 @@ import (
 )
 
 /*
-File, Group, MergeRemotes are filled in at runtime
+- File, Group, MergeRemotes are filled in at runtime
 
-Remotes, Secrets are read from config file by viper
+- Remotes, Secrets are read from config file by viper
 */
 type TypeConf struct {
-	File          string      `json:"-"`
+	FileConf      string      `json:"-"`
 	Groups        Groups      `json:"-"`
 	Remotes       Remotes     `json:"remotes"`
 	Secrets       ConfSecrets `json:"secrets"`
@@ -44,25 +44,24 @@ type TypeConf struct {
 }
 
 // Fill in conf struct from viper and extract all groups from `Remotes`
-func (self *TypeConf) Init() {
-	helper.Debug = Flag.Debug
-	self.File = viper.ConfigFileUsed()
-	viper.Unmarshal(&self)
+func (conf *TypeConf) Init() {
+	viper.Unmarshal(&conf)
+	prefix := "TypeConf.Init"
+	helper.ReportDebug(conf.FileConf, prefix+":Config file", false, true)
 	// Fill in ConfGroup
-	for _, r := range self.Remotes {
-		self.Groups.Add(&r.Group)
+	for _, r := range conf.Remotes {
+		conf.Groups.Add(&r.Group)
 	}
-	helper.ReportDebug(&Conf.File, "", true, true)
-	helper.ReportDebug(&Flag, "Flag", true, false)
+	helper.ReportDebug(conf, prefix, false, true)
 }
 
 // Calculate remotes base on flag
-func (self *TypeConf) MergeRemotes() {
+func (conf *TypeConf) MergeRemotes() {
 	// Merge remote from flag "group"
 	for _, g := range Flag.Groups {
 		group := &g
-		if self.Groups.Has(group) {
-			self.MergedRemotes.AddArray(self.Remotes.GetByGroup(group))
+		if conf.Groups.Has(group) {
+			conf.MergedRemotes.AddArray(conf.Remotes.GetByGroup(group))
 		} else {
 			log.Fatal("Group not in config: " + g)
 			os.Exit(1)
@@ -70,16 +69,16 @@ func (self *TypeConf) MergeRemotes() {
 	}
 	// Merge remote from flag "remote"
 	for _, r := range Flag.Remotes {
-		if self.Remotes.Has(&r) {
-			self.MergedRemotes.Add(self.Remotes.GetByName(&r))
+		if conf.Remotes.Has(&r) {
+			conf.MergedRemotes.Add(conf.Remotes.GetByName(&r))
 		} else {
 			log.Fatal("Remote not in config: " + r)
 			os.Exit(1)
 		}
 	}
 	// If no remote is specified from command line, use all remotes in config
-	if len(self.MergedRemotes) == 0 {
-		self.MergedRemotes = append(self.MergedRemotes, self.Remotes...)
+	if len(conf.MergedRemotes) == 0 {
+		conf.MergedRemotes = append(conf.MergedRemotes, conf.Remotes...)
 	}
 	helper.ReportDebug(&Conf.MergedRemotes, "Merged Remote", true, false)
 }

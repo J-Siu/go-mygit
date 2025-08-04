@@ -36,5 +36,6 @@ var (
 )
 
 const (
-	Version = "v2.7.5"
+	DefaultConfFile = "~/.go-mygit.json"
+	Version         = "v2.7.6"
 )
