@@ -36,27 +36,62 @@ import (
 - Remotes, Secrets are read from config file by viper
 */
 type TypeConf struct {
-	FileConf      string      `json:"-"`
-	Groups        Groups      `json:"-"`
+	FileConf      string      `json:"FileConf"`
+	Groups        Groups      `json:"Groups"`
 	Remotes       Remotes     `json:"remotes"`
 	Secrets       ConfSecrets `json:"secrets"`
-	MergedRemotes Remotes     `json:"-"`
+	MergedRemotes Remotes     `json:"MergedRemotes"`
 }
 
-// Fill in conf struct from viper and extract all groups from `Remotes`
 func (conf *TypeConf) Init() {
-	viper.Unmarshal(&conf)
 	prefix := "TypeConf.Init"
-	helper.ReportDebug(conf.FileConf, prefix+":Config file", false, true)
-	// Fill in ConfGroup
+
+	conf.setDefault()
+
+	helper.ReportDebug(conf.FileConf, prefix+": Config file", false, true)
+
+	conf.readFileConf()
+
+	conf.groups()
+	conf.mergeRemotes()
+
+	helper.ReportDebug(conf, prefix+": Raw", false, true)
+
+	conf.expand()
+
+	helper.ReportDebug(conf, prefix+": Expand", false, true)
+}
+
+func (conf *TypeConf) readFileConf() {
+	prefix := "TypeConf.readFileConf"
+	viper.SetConfigType("json")
+	viper.SetConfigFile(helper.TildeEnvExpand(Conf.FileConf))
+	viper.AutomaticEnv() // read in environment variables that match
+	if err := viper.ReadInConfig(); err == nil {
+		viper.Unmarshal(&conf)
+	} else {
+		helper.Report(err.Error(), prefix, true, true)
+		os.Exit(1)
+	}
+}
+
+func (conf *TypeConf) setDefault() {
+	if conf.FileConf == "" {
+		conf.FileConf = Default.FileConf
+	}
+}
+
+// This should be called
+//   - after reading config file
+//   - before merging remote
+func (conf *TypeConf) groups() {
 	for _, r := range conf.Remotes {
 		conf.Groups.Add(&r.Group)
 	}
-	helper.ReportDebug(conf, prefix, false, true)
 }
 
 // Calculate remotes base on flag
-func (conf *TypeConf) MergeRemotes() {
+func (conf *TypeConf) mergeRemotes() {
 	// Merge remote from flag "group"
 	for _, g := range Flag.Groups {
 		group := &g
@@ -80,5 +115,9 @@ func (conf *TypeConf) MergeRemotes() {
 	if len(conf.MergedRemotes) == 0 {
 		conf.MergedRemotes = append(conf.MergedRemotes, conf.Remotes...)
 	}
-	helper.ReportDebug(&Conf.MergedRemotes, "Merged Remote", true, false)
+	// helper.ReportDebug(&Conf.MergedRemotes, "Merged Remote", true, false)
+}
+
+func (conf *TypeConf) expand() {
+	conf.FileConf = helper.TildeEnvExpand(conf.FileConf)
 }

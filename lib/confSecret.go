@@ -36,16 +36,16 @@ type ConfSecret struct {
 type ConfSecrets []ConfSecret
 
 // Do NACL box encryption
-func (self *ConfSecret) Encrypt(pubKeyP *gitapi.RepoPublicKey) *gitapi.RepoEncryptedPair {
+func (cs *ConfSecret) Encrypt(pubKeyP *gitapi.RepoPublicKey) *gitapi.RepoEncryptedPair {
 	var ep gitapi.RepoEncryptedPair
 	ep.Key_id = pubKeyP.Key_id
-	ep.Encrypted_value = *helper.BoxSealAnonymous(&pubKeyP.Key, &self.Value)
+	ep.Encrypted_value = *helper.BoxSealAnonymous(&pubKeyP.Key, &cs.Value)
 	return &ep
 }
 
 // Check if secrete exist by name
-func (self *ConfSecrets) Has(name *string) bool {
-	for _, s := range *self {
+func (css *ConfSecrets) Has(name *string) bool {
+	for _, s := range *css {
 		if s.Name == *name {
 			return true
 		}

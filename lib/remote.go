@@ -44,16 +44,16 @@ type Remote struct {
 	SkipVerify bool   `json:"skipverify"` // Api request skip cert verify (allow self-signed cert)
 }
 
-func (self *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
+func (remote *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
 	var fullPath string = *helper.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
 	apiP := gitapi.GitApiNew(
-		self.Name,
-		self.Token,
-		self.Entrypoint,
-		self.User,
-		self.Vendor,
-		self.SkipVerify,
+		remote.Name,
+		remote.Token,
+		remote.Entrypoint,
+		remote.User,
+		remote.Vendor,
+		remote.SkipVerify,
 		repo,
 		info)
 	// Set Github header
@@ -62,12 +62,12 @@ func (self *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi
 }
 
 // Add all Remotes into git repository
-func (self *Remote) GitAdd(workPathP *string) *helper.MyCmd {
-	self.GitRemove(workPathP)
+func (remote *Remote) GitAdd(workPathP *string) *helper.MyCmd {
+	remote.GitRemove(workPathP)
 	var fullPath string = *helper.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
-	var git string = self.Ssh + ":/" + self.User + "/" + repo + ".git"
-	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullPath, self.Name, git)
+	var git string = remote.Ssh + ":/" + remote.User + "/" + repo + ".git"
+	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullPath, remote.Name, git)
 	var title string
 	if !Flag.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
@@ -78,10 +78,10 @@ func (self *Remote) GitAdd(workPathP *string) *helper.MyCmd {
 }
 
 // Remove all Remotes in git repository
-func (self *Remote) GitRemove(workPathP *string) *helper.MyCmd {
+func (remote *Remote) GitRemove(workPathP *string) *helper.MyCmd {
 	var myCmd *helper.MyCmd
-	if helper.GitRemoteExist(workPathP, self.Name) {
-		myCmd = helper.GitRemoteRemove(workPathP, self.Name)
+	if helper.GitRemoteExist(workPathP, remote.Name) {
+		myCmd = helper.GitRemoteRemove(workPathP, remote.Name)
 	}
 	var title string
 	if myCmd != nil && !Flag.NoTitle {

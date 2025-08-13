@@ -28,7 +28,6 @@ import (
 	"github.com/J-Siu/go-helper"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -38,14 +37,12 @@ var rootCmd = &cobra.Command{
 	Version: lib.Version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		helper.Debug = lib.Flag.Debug
+		helper.ReportDebug(lib.Version, "Version", false, true)
 		helper.ReportDebug(&lib.Flag, "Flag", false, false)
 		lib.Conf.Init()
-		lib.Conf.MergeRemotes()
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -54,26 +51,11 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.Debug, "debug", "d", false, "Enable debug")
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoParallel, "no-parallel", "", false, "Don't process in parallel")
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoSkip, "no-skip", "", false, "Don't skip empty output")
 	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
 	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Groups, "group", "g", nil, "Specify group")
 	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Remotes, "remote", "r", nil, "Specify remotes")
-	rootCmd.PersistentFlags().StringVarP(&lib.Conf.FileConf, "config", "", lib.DefaultConfFile, "Config file")
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	viper.SetConfigType("json")
-	if lib.Conf.FileConf == "" {
-		lib.Conf.FileConf = lib.DefaultConfFile
-	}
-	viper.SetConfigFile(helper.TildeEnvExpand(lib.Conf.FileConf))
-	viper.AutomaticEnv() // read in environment variables that match
-	if err := viper.ReadInConfig(); err != nil {
-		helper.Report(err.Error(), "", true, true)
-		os.Exit(1)
-	}
+	rootCmd.PersistentFlags().StringVarP(&lib.Conf.FileConf, "config", "", lib.Default.FileConf, "Config file")
 }
