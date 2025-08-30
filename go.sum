@@ -40,8 +40,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/J-Siu/go-gitapi v1.6.0 h1:isHmvr961CGiDwonbeiE8u8JhpVNTFeXjAayni05iXo=
 github.com/J-Siu/go-gitapi v1.6.0/go.mod h1:ZAIYbQvsXvxTqiCD39nIbXV/j7bd+1pK3U2YNBJ+eXc=
-github.com/J-Siu/go-helper v1.1.8 h1:cF92obqG6QTKkNYA06luuURCHHn99dR6pDEzak6fQ4c=
-github.com/J-Siu/go-helper v1.1.8/go.mod h1:PkBVY3EdVhAPE29H1Mx+nz1j01ymxy91VZV7VwHlsbA=
+github.com/J-Siu/go-helper v1.1.10 h1:tmNyFs5sJqPnE/7rshEfcyhC82MPEt2Is4FVpI7wPrU=
+github.com/J-Siu/go-helper v1.1.10/go.mod h1:PkBVY3EdVhAPE29H1Mx+nz1j01ymxy91VZV7VwHlsbA=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
