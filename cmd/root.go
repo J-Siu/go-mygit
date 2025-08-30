@@ -41,6 +41,9 @@ var rootCmd = &cobra.Command{
 		helper.ReportDebug(&lib.Flag, "Flag", false, false)
 		lib.Conf.Init()
 	},
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		helper.Report(helper.Errs, "Errors", true, false)
+	},
 }
 
 func Execute() {
