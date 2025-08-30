@@ -62,8 +62,8 @@ func (remote *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gita
 }
 
 // Add all Remotes into git repository
-func (remote *Remote) GitAdd(workPathP *string) *helper.MyCmd {
-	remote.GitRemove(workPathP)
+func (remote *Remote) Add(workPathP *string) *helper.MyCmd {
+	remote.Remove(workPathP)
 	var fullPath string = *helper.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
 	var git string = remote.Ssh + ":/" + remote.User + "/" + repo + ".git"
@@ -78,7 +78,7 @@ func (remote *Remote) GitAdd(workPathP *string) *helper.MyCmd {
 }
 
 // Remove all Remotes in git repository
-func (remote *Remote) GitRemove(workPathP *string) *helper.MyCmd {
+func (remote *Remote) Remove(workPathP *string) *helper.MyCmd {
 	var myCmd *helper.MyCmd
 	if helper.GitRemoteExist(workPathP, remote.Name) {
 		myCmd = helper.GitRemoteRemove(workPathP, remote.Name)

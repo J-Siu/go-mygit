@@ -44,7 +44,7 @@ var remoteAddCmd = &cobra.Command{
 				return
 			}
 			for _, remote := range lib.Conf.MergedRemotes {
-				remote.GitAdd(&workPath)
+				remote.Add(&workPath)
 			}
 		}
 	},

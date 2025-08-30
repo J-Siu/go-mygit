@@ -47,7 +47,7 @@ var remoteRemoveCmd = &cobra.Command{
 				helper.GitRemoteRemoveAll(&workPath)
 			} else {
 				for _, remote := range lib.Conf.MergedRemotes {
-					remote.GitRemove(&workPath)
+					remote.Remove(&workPath)
 				}
 			}
 		}
