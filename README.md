@@ -164,7 +164,7 @@ Available Commands:
   repository  Repository commands
 
 Flags:
-      --config string        config file (default is $HOME/.go-mygit.json)
+      --config string        config file (default is $HOME/.config/go-mygit.json)
   -d, --debug                Enable debug
   -g, --group stringArray    Specify group
   -h, --help                 help for go-mygit
@@ -181,6 +181,7 @@ Use "go-mygit [command] --help" for more information about a command.
 Use `-d` for debug output.
 
 Example:
+
 ```sh
 go-mygit -d repo des get
 ```
@@ -305,6 +306,7 @@ go-mygit -r gh push --all
 ### Configuration
 
 See [go-mygit.json.md](go-mygit.json.md)
+
 ### Packages Used
 
 - [go-gitapi](https://github.com/J-Siu/go-gitapi)
@@ -390,6 +392,10 @@ https://github.com/J-Siu/go-mygit/releases
   - Upgrade go-helper to v1.1.8
   - Fix config logic
   - Fix debug logic
+  - Fix receiver name
+- v2.7.7
+  - Upgrade go-helper to v1.1.10
+  - Move default config file `~/.go-mygit.json` -> `~/.config/go-mygit.json`
   - Fix receiver name
 
 ### License
