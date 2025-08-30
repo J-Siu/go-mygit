@@ -31,11 +31,12 @@ const (
 )
 
 var (
+	Version = "v2.7.7"
+
 	Conf TypeConf
 	Flag TypeFlag
-)
 
-const (
-	DefaultConfFile = "~/.go-mygit.json"
-	Version         = "v2.7.6"
+	Default = TypeConf{
+		FileConf: "~/.config/go-mygit.json",
+	}
 )
