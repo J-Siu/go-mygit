@@ -41,7 +41,7 @@ var rootInitCmd = &cobra.Command{
 			helper.GitInit(&workPath)
 			helper.GitRemoteRemoveAll(&workPath)
 			for _, remote := range lib.Conf.MergedRemotes {
-				remote.GitAdd(&workPath)
+				remote.Add(&workPath)
 			}
 		}
 	},
