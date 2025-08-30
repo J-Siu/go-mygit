@@ -8,38 +8,39 @@ Config file is in json format.
 
 ```json
 {
-	"secrets": [
-		{
-			"name": "",
-			"value": ""
-		},
-		{
-			"name": "",
-			"value": ""
-		}
-	],
-	"remotes": [
-		{
-			"group": "",
-			"name": "GitHub",
-			"private": false,
-			"ssh": "",
-			"token": "",
-			"entrypoint": "https://api.github.com",
-			"user": ""
-			"vendor": "github"
-		},
-		{
-			"group": "",
-			"name": "MyServer",
-			"private": true,
-			"ssh": "",
-			"token": "",
-			"entrypoint": "https://<domain>/api/v1",
-			"user": "",
-			"vendor": "gitea"
-		}
-	]
+  "secrets": [
+    {
+      "name": "",
+      "value": ""
+    },
+    {
+      "name": "",
+      "value": ""
+    }
+  ],
+  "remotes": [
+    {
+      "group": "",
+      "name": "GitHub",
+      "private": false,
+      "ssh": "",
+      "token": "",
+      "entrypoint": "https://api.github.com",
+      "user": ""
+      "vendor": "github"
+    },
+    {
+      "group": "",
+      "name": "MyServer",
+      "private": true,
+      "ssh": "",
+      "token": "",
+      "entrypoint": "https://<domain>/api/v1",
+      "user": "",
+      "vendor": "gitea",
+      "skipverify": true
+    }
+  ]
 }
 ```
 
@@ -86,7 +87,8 @@ One use case is to push docker username and docker api token for docker projects
     "token": "",
     "entrypoint": "https://api.github.com",
     "user": "J-Siu",
-    "vendor": "github"
+    "vendor": "github",
+    "skipverify": true
   },
   ...
 ]
@@ -113,8 +115,8 @@ One use case is to push docker username and docker api token for docker projects
   `./ssh/config`
   ```sh
   Host gh
-        HostName github.com
-        User git
+    HostName github.com
+    User git
   ```
 
   "gh" can be used.
@@ -138,6 +140,10 @@ One use case is to push docker username and docker api token for docker projects
 - "vendor"
 
   Either "github" or "gitea"
+
+- "skipverify"
+
+  Skip SSL/TLS verify for API call.
 
 ### Selector
 
