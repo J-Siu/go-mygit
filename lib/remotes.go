@@ -25,6 +25,8 @@ package lib
 import "github.com/J-Siu/go-helper"
 
 // Array of Remote
+//
+// Embedded in TypeConf. No initialization
 type Remotes []Remote
 
 // Check array has Remote (by name)

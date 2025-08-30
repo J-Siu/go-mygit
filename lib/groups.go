@@ -25,11 +25,9 @@ package lib
 import "github.com/J-Siu/go-helper"
 
 // Group names
+//
+// Embedded in TypeConf. No initialization
 type Groups []string
-
-func (groupsP *Groups) Has(groupP *string) bool {
-	return helper.StrArrayPtrContain((*[]string)(groupsP), groupP)
-}
 
 func (groupsP *Groups) Add(groupP *string) {
 	if groupP != nil && !groupsP.Has(groupP) {
@@ -44,4 +42,8 @@ func (groupsP *Groups) Get(name string) *string {
 		}
 	}
 	return nil
+}
+
+func (groupsP *Groups) Has(groupP *string) bool {
+	return helper.StrArrayPtrContain((*[]string)(groupsP), groupP)
 }
