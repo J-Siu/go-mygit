@@ -35,8 +35,4 @@ var (
 
 	Conf TypeConf
 	Flag TypeFlag
-
-	Default = TypeConf{
-		FileConf: "~/.config/go-mygit.json",
-	}
 )
