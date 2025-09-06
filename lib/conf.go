@@ -30,6 +30,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+var Default = TypeConf{
+	FileConf: "$HOME/.config/go-mygit.json",
+}
+
 /*
 - File, Group, MergeRemotes are filled in at runtime
 
@@ -81,6 +85,8 @@ func (c *TypeConf) readFileConf() {
 	}
 }
 
+// This should be called
+//   - before reading config file
 func (c *TypeConf) setDefault() {
 	if c.FileConf == "" {
 		c.FileConf = Default.FileConf
