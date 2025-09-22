@@ -62,7 +62,7 @@ var rootPushCmd = &cobra.Command{
 				// make a local copy of workPath for go routine
 				var wp string = workPath
 				options1 := []string{remote}
-				var options2 []string
+				options2 := options1
 				if lib.Flag.PushAll {
 					options2 = append(options1, "--all")
 				}
@@ -85,9 +85,11 @@ func init() {
 
 func push(wp *string, options *[]string, wg *sync.WaitGroup) {
 	wg.Add(1)
+	w := *wp
+	opts := *options
 	if lib.Flag.NoParallel {
-		lib.GitPush(wp, options, wg)
+		lib.GitPush(&w, &opts, wg)
 	} else {
-		go lib.GitPush(wp, options, wg)
+		go lib.GitPush(&w, &opts, wg)
 	}
 }

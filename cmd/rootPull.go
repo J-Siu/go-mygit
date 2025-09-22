@@ -84,9 +84,11 @@ func init() {
 
 func pull(wp *string, options *[]string, wg *sync.WaitGroup) {
 	wg.Add(1)
+	w := *wp
+	opts := *options
 	if lib.Flag.NoParallel {
-		lib.GitPull(wp, options, wg)
+		lib.GitPull(&w, &opts, wg)
 	} else {
-		go lib.GitPull(wp, options, wg)
+		go lib.GitPull(&w, &opts, wg)
 	}
 }
