@@ -62,30 +62,14 @@ var rootPushCmd = &cobra.Command{
 				// make a local copy of workPath for go routine
 				var wp string = workPath
 				options1 := []string{remote}
+				var options2 []string
 				if lib.Flag.PushAll {
-					wg.Add(1)
-					options2 := append(options1, "--all")
-					if lib.Flag.NoParallel {
-						lib.GitPush(&wp, &options2, &wg)
-					} else {
-						go lib.GitPush(&wp, &options2, &wg)
-					}
-				} else {
-					wg.Add(1)
-					if lib.Flag.NoParallel {
-						lib.GitPush(&wp, &options1, &wg)
-					} else {
-						go lib.GitPush(&wp, &options1, &wg)
-					}
+					options2 = append(options1, "--all")
 				}
+				push(&wp, &options2, &wg)
 				if lib.Flag.PushTag {
-					wg.Add(1)
-					options2 := append(options1, "--tags")
-					if lib.Flag.NoParallel {
-						lib.GitPush(&wp, &options2, &wg)
-					} else {
-						go lib.GitPush(&wp, &options2, &wg)
-					}
+					options2 = append(options1, "--tags")
+					push(&wp, &options2, &wg)
 				}
 			}
 		}
@@ -97,4 +81,13 @@ func init() {
 	rootCmd.AddCommand(rootPushCmd)
 	rootPushCmd.Flags().BoolVarP(&lib.Flag.PushAll, "all", "a", false, "Push all branches")
 	rootPushCmd.Flags().BoolVarP(&lib.Flag.PushTag, "tags", "t", false, "Push with tags")
+}
+
+func push(wp *string, options *[]string, wg *sync.WaitGroup) {
+	wg.Add(1)
+	if lib.Flag.NoParallel {
+		lib.GitPush(wp, options, wg)
+	} else {
+		go lib.GitPush(wp, options, wg)
+	}
 }

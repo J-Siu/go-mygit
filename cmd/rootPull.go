@@ -60,26 +60,16 @@ var rootPullCmd = &cobra.Command{
 				helper.Report("is not a git repository.", workPath, true, true)
 				continue
 			}
-			wg.Add(1)
 
 			var wp string = workPath
 			var branch string = strings.TrimSpace(helper.GitBranchCurrent(&wp).Stdout.String())
 			var options []string = []string{remote.Name, branch}
 
-			if lib.Flag.NoParallel {
-				lib.GitPull(&wp, &options, &wg)
-			} else {
-				go lib.GitPull(&wp, &options, &wg)
-			}
+			pull(&wp, &options, &wg)
 
 			if lib.Flag.PushTag {
-				wg.Add(1)
-				var options_tag []string = append(options, "--tags")
-				if lib.Flag.NoParallel {
-					lib.GitPull(&wp, &options_tag, &wg)
-				} else {
-					go lib.GitPull(&wp, &options_tag, &wg)
-				}
+				options = append(options, "--tags")
+				pull(&wp, &options, &wg)
 			}
 		}
 		wg.Wait()
@@ -90,4 +80,13 @@ func init() {
 	rootCmd.AddCommand(rootPullCmd)
 	// Re-use push flags
 	rootPullCmd.Flags().BoolVarP(&lib.Flag.PushTag, "tags", "t", false, "Pull all tags")
+}
+
+func pull(wp *string, options *[]string, wg *sync.WaitGroup) {
+	wg.Add(1)
+	if lib.Flag.NoParallel {
+		lib.GitPull(wp, options, wg)
+	} else {
+		go lib.GitPull(wp, options, wg)
+	}
 }
