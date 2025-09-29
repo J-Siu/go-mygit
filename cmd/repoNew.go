@@ -26,7 +26,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/file"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -41,7 +41,7 @@ var repoNewCmd = &cobra.Command{
 		var wg sync.WaitGroup
 		// args == array of repos from command line
 		if len(args) == 0 {
-			args = append(args, *helper.CurrentDirBase())
+			args = append(args, *file.CurrentDirBase())
 		}
 		for _, workPath := range args {
 			for _, remote := range lib.Conf.MergedRemotes {

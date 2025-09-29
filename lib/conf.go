@@ -26,7 +26,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-helper/v2/file"
 	"github.com/spf13/viper"
 )
 
@@ -57,31 +58,33 @@ func (c *TypeConf) Init() {
 	prefix := c.myType + ".Init"
 
 	c.setDefault()
-
-	helper.ReportDebug(c.FileConf, prefix+": Config file", false, true)
+	ezlog.Debug().Name(prefix).NameLn("Default").Msg(c).Out()
 
 	c.readFileConf()
 	if c.Err == nil {
 		c.initGroups()
 		c.mergeRemotes()
 
-		helper.ReportDebug(c, prefix+": Raw", false, true)
+		ezlog.Debug().Name(prefix).NameLn("Raw").Msg(c).Out()
 
 		c.expand()
 
-		helper.ReportDebug(c, prefix+": Expand", false, true)
+		ezlog.Debug().Name(prefix).NameLn("Expand").Msg(c).Out()
 	}
 }
 
 func (c *TypeConf) readFileConf() {
 	prefix := c.myType + ".readFileConf"
+
 	viper.SetConfigType("json")
-	viper.SetConfigFile(helper.TildeEnvExpand(Conf.FileConf))
+	viper.SetConfigFile(file.TildeEnvExpand(Conf.FileConf))
 	viper.AutomaticEnv() // read in environment variables that match
-	if c.Err = viper.ReadInConfig(); c.Err == nil {
+	c.Err = viper.ReadInConfig()
+
+	if c.Err == nil {
 		viper.Unmarshal(&c)
 	} else {
-		helper.Report(c.Err.Error(), prefix, true, true)
+		ezlog.Debug().Name(prefix).Msg(c.Err).Out()
 	}
 }
 
@@ -131,5 +134,5 @@ func (c *TypeConf) mergeRemotes() {
 }
 
 func (c *TypeConf) expand() {
-	c.FileConf = helper.TildeEnvExpand(c.FileConf)
+	c.FileConf = file.TildeEnvExpand(c.FileConf)
 }

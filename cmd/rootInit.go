@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -38,8 +38,8 @@ var rootInitCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		for _, workPath := range args {
-			helper.GitInit(&workPath)
-			helper.GitRemoteRemoveAll(&workPath)
+			gitcmd.GitInit(&workPath)
+			gitcmd.GitRemoteRemoveAll(&workPath)
 			for _, remote := range lib.Conf.MergedRemotes {
 				remote.Add(&workPath)
 			}

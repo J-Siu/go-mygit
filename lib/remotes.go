@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 package lib
 
-import "github.com/J-Siu/go-helper"
+import "github.com/J-Siu/go-helper/v2/str"
 
 // Array of Remote
 //
@@ -78,7 +78,7 @@ func (remotes *Remotes) GetByGroup(groupP *string) *Remotes {
 func (remotes *Remotes) GetNames() *[]string {
 	var names []string
 	for _, r := range *remotes {
-		if !helper.StrArrayPtrContain(&names, &r.Name) {
+		if !str.ArrayContains(&names, &r.Name) {
 			names = append(names, r.Name)
 		}
 	}

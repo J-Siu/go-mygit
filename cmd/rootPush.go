@@ -24,7 +24,10 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-gitcmd"
+
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-helper/v2/str"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -41,20 +44,20 @@ var rootPushCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		for _, workPath := range args {
-			if helper.GitRoot(&workPath) == "" {
-				helper.Report("is not a git repository.", workPath, true, true)
+			if gitcmd.GitRoot(&workPath) == "" {
+				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
 				continue
 			}
 
 			// Create queue base on local remote
-			var remoteLocal []string = *helper.GitRemote(&workPath, false)
+			var remoteLocal []string = *gitcmd.GitRemote(&workPath, false)
 			var remoteQueue []string
 			for _, remote := range lib.Conf.MergedRemotes {
 				// Only add to queue if exist locally
-				if helper.StrArrayPtrContain(&remoteLocal, &remote.Name) {
+				if str.ArrayContains(&remoteLocal, &remote.Name) {
 					remoteQueue = append(remoteQueue, remote.Name)
 				} else {
-					helper.Report(remote.Name, workPath+": Remote not setup", false, true)
+					ezlog.Log().Name(workPath).Name("Remote not setup").Msg(remote.Name)
 				}
 			}
 

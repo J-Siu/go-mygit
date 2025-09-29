@@ -23,7 +23,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-gitcmd"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -39,8 +40,8 @@ var remoteAddCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		for _, workPath := range args {
-			if helper.GitRoot(&workPath) == "" {
-				helper.Report("is not a git repository.", workPath, true, true)
+			if gitcmd.GitRoot(&workPath) == "" {
+				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
 				return
 			}
 			for _, remote := range lib.Conf.MergedRemotes {

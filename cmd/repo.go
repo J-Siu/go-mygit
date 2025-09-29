@@ -22,10 +22,11 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"strconv"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/savaki/jq"
 	"github.com/spf13/cobra"
@@ -54,7 +55,8 @@ func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 	status := gitApi.Do().Ok()
 	if status {
 		if statusOnly {
-			helper.ReportStatus(status, title, true)
+			// helper.ReportStatus(status, title, true)
+			ezlog.Log().Name(title).Msg(status).Out()
 		} else {
 			singleLine := false
 			output := gitApi.Output()
@@ -64,11 +66,17 @@ func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 			default:
 				singleLine = false
 			}
-			helper.Report(output, title, !lib.Flag.NoSkip, singleLine)
+			if !(output == nil || *output == "") || lib.Flag.NoSkip {
+				ez := ezlog.Log().Name(title)
+				if !singleLine {
+					ez.Ln()
+				}
+				ez.Msg(output).Out()
+			}
 		}
 	} else {
 		// API or HTTP GET failed, try to extract error message
-		helper.Report(gitApi.Err(), title, true, true)
+		ezlog.Err().Name(title).Msg(gitApi.Err()).Out()
 	}
 }
 
@@ -89,11 +97,10 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	// Cannot use repoGetFunc(gitApi, nil), as we don't want print out here
 	gitApi.Get()
 	if !gitApi.Ok() {
-		helper.Report(gitApi.Err(), title, true, true)
+		ezlog.Err().Name(title).Msg(gitApi.Err()).Out()
 		return
 	}
-
-	helper.ReportDebug(&info, "RepoNodeId", false, false)
+	ezlog.Debug().NameLn("RepoNodeId").Msg(&info).Out()
 
 	// Use Github GraphQL as unarchive not supported by rest api
 	gitApi.Req.Entrypoint = "https://api.github.com/graphql" // Github GraphQL entrypoint
@@ -117,30 +124,29 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	// Use jq to extract isArchived and description
 	op, err = jq.Parse(".data.unarchiveRepository.repository.isArchived")
 	if err != nil {
-		helper.Report(err.Error(), title, false, true)
+		ezlog.Err().Name(title).Msg(err).Out()
 		return
 	}
 	isArchived, err := op.Apply(*gitApi.Res.Body)
 	if err != nil {
-		helper.Report(err.Error(), title, false, true)
+		ezlog.Err().Name(title).Msg(err).Out()
 		return
 	}
 	// No error, print result
-	helper.ReportDebug(isArchived, "isArchived", false, true)
-	helper.Report(helper.BoolStatus(string(isArchived) == "false"), title, !lib.Flag.NoSkip, true)
+	ezlog.Log().Name(title).Msg(isArchived).Out()
 }
 
 type RepoArchived struct {
 	Archived bool `json:"archived"`
 }
 
-func (s *RepoArchived) StringP() *string {
-	var str string = helper.BoolString(s.Archived)
-	return &str
+func (s *RepoArchived) String() string {
+	return strconv.FormatBool(s.Archived)
 }
 
-func (s *RepoArchived) String() string {
-	return *s.StringP()
+func (s *RepoArchived) StringP() *string {
+	tmp := s.String()
+	return &tmp
 }
 
 type RepoNodeId struct {

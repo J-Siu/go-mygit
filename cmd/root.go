@@ -25,7 +25,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/errs"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -36,13 +37,25 @@ var rootCmd = &cobra.Command{
 	Short:   `Git and Repo automation made easy.`,
 	Version: lib.Version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		helper.Debug = lib.Flag.Debug
-		helper.ReportDebug(lib.Version, "Version", false, true)
-		helper.ReportDebug(&lib.Flag, "Flag", false, false)
+		ezlog.SetLogLevel(ezlog.ErrLevel)
+		if lib.Flag.Debug {
+			ezlog.SetLogLevel(ezlog.DebugLevel)
+		}
+
+		ezlog.Debug().
+			Name("Version").MsgLn("global.Version").
+			NameLn("Flag:").
+			Msg(&lib.Flag).
+			Out()
+
 		lib.Conf.Init()
+
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		helper.Report(helper.Errs, "Errors", true, false)
+		if !errs.IsEmpty() {
+			ezlog.Err().NameLn("Error").Msg(errs.Errs).Out()
+			os.Exit(1)
+		}
 	},
 }
 

@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -33,7 +33,7 @@ var confSecretsCmd = &cobra.Command{
 	Aliases: []string{"s", "sec"},
 	Short:   "Print secret configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		helper.Report(&lib.Conf.Secrets, "", true, false)
+		ezlog.Log().NameLn("Secrets").Msg(&lib.Conf.Secrets).Out()
 	},
 }
 

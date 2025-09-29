@@ -31,7 +31,7 @@ const (
 )
 
 var (
-	Version = "v2.7.7"
+	Version = "v2.7.8"
 
 	Conf TypeConf
 	Flag TypeFlag

@@ -23,13 +23,13 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -47,9 +47,8 @@ var repoSetSecretCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		// --name/--value must be used together
-		if lib.Flag.Secret.Name == "" && lib.Flag.Secret.Value != "" ||
-			lib.Flag.Secret.Name != "" && lib.Flag.Secret.Value == "" {
-			log.Fatal("-n/--name and -v/--value must be used together")
+		if lib.Flag.Secret.Name == "" || lib.Flag.Secret.Value == "" {
+			ezlog.Err().Msg("Both -n/--name and -v/--value must be set").Out()
 			os.Exit(1)
 		}
 		for _, workPath := range args {
@@ -58,12 +57,12 @@ var repoSetSecretCmd = &cobra.Command{
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
 					// "GET" public key
-					helper.Report("", remote.Name, false, false)
+					ezlog.Log().Name(remote.Name).Out()
 					var pubkey gitapi.RepoPublicKey
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey)
 					gitApi.EndpointReposSecretsPubkey()
 					ok := gitApi.SetGet().Do().Ok()
-					helper.ReportStatus(ok, "Get Actions Public Key", true)
+					ezlog.Log().Name("Get Actions Public Key").Msg(ok)
 					if !ok {
 						os.Exit(1)
 					}

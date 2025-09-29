@@ -27,7 +27,10 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-gitcmd"
+	"github.com/J-Siu/go-helper/v2/cmd"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-helper/v2/file"
 )
 
 // Remote entry in config file
@@ -45,7 +48,7 @@ type Remote struct {
 }
 
 func (remote *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
-	var fullPath string = *helper.FullPath(workPathP)
+	var fullPath string = *file.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
 	apiP := gitapi.GitApiNew(
 		remote.Name,
@@ -62,81 +65,103 @@ func (remote *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gita
 }
 
 // Add all Remotes into git repository
-func (remote *Remote) Add(workPathP *string) *helper.MyCmd {
+func (remote *Remote) Add(workPathP *string) *cmd.Cmd {
 	remote.Remove(workPathP)
-	var fullPath string = *helper.FullPath(workPathP)
+	var fullPath string = *file.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
 	var git string = remote.Ssh + ":/" + remote.User + "/" + repo + ".git"
-	var myCmd *helper.MyCmd = helper.GitRemoteAdd(&fullPath, remote.Name, git)
+	var myCmd = gitcmd.GitRemoteAdd(&fullPath, remote.Name, git)
 	var title string
 	if !Flag.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, false, false)
+
+	if myCmd.Stdout.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+	}
+	if myCmd.Stderr.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+	}
+
 	return myCmd
 }
 
 // Remove all Remotes in git repository
-func (remote *Remote) Remove(workPathP *string) *helper.MyCmd {
-	var myCmd *helper.MyCmd
-	if helper.GitRemoteExist(workPathP, remote.Name) {
-		myCmd = helper.GitRemoteRemove(workPathP, remote.Name)
+func (remote *Remote) Remove(workPathP *string) *cmd.Cmd {
+	var myCmd *cmd.Cmd
+	if gitcmd.GitRemoteExist(workPathP, remote.Name) {
+		myCmd = gitcmd.GitRemoteRemove(workPathP, remote.Name)
 	}
 	var title string
 	if myCmd != nil && !Flag.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
-		helper.Report(myCmd.Stderr.String(), title, true, false)
-		helper.Report(myCmd.Stdout.String(), title, false, false)
+		if myCmd.Stdout.Len() > 0 {
+			ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+		}
+		if myCmd.Stderr.Len() > 0 {
+			ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+		}
 	}
 	return myCmd
 }
 
 // Push all Remotes in git repository
-func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
-	var myCmd *helper.MyCmd = helper.GitPush(workPathP, optionsP)
+	var myCmd *cmd.Cmd = gitcmd.GitPush(workPathP, optionsP)
 	var title string
 	if !Flag.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, true, false)
+	if myCmd.Stdout.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+	}
+	if myCmd.Stderr.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+	}
 	return myCmd
 }
 
 // Push all Remotes in git repository
-func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
 
-	var myCmd *helper.MyCmd = helper.GitPull(workPathP, optionsP)
+	var myCmd *cmd.Cmd = gitcmd.GitPull(workPathP, optionsP)
 
 	var title string
 	if !Flag.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, true, false)
+	if myCmd.Stdout.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+	}
+	if myCmd.Stderr.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+	}
 	return myCmd
 }
 
 // git clone to current directory
-func GitClone(optionsP *[]string, wgP *sync.WaitGroup) *helper.MyCmd {
+func GitClone(optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
 
-	var myCmd *helper.MyCmd = helper.GitClone(nil, optionsP)
+	var myCmd *cmd.Cmd = gitcmd.GitClone(nil, optionsP)
 
 	var title string
 	if !Flag.NoTitle {
 		title = myCmd.CmdLn
 	}
-	helper.Report(myCmd.Stderr.String(), title, true, false)
-	helper.Report(myCmd.Stdout.String(), title, true, false)
+	if myCmd.Stdout.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+	}
+	if myCmd.Stderr.Len() > 0 {
+		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+	}
 	return myCmd
 }

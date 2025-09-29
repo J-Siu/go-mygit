@@ -23,8 +23,9 @@ THE SOFTWARE.
 package lib
 
 import (
+	"github.com/J-Siu/go-crypto/crypto"
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 )
 
 // Secret entry in config file
@@ -39,7 +40,11 @@ type ConfSecrets []ConfSecret
 func (cs *ConfSecret) Encrypt(pubKeyP *gitapi.RepoPublicKey) *gitapi.RepoEncryptedPair {
 	var ep gitapi.RepoEncryptedPair
 	ep.Key_id = pubKeyP.Key_id
-	ep.Encrypted_value = *helper.BoxSealAnonymous(&pubKeyP.Key, &cs.Value)
+	encrypted_value, e := crypto.BoxSealAnonymous(&pubKeyP.Key, &cs.Value)
+	ep.Encrypted_value = *encrypted_value
+	if e != nil {
+		ezlog.Err().Msg(e).Out()
+	}
 	return &ep
 }
 

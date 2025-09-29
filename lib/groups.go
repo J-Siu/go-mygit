@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 package lib
 
-import "github.com/J-Siu/go-helper"
+import "github.com/J-Siu/go-helper/v2/str"
 
 // Group names
 //
@@ -45,5 +45,5 @@ func (groupsP *Groups) Get(name string) *string {
 }
 
 func (groupsP *Groups) Has(groupP *string) bool {
-	return helper.StrArrayPtrContain((*[]string)(groupsP), groupP)
+	return str.ArrayContains((*[]string)(groupsP), groupP)
 }

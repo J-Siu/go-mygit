@@ -26,7 +26,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-gitcmd"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -45,24 +46,24 @@ var rootPullCmd = &cobra.Command{
 		// Check flag
 		if len(lib.Flag.Groups) != 0 || // should not have --group
 			len(lib.Flag.Remotes) != 1 { // need exactly 1 --remote
-			helper.Report(lib.TXT_REPO_CLONE_LONG, "", true, true)
+			ezlog.Log().Msg(lib.TXT_REPO_CLONE_LONG).Out()
 			os.Exit(1)
 		}
 		// Check remote name exist
 		var remote *lib.Remote = lib.Conf.Remotes.GetByName(&lib.Flag.Remotes[0])
 		if remote == nil {
-			helper.Report(lib.Flag.Remotes[0], "Remote not configured", true, true)
+			ezlog.Log().Name("Remote not configured").Msg(lib.Flag.Remotes[0]).Out()
 			os.Exit(1)
 		}
 
 		for _, workPath := range args {
-			if helper.GitRoot(&workPath) == "" {
-				helper.Report("is not a git repository.", workPath, true, true)
+			if gitcmd.GitRoot(&workPath) == "" {
+				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
 				continue
 			}
 
 			var wp string = workPath
-			var branch string = strings.TrimSpace(helper.GitBranchCurrent(&wp).Stdout.String())
+			var branch string = strings.TrimSpace(gitcmd.GitBranchCurrent(&wp).Stdout.String())
 			var options []string = []string{remote.Name, branch}
 
 			pull(&wp, &options, &wg)

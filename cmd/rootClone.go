@@ -25,7 +25,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/J-Siu/go-helper"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -43,13 +43,13 @@ var rootCloneCmd = &cobra.Command{
 		if len(lib.Flag.Groups) != 0 || // should not have --group
 			len(lib.Flag.Remotes) != 1 || // need exactly 1 --remote
 			len(args) == 0 { // need >0 repo name
-			helper.Report(lib.TXT_REPO_CLONE_LONG, "", true, true)
+			ezlog.Log().Msg(lib.TXT_REPO_CLONE_LONG).Out()
 			os.Exit(1)
 		}
 		// Check remote name exist
 		var remote *lib.Remote = lib.Conf.Remotes.GetByName(&lib.Flag.Remotes[0])
 		if remote == nil {
-			helper.Report(lib.Flag.Remotes[0], "Remote not configured", true, true)
+			ezlog.Log().Name("Remote not configured").Msg(lib.Flag.Remotes[0]).Out()
 			os.Exit(1)
 		}
 

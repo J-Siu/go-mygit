@@ -397,6 +397,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Upgrade go-helper to v1.1.10
   - Move default config file `~/.go-mygit.json` -> `~/.config/go-mygit.json`
   - Fix receiver name
+- v2.7.8
+  - Upgrade go-helper/v2
 
 ### License
 
