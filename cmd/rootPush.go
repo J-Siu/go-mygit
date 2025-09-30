@@ -53,6 +53,7 @@ var rootPushCmd = &cobra.Command{
 			// Create queue base on local remote
 			var remoteLocal []string = *gitcmd.GitRemote(&workPath, false)
 			var remoteQueue []string
+
 			for _, remote := range global.Conf.MergedRemotes {
 				// Only add to queue if exist locally
 				if str.ArrayContains(&remoteLocal, &remote.Name) {

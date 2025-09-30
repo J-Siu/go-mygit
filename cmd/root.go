@@ -49,7 +49,7 @@ var rootCmd = &cobra.Command{
 			Msg(&global.Flag).
 			Out()
 
-		global.Conf.Init(&global.Flag.Groups, &global.Flag.Remotes)
+		global.Conf.New(&global.Flag.Groups, &global.Flag.Remotes)
 
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {

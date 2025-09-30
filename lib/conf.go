@@ -52,7 +52,7 @@ type TypeConf struct {
 	MergedRemotes Remotes     `json:"MergedRemotes"`
 }
 
-func (c *TypeConf) Init(flagGroups, flagRemotes *[]string) {
+func (c *TypeConf) New(flagGroups, flagRemotes *[]string) {
 	c.init = true
 	c.myType = "TypeConf"
 	prefix := c.myType + ".Init"
