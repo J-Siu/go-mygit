@@ -4,8 +4,8 @@ github.com/J-Siu/go-gitapi v1.6.2 h1:CutCbUpLpbQjIX7UXgWVTUX0wOxXgKfWX5orAoixnGQ
 github.com/J-Siu/go-gitapi v1.6.2/go.mod h1:80jg6DMOm9V7gn3RHSKdwSrWAfRcx6L71dDQWGeY41E=
 github.com/J-Siu/go-gitcmd v0.0.3 h1:DczdIzaUgS2H+y2KFkAtrUpC8IH6rBpkdVz6VNHgPqw=
 github.com/J-Siu/go-gitcmd v0.0.3/go.mod h1:mPNHN5Qd8jrJ59kXzx9s3O2nQ+XGzty9HkO/WWiO+MQ=
-github.com/J-Siu/go-helper/v2 v2.3.1 h1:d9WtCAvMt9d4JoSHpwOLXcU9pulcgZjfv5C0NlwuqsI=
-github.com/J-Siu/go-helper/v2 v2.3.1/go.mod h1:YAYnAvD6WStwhm1mWsqkbP7yYp0+uKQBuQpqhlC7d5s=
+github.com/J-Siu/go-helper/v2 v2.3.2 h1:qIMf7HGh/jQxi1ZrjQBJSkOnjoO0WIBl8GtO9U9JsP4=
+github.com/J-Siu/go-helper/v2 v2.3.2/go.mod h1:YAYnAvD6WStwhm1mWsqkbP7yYp0+uKQBuQpqhlC7d5s=
 github.com/charlievieth/strcase v0.0.5 h1:gV4iXVyD6eI5KdfOV+/vIVCKXZwtCWOmDMcu7Uy00Rs=
 github.com/charlievieth/strcase v0.0.5/go.mod h1:FIOYY1aDBMSIOFqmVomHBpoK+bteGlESRsgsdWjrhx8=
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
@@ -32,12 +32,10 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
 github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/fJaraNFVN+nFs=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
-github.com/sagikazarmark/locafero v0.11.0 h1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=
-github.com/sagikazarmark/locafero v0.11.0/go.mod h1:nVIGvgyzw595SUSUE6tvCp3YYTeHs15MvlmU87WwIik=
+github.com/sagikazarmark/locafero v0.12.0 h1:/NQhBAkUb4+fH1jivKHWusDYFjMOOKU88eegjfxfHb4=
+github.com/sagikazarmark/locafero v0.12.0/go.mod h1:sZh36u/YSZ918v0Io+U9ogLYQJ9tLLBmM4eneO6WwsI=
 github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8 h1:ajJQhvqPSQFJJ4aV5mDAMx8F7iFi6Dxfo6y62wymLNs=
 github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8/go.mod h1:Nw/CCOXNyF5JDd6UpYxBwG5WWZ2FOJ/d5QnXL4KQ6vY=
-github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 h1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=
-github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8/go.mod h1:3n1Cwaq1E1/1lhQhtRK2ts/ZwZEhjcQeJQ1RuC6Q/8U=
 github.com/spf13/afero v1.15.0 h1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=
 github.com/spf13/afero v1.15.0/go.mod h1:NC2ByUVxtQs4b3sIUphxK0NioZnmxgyCrfzeuq8lxMg=
 github.com/spf13/cast v1.10.0 h1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=

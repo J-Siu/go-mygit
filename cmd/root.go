@@ -43,8 +43,8 @@ var rootCmd = &cobra.Command{
 		}
 
 		ezlog.Debug().
-			Name("Version").MsgLn("global.Version").
-			NameLn("Flag:").
+			Name("Version").MsgLn(lib.Version).
+			NameLn("Flag").
 			Msg(&lib.Flag).
 			Out()
 
