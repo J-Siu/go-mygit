@@ -67,11 +67,11 @@ func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 				singleLine = false
 			}
 			if !(output == nil || *output == "") || global.Flag.NoSkip {
-				ez := ezlog.Log().Name(title)
-				if !singleLine {
-					ez.Ln()
+				if singleLine {
+					ezlog.Log().Name(title).Msg(output).Out()
+				} else {
+					ezlog.Log().NameLn(title).Msg(output).Out()
 				}
-				ez.Msg(output).Out()
 			}
 		}
 	} else {
