@@ -20,7 +20,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package lib
+package global
+
+import "github.com/J-Siu/go-mygit/v2/lib"
 
 const (
 	TXT_FLAGS_USE       = "If -r/-g not specified, all remotes in config file will be used. "
@@ -33,6 +35,6 @@ const (
 var (
 	Version = "v2.7.8"
 
-	Conf TypeConf
-	Flag TypeFlag
+	Conf lib.TypeConf
+	Flag lib.TypeFlag
 )

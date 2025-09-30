@@ -25,16 +25,16 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
 // publicCmd represents the public command
 var repoSetPrivateFalseCmd = &cobra.Command{
-	Use:     "false " + lib.TXT_REPO_DIR_USE,
+	Use:     "false " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"f"},
 	Short:   "Set to false.",
-	Long:    "Set to false.  " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
+	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		var info gitapi.RepoPrivate
@@ -44,12 +44,12 @@ var repoSetPrivateFalseCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		for _, workPath := range args {
-			for _, remote := range lib.Conf.MergedRemotes {
+			for _, remote := range global.Conf.MergedRemotes {
 				wg.Add(1)
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 				gitApi.EndpointRepos()
 				gitApi.SetPatch()
-				if lib.Flag.NoParallel {
+				if global.Flag.NoParallel {
 					repoDo(gitApi, &wg, true)
 				} else {
 					go repoDo(gitApi, &wg, true)

@@ -24,16 +24,16 @@ package cmd
 import (
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
 // addCmd represents the add command
 var remoteListCmd = &cobra.Command{
-	Use:     "list " + lib.TXT_REPO_DIR_USE,
+	Use:     "list " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"l", "ls"},
 	Short:   "List git remote",
-	Long:    "List git remote. " + lib.TXT_FLAGS_USE,
+	Long:    "List git remote. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			args = []string{"."}
@@ -45,7 +45,7 @@ var remoteListCmd = &cobra.Command{
 			}
 			var gitRemoteList *[]string = gitcmd.GitRemote(&workPath, true)
 			var title string
-			if !lib.Flag.NoTitle {
+			if !global.Flag.NoTitle {
 				title = workPath
 			}
 			ezlog.Log().NameLn(title).Msg(gitRemoteList).Out()

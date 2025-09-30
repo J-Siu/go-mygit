@@ -24,7 +24,7 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +34,7 @@ var confRemotesCmd = &cobra.Command{
 	Aliases: []string{"r", "rmt"},
 	Short:   "Print remotes configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		ezlog.Log().NameLn("Remotes").Msg(&lib.Conf.Remotes).Out()
+		ezlog.Log().NameLn("Remotes").Msg(&global.Conf.Remotes).Out()
 	},
 }
 

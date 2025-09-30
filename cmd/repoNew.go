@@ -27,16 +27,16 @@ import (
 
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper/v2/file"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
 // repo new
 var repoNewCmd = &cobra.Command{
-	Use:     "new " + lib.TXT_REPO_DIR_USE,
+	Use:     "new " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"n"},
 	Short:   "Create remote repository",
-	Long:    "Create remote repository. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
+	Long:    "Create remote repository. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		// args == array of repos from command line
@@ -44,7 +44,7 @@ var repoNewCmd = &cobra.Command{
 			args = append(args, *file.CurrentDirBase())
 		}
 		for _, workPath := range args {
-			for _, remote := range lib.Conf.MergedRemotes {
+			for _, remote := range global.Conf.MergedRemotes {
 				wg.Add(1)
 				var info gitapi.RepoInfo
 				info.Name = path.Base(workPath)
@@ -52,7 +52,7 @@ var repoNewCmd = &cobra.Command{
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
 				gitApi.EndpointUserRepos()
 				gitApi.SetPost()
-				if lib.Flag.NoParallel {
+				if global.Flag.NoParallel {
 					repoDo(gitApi, &wg, true)
 				} else {
 					go repoDo(gitApi, &wg, true)

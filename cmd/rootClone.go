@@ -26,30 +26,31 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
 // Mass git clone
 var rootCloneCmd = &cobra.Command{
-	Use:     "clone " + lib.TXT_REPO_CLONE_USE,
+	Use:     "clone " + global.TXT_REPO_CLONE_USE,
 	Aliases: []string{"cl"},
 	Short:   "Git clone",
-	Long:    "Git clone. " + lib.TXT_REPO_CLONE_LONG,
+	Long:    "Git clone. " + global.TXT_REPO_CLONE_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 
 		// Check flag
-		if len(lib.Flag.Groups) != 0 || // should not have --group
-			len(lib.Flag.Remotes) != 1 || // need exactly 1 --remote
+		if len(global.Flag.Groups) != 0 || // should not have --group
+			len(global.Flag.Remotes) != 1 || // need exactly 1 --remote
 			len(args) == 0 { // need >0 repo name
-			ezlog.Log().Msg(lib.TXT_REPO_CLONE_LONG).Out()
+			ezlog.Log().Msg(global.TXT_REPO_CLONE_LONG).Out()
 			os.Exit(1)
 		}
 		// Check remote name exist
-		var remote *lib.Remote = lib.Conf.Remotes.GetByName(&lib.Flag.Remotes[0])
+		var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 		if remote == nil {
-			ezlog.Log().Name("Remote not configured").Msg(lib.Flag.Remotes[0]).Out()
+			ezlog.Log().Name("Remote not configured").Msg(global.Flag.Remotes[0]).Out()
 			os.Exit(1)
 		}
 
@@ -58,10 +59,10 @@ var rootCloneCmd = &cobra.Command{
 
 			// construct url
 			var options []string = []string{remote.Ssh + ":/" + remote.User + "/" + repoName}
-			if lib.Flag.NoParallel {
-				lib.GitClone(&options, &wg)
+			if global.Flag.NoParallel {
+				lib.GitClone(&options, &wg, global.Flag.NoTitle)
 			} else {
-				go lib.GitClone(&options, &wg)
+				go lib.GitClone(&options, &wg, global.Flag.NoTitle)
 			}
 		}
 		wg.Wait()

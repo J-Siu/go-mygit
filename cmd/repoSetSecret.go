@@ -29,17 +29,18 @@ import (
 
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper/v2/ezlog"
-
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
+
 	"github.com/spf13/cobra"
 )
 
 // setCmd represents the set command
 var repoSetSecretCmd = &cobra.Command{
-	Use:     "secret " + lib.TXT_REPO_DIR_USE,
+	Use:     "secret " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"s"},
 	Short:   "Set action secret",
-	Long:    "Set action secret. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
+	Long:    "Set action secret. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		// If no repo/dir specified in command line, add a ""
@@ -47,12 +48,12 @@ var repoSetSecretCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		// --name/--value must be used together
-		if lib.Flag.Secret.Name == "" || lib.Flag.Secret.Value == "" {
+		if global.Flag.Secret.Name == "" || global.Flag.Secret.Value == "" {
 			ezlog.Err().Msg("Both -n/--name and -v/--value must be set").Out()
 			os.Exit(1)
 		}
 		for _, workPath := range args {
-			for _, remote := range lib.Conf.MergedRemotes {
+			for _, remote := range global.Conf.MergedRemotes {
 				if remote.Vendor != gitapi.Vendor_Github {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
@@ -68,12 +69,12 @@ var repoSetSecretCmd = &cobra.Command{
 					}
 					// A list of secret to use
 					var secretsP *lib.ConfSecrets
-					if lib.Flag.Secret.Name != "" && lib.Flag.Secret.Value != "" {
+					if global.Flag.Secret.Name != "" && global.Flag.Secret.Value != "" {
 						// Use command line value
-						secretsP = &lib.ConfSecrets{lib.Flag.Secret}
+						secretsP = &lib.ConfSecrets{global.Flag.Secret}
 					} else {
 						// Use Conf secrets
-						secretsP = &lib.Conf.Secrets
+						secretsP = &global.Conf.Secrets
 					}
 					// Use config secrets
 					for _, secret := range *secretsP {
@@ -83,7 +84,7 @@ var repoSetSecretCmd = &cobra.Command{
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
 						gitApi.SetPut()
-						if lib.Flag.NoParallel {
+						if global.Flag.NoParallel {
 							repoDo(gitApi, &wg, true)
 						} else {
 							go repoDo(gitApi, &wg, true)
@@ -98,6 +99,6 @@ var repoSetSecretCmd = &cobra.Command{
 
 func init() {
 	repoSetCmd.AddCommand(repoSetSecretCmd)
-	repoSetSecretCmd.Flags().StringVarP(&lib.Flag.Secret.Name, "name", "n", "", "Secret name")
-	repoSetSecretCmd.Flags().StringVarP(&lib.Flag.Secret.Value, "value", "v", "", "Secret value")
+	repoSetSecretCmd.Flags().StringVarP(&global.Flag.Secret.Name, "name", "n", "", "Secret name")
+	repoSetSecretCmd.Flags().StringVarP(&global.Flag.Secret.Value, "value", "v", "", "Secret value")
 }

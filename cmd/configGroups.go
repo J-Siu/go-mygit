@@ -23,7 +23,7 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +33,7 @@ var confGroupsCmd = &cobra.Command{
 	Aliases: []string{"g", "grp"},
 	Short:   "Print groups configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		ezlog.Log().NameLn("Groups").Msg(&lib.Conf.Groups).Out()
+		ezlog.Log().NameLn("Groups").Msg(&global.Conf.Groups).Out()
 	},
 }
 

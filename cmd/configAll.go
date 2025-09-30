@@ -24,7 +24,7 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +34,7 @@ var confAllCmd = &cobra.Command{
 	Aliases: []string{"a"},
 	Short:   "Print all configurations",
 	Run: func(cmd *cobra.Command, args []string) {
-		ezlog.Log().NameLn("Config").Msg(&lib.Conf).Out()
+		ezlog.Log().NameLn("Config").Msg(&global.Conf).Out()
 	},
 }
 

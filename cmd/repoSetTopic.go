@@ -25,7 +25,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
@@ -34,18 +34,18 @@ var repoSetTopicCmd = &cobra.Command{
 	Use:     "topic",
 	Aliases: []string{"t"},
 	Short:   "Set topics",
-	Long:    "Set topic. " + lib.TXT_FLAGS_USE,
+	Long:    "Set topic. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		var info gitapi.RepoTopics
 		info.Topics = &args
 		info.Names = &args
-		for _, remote := range lib.Conf.MergedRemotes {
+		for _, remote := range global.Conf.MergedRemotes {
 			wg.Add(1)
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointReposTopics()
 			gitApi.SetPut()
-			if lib.Flag.NoParallel {
+			if global.Flag.NoParallel {
 				repoDo(gitApi, &wg, true)
 			} else {
 				go repoDo(gitApi, &wg, true)

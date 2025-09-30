@@ -28,15 +28,16 @@ import (
 
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
 // Mass git pull
 var rootPullCmd = &cobra.Command{
-	Use:   "pull " + lib.TXT_REPO_DIR_USE,
+	Use:   "pull " + global.TXT_REPO_DIR_USE,
 	Short: "Git pull",
-	Long:  "Git pull. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
+	Long:  "Git pull. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		if len(args) == 0 {
@@ -44,15 +45,15 @@ var rootPullCmd = &cobra.Command{
 		}
 
 		// Check flag
-		if len(lib.Flag.Groups) != 0 || // should not have --group
-			len(lib.Flag.Remotes) != 1 { // need exactly 1 --remote
-			ezlog.Log().Msg(lib.TXT_REPO_CLONE_LONG).Out()
+		if len(global.Flag.Groups) != 0 || // should not have --group
+			len(global.Flag.Remotes) != 1 { // need exactly 1 --remote
+			ezlog.Log().Msg(global.TXT_REPO_CLONE_LONG).Out()
 			os.Exit(1)
 		}
 		// Check remote name exist
-		var remote *lib.Remote = lib.Conf.Remotes.GetByName(&lib.Flag.Remotes[0])
+		var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 		if remote == nil {
-			ezlog.Log().Name("Remote not configured").Msg(lib.Flag.Remotes[0]).Out()
+			ezlog.Log().Name("Remote not configured").Msg(global.Flag.Remotes[0]).Out()
 			os.Exit(1)
 		}
 
@@ -68,7 +69,7 @@ var rootPullCmd = &cobra.Command{
 
 			pull(&wp, &options, &wg)
 
-			if lib.Flag.PushTag {
+			if global.Flag.PushTag {
 				options = append(options, "--tags")
 				pull(&wp, &options, &wg)
 			}
@@ -80,16 +81,16 @@ var rootPullCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(rootPullCmd)
 	// Re-use push flags
-	rootPullCmd.Flags().BoolVarP(&lib.Flag.PushTag, "tags", "t", false, "Pull all tags")
+	rootPullCmd.Flags().BoolVarP(&global.Flag.PushTag, "tags", "t", false, "Pull all tags")
 }
 
 func pull(wp *string, options *[]string, wg *sync.WaitGroup) {
 	wg.Add(1)
 	w := *wp
 	opts := *options
-	if lib.Flag.NoParallel {
-		lib.GitPull(&w, &opts, wg)
+	if global.Flag.NoParallel {
+		lib.GitPull(&w, &opts, wg, global.Flag.NoTitle)
 	} else {
-		go lib.GitPull(&w, &opts, wg)
+		go lib.GitPull(&w, &opts, wg, global.Flag.NoTitle)
 	}
 }

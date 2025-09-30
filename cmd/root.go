@@ -27,6 +27,7 @@ import (
 
 	"github.com/J-Siu/go-helper/v2/errs"
 	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
@@ -35,20 +36,20 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "go-mygit",
 	Short:   `Git and Repo automation made easy.`,
-	Version: lib.Version,
+	Version: global.Version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		ezlog.SetLogLevel(ezlog.ErrLevel)
-		if lib.Flag.Debug {
+		if global.Flag.Debug {
 			ezlog.SetLogLevel(ezlog.DebugLevel)
 		}
 
 		ezlog.Debug().
-			Name("Version").MsgLn(lib.Version).
+			Name("Version").MsgLn(global.Version).
 			NameLn("Flag").
-			Msg(&lib.Flag).
+			Msg(&global.Flag).
 			Out()
 
-		lib.Conf.Init()
+		global.Conf.Init(&global.Flag.Groups, &global.Flag.Remotes)
 
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
@@ -67,11 +68,11 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.Debug, "debug", "d", false, "Enable debug")
-	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoParallel, "no-parallel", "", false, "Don't process in parallel")
-	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoSkip, "no-skip", "", false, "Don't skip empty output")
-	rootCmd.PersistentFlags().BoolVarP(&lib.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
-	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Groups, "group", "g", nil, "Specify group")
-	rootCmd.PersistentFlags().StringArrayVarP(&lib.Flag.Remotes, "remote", "r", nil, "Specify remotes")
-	rootCmd.PersistentFlags().StringVarP(&lib.Conf.FileConf, "config", "", lib.Default.FileConf, "Config file")
+	rootCmd.PersistentFlags().BoolVarP(&global.Flag.Debug, "debug", "d", false, "Enable debug")
+	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoParallel, "no-parallel", "", false, "Don't process in parallel")
+	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoSkip, "no-skip", "", false, "Don't skip empty output")
+	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
+	rootCmd.PersistentFlags().StringArrayVarP(&global.Flag.Groups, "group", "g", nil, "Specify group")
+	rootCmd.PersistentFlags().StringArrayVarP(&global.Flag.Remotes, "remote", "r", nil, "Specify remotes")
+	rootCmd.PersistentFlags().StringVarP(&global.Conf.FileConf, "config", "", lib.Default.FileConf, "Config file")
 }

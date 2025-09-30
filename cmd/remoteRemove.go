@@ -25,16 +25,16 @@ package cmd
 import (
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
 // remoteDelCmd represents the delete command
 var remoteRemoveCmd = &cobra.Command{
-	Use:     "remove " + lib.TXT_REPO_DIR_USE,
+	Use:     "remove " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"r", "rm"},
 	Short:   "Delete git remote",
-	Long:    "Delete git remote. " + lib.TXT_FLAGS_USE,
+	Long:    "Delete git remote. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			args = []string{"."}
@@ -44,10 +44,10 @@ var remoteRemoveCmd = &cobra.Command{
 				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
 				return
 			}
-			if lib.Flag.RemoteRemoveAll {
+			if global.Flag.RemoteRemoveAll {
 				gitcmd.GitRemoteRemoveAll(&workPath)
 			} else {
-				for _, remote := range lib.Conf.MergedRemotes {
+				for _, remote := range global.Conf.MergedRemotes {
 					remote.Remove(&workPath)
 				}
 			}
@@ -57,5 +57,5 @@ var remoteRemoveCmd = &cobra.Command{
 
 func init() {
 	remoteCmd.AddCommand(remoteRemoveCmd)
-	remoteRemoveCmd.Flags().BoolVarP(&lib.Flag.RemoteRemoveAll, "all", "a", false, "Delete all remotes")
+	remoteRemoveCmd.Flags().BoolVarP(&global.Flag.RemoteRemoveAll, "all", "a", false, "Delete all remotes")
 }

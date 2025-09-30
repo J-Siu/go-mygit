@@ -27,7 +27,7 @@ import (
 
 	"github.com/J-Siu/go-gitapi"
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/savaki/jq"
 	"github.com/spf13/cobra"
 )
@@ -48,7 +48,7 @@ func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 		defer wg.Done()
 	}
 	var title string
-	if !lib.Flag.NoTitle {
+	if !global.Flag.NoTitle {
 		title = gitApi.Repo + "(" + gitApi.Name + ")"
 	}
 
@@ -66,7 +66,7 @@ func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 			default:
 				singleLine = false
 			}
-			if !(output == nil || *output == "") || lib.Flag.NoSkip {
+			if !(output == nil || *output == "") || global.Flag.NoSkip {
 				ez := ezlog.Log().Name(title)
 				if !singleLine {
 					ez.Ln()
@@ -86,7 +86,7 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	}
 
 	var title string
-	if !lib.Flag.NoTitle {
+	if !global.Flag.NoTitle {
 		title = gitApi.Repo + "(" + gitApi.Name + ")"
 	}
 

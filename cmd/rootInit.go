@@ -23,16 +23,16 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-gitcmd"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
 // Mass git init
 var rootInitCmd = &cobra.Command{
-	Use:     "init " + lib.TXT_REPO_DIR_USE,
+	Use:     "init " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"i"}, // rootInitCmd
 	Short:   "Git init and reset remotes",
-	Long:    "Git init. Reset and add remotes. " + lib.TXT_REPO_DIR_LONG + lib.TXT_FLAGS_USE,
+	Long:    "Git init. Reset and add remotes. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			args = []string{"."}
@@ -40,7 +40,7 @@ var rootInitCmd = &cobra.Command{
 		for _, workPath := range args {
 			gitcmd.GitInit(&workPath)
 			gitcmd.GitRemoteRemoveAll(&workPath)
-			for _, remote := range lib.Conf.MergedRemotes {
+			for _, remote := range global.Conf.MergedRemotes {
 				remote.Add(&workPath)
 			}
 		}

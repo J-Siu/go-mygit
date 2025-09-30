@@ -52,7 +52,7 @@ type TypeConf struct {
 	MergedRemotes Remotes     `json:"MergedRemotes"`
 }
 
-func (c *TypeConf) Init() {
+func (c *TypeConf) Init(flagGroups, flagRemotes *[]string) {
 	c.init = true
 	c.myType = "TypeConf"
 	prefix := c.myType + ".Init"
@@ -63,7 +63,7 @@ func (c *TypeConf) Init() {
 	c.readFileConf()
 	if c.Err == nil {
 		c.initGroups()
-		c.mergeRemotes()
+		c.mergeRemotes(flagGroups, flagRemotes)
 
 		ezlog.Debug().Name(prefix).NameLn("Raw").Msg(c).Out()
 
@@ -77,7 +77,7 @@ func (c *TypeConf) readFileConf() {
 	prefix := c.myType + ".readFileConf"
 
 	viper.SetConfigType("json")
-	viper.SetConfigFile(file.TildeEnvExpand(Conf.FileConf))
+	viper.SetConfigFile(file.TildeEnvExpand(c.FileConf))
 	viper.AutomaticEnv() // read in environment variables that match
 	c.Err = viper.ReadInConfig()
 
@@ -106,9 +106,9 @@ func (c *TypeConf) initGroups() {
 }
 
 // Calculate remotes base on flag
-func (c *TypeConf) mergeRemotes() {
+func (c *TypeConf) mergeRemotes(flagGroups, flagRemotes *[]string) {
 	// Merge remote from flag "group"
-	for _, g := range Flag.Groups {
+	for _, g := range *flagGroups {
 		group := &g
 		if c.Groups.Has(group) {
 			c.MergedRemotes.AddArray(c.Remotes.GetByGroup(group))
@@ -118,7 +118,7 @@ func (c *TypeConf) mergeRemotes() {
 		}
 	}
 	// Merge remote from flag "remote"
-	for _, r := range Flag.Remotes {
+	for _, r := range *flagRemotes {
 		if c.Remotes.Has(&r) {
 			c.MergedRemotes.Add(c.Remotes.GetByName(&r))
 		} else {

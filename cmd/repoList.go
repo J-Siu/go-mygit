@@ -26,7 +26,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
@@ -35,10 +35,10 @@ var repoListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l", "ls"},
 	Short:   "List all remote repositories",
-	Long:    "List all remote repositories. " + lib.TXT_FLAGS_USE,
+	Long:    "List all remote repositories. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		for _, remote := range lib.Conf.MergedRemotes {
+		for _, remote := range global.Conf.MergedRemotes {
 			wg.Add(1)
 			var info gitapi.RepoInfoList
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
@@ -50,9 +50,9 @@ var repoListCmd = &cobra.Command{
 			case gitapi.Vendor_Gitea:
 				gitApi.Req.UrlVal.Add("limit", "100")
 			}
-			gitApi.Req.UrlVal.Add("page", strconv.Itoa(lib.Flag.Page))
+			gitApi.Req.UrlVal.Add("page", strconv.Itoa(global.Flag.Page))
 			gitApi.SetGet()
-			if lib.Flag.NoParallel {
+			if global.Flag.NoParallel {
 				repoDo(gitApi, &wg, false)
 			} else {
 				go repoDo(gitApi, &wg, false)
@@ -64,5 +64,5 @@ var repoListCmd = &cobra.Command{
 
 func init() {
 	repoCmd.AddCommand(repoListCmd)
-	repoListCmd.Flags().IntVarP(&lib.Flag.Page, "page", "p", 1, "Page number")
+	repoListCmd.Flags().IntVarP(&global.Flag.Page, "page", "p", 1, "Page number")
 }

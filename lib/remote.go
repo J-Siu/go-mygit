@@ -35,16 +35,18 @@ import (
 
 // Remote entry in config file
 type Remote struct {
-	Name  string `json:"name"`  // Name of remote entry, also use as git remote name
-	Group string `json:"group"` // Group name
-	Ssh   string `json:"ssh"`   // Ssh url for git server
+	Name  string `json:"name,omitempty"`  // Name of remote entry, also use as git remote name
+	Group string `json:"group,omitempty"` // Group name
+	Ssh   string `json:"ssh,omitempty"`   // Ssh url for git server
 
-	Entrypoint string `json:"entrypoint"` // Api entrypoint url
-	Token      string `json:"token"`      // Api token
-	User       string `json:"user"`       // Api user
-	Private    bool   `json:"private"`    // Default private value
-	Vendor     string `json:"vendor"`     // Api vendor/brand
-	SkipVerify bool   `json:"skipverify"` // Api request skip cert verify (allow self-signed cert)
+	Entrypoint string `json:"entrypoint,omitempty"` // Api entrypoint url
+	Token      string `json:"token,omitempty"`      // Api token
+	User       string `json:"user,omitempty"`       // Api user
+	Private    bool   `json:"private,omitempty"`    // Default private value
+	Vendor     string `json:"vendor,omitempty"`     // Api vendor/brand
+	SkipVerify bool   `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)
+
+	NoTitle bool `json:"no_title,omitempty"` // This is pass from global.Flag
 }
 
 func (remote *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
@@ -72,7 +74,7 @@ func (remote *Remote) Add(workPathP *string) *cmd.Cmd {
 	var git string = remote.Ssh + ":/" + remote.User + "/" + repo + ".git"
 	var myCmd = gitcmd.GitRemoteAdd(&fullPath, remote.Name, git)
 	var title string
-	if !Flag.NoTitle {
+	if !remote.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
 
@@ -93,7 +95,7 @@ func (remote *Remote) Remove(workPathP *string) *cmd.Cmd {
 		myCmd = gitcmd.GitRemoteRemove(workPathP, remote.Name)
 	}
 	var title string
-	if myCmd != nil && !Flag.NoTitle {
+	if myCmd != nil && !remote.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 		if myCmd.Stdout.Len() > 0 {
 			ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
@@ -106,13 +108,13 @@ func (remote *Remote) Remove(workPathP *string) *cmd.Cmd {
 }
 
 // Push all Remotes in git repository
-func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cmd {
+func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
 	var myCmd *cmd.Cmd = gitcmd.GitPush(workPathP, optionsP)
 	var title string
-	if !Flag.NoTitle {
+	if !noTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
 	if myCmd.Stdout.Len() > 0 {
@@ -125,7 +127,7 @@ func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cm
 }
 
 // Push all Remotes in git repository
-func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cmd {
+func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
@@ -133,7 +135,7 @@ func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cm
 	var myCmd *cmd.Cmd = gitcmd.GitPull(workPathP, optionsP)
 
 	var title string
-	if !Flag.NoTitle {
+	if !noTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
 	if myCmd.Stdout.Len() > 0 {
@@ -146,7 +148,7 @@ func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cm
 }
 
 // git clone to current directory
-func GitClone(optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cmd {
+func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
@@ -154,7 +156,7 @@ func GitClone(optionsP *[]string, wgP *sync.WaitGroup) *cmd.Cmd {
 	var myCmd *cmd.Cmd = gitcmd.GitClone(nil, optionsP)
 
 	var title string
-	if !Flag.NoTitle {
+	if !noTitle {
 		title = myCmd.CmdLn
 	}
 	if myCmd.Stdout.Len() > 0 {

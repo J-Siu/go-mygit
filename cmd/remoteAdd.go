@@ -25,16 +25,16 @@ package cmd
 import (
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
 // addCmd represents the add command
 var remoteAddCmd = &cobra.Command{
-	Use:     "add " + lib.TXT_REPO_DIR_USE,
+	Use:     "add " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"a"},
 	Short:   "Add git remote",
-	Long:    "Add git remote. " + lib.TXT_FLAGS_USE,
+	Long:    "Add git remote. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			args = []string{"."}
@@ -44,7 +44,7 @@ var remoteAddCmd = &cobra.Command{
 				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
 				return
 			}
-			for _, remote := range lib.Conf.MergedRemotes {
+			for _, remote := range global.Conf.MergedRemotes {
 				remote.Add(&workPath)
 			}
 		}

@@ -27,16 +27,16 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
 // Delete repository action secret
 var repoDelSecretCmd = &cobra.Command{
-	Use:     "secret " + lib.TXT_REPO_DIR_USE,
+	Use:     "secret " + global.TXT_REPO_DIR_USE,
 	Aliases: []string{"s"},
 	Short:   "Delete action secret",
-	Long:    "Delete action secret. If --name is not set, all secrets in config will be used. " + lib.TXT_REPO_DIR_LONG,
+	Long:    "Delete action secret. If --name is not set, all secrets in config will be used. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
 		// If no repo specified in command line, add a ""
@@ -44,23 +44,23 @@ var repoDelSecretCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		// Use secrets in conf if not specified in command line
-		if len(lib.Flag.SecretsDel) == 0 {
-			for _, s := range lib.Conf.Secrets {
-				lib.Flag.SecretsDel = append(lib.Flag.SecretsDel, s.Name)
+		if len(global.Flag.SecretsDel) == 0 {
+			for _, s := range global.Conf.Secrets {
+				global.Flag.SecretsDel = append(global.Flag.SecretsDel, s.Name)
 			}
 		}
 		for _, workPath := range args {
-			for _, remote := range lib.Conf.MergedRemotes {
+			for _, remote := range global.Conf.MergedRemotes {
 				if remote.Vendor != gitapi.Vendor_Github {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
-					for _, secret := range lib.Flag.SecretsDel {
+					for _, secret := range global.Flag.SecretsDel {
 						wg.Add(1)
 						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, gitapi.Nil())
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
 						gitApi.SetDel()
-						if lib.Flag.NoParallel {
+						if global.Flag.NoParallel {
 							repoDo(gitApi, &wg, true)
 						} else {
 							go repoDo(gitApi, &wg, true)
@@ -75,5 +75,5 @@ var repoDelSecretCmd = &cobra.Command{
 
 func init() {
 	repoDelCmd.AddCommand(repoDelSecretCmd)
-	repoDelSecretCmd.Flags().StringArrayVarP(&lib.Flag.SecretsDel, "name", "n", []string{}, "Secret name")
+	repoDelSecretCmd.Flags().StringArrayVarP(&global.Flag.SecretsDel, "name", "n", []string{}, "Secret name")
 }

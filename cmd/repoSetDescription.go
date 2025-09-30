@@ -26,7 +26,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
 
@@ -41,12 +41,12 @@ var repoSetDescriptionCmd = &cobra.Command{
 		if len(args) > 0 {
 			info.Description = args[0]
 		}
-		for _, remote := range lib.Conf.MergedRemotes {
+		for _, remote := range global.Conf.MergedRemotes {
 			wg.Add(1)
 			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
 			gitApi.EndpointRepos()
 			gitApi.SetPatch()
-			if lib.Flag.NoParallel {
+			if global.Flag.NoParallel {
 				repoDo(gitApi, &wg, true)
 			} else {
 				go repoDo(gitApi, &wg, true)
