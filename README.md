@@ -399,6 +399,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Fix receiver name
 - v2.7.8
   - Upgrade go-helper/v2
+- v2.7.9
+  - Fix output
 
 ### License
 
