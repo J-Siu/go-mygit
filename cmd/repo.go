@@ -56,7 +56,7 @@ func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 	if status {
 		if statusOnly {
 			// helper.ReportStatus(status, title, true)
-			ezlog.Log().Name(title).Msg(status).Out()
+			ezlog.Log().N(title).M(status).Out()
 		} else {
 			singleLine := false
 			output := gitApi.Output()
@@ -68,15 +68,15 @@ func repoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool) {
 			}
 			if !(output == nil || *output == "") || global.Flag.NoSkip {
 				if singleLine {
-					ezlog.Log().Name(title).Msg(output).Out()
+					ezlog.Log().N(title).M(output).Out()
 				} else {
-					ezlog.Log().NameLn(title).Msg(output).Out()
+					ezlog.Log().Nn(title).M(output).Out()
 				}
 			}
 		}
 	} else {
 		// API or HTTP GET failed, try to extract error message
-		ezlog.Err().Name(title).Msg(gitApi.Err()).Out()
+		ezlog.Err().N(title).M(gitApi.Err()).Out()
 	}
 }
 
@@ -97,10 +97,10 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	// Cannot use repoGetFunc(gitApi, nil), as we don't want print out here
 	gitApi.Get()
 	if !gitApi.Ok() {
-		ezlog.Err().Name(title).Msg(gitApi.Err()).Out()
+		ezlog.Err().N(title).M(gitApi.Err()).Out()
 		return
 	}
-	ezlog.Debug().NameLn("RepoNodeId").Msg(&info).Out()
+	ezlog.Debug().Nn("RepoNodeId").M(&info).Out()
 
 	// Use Github GraphQL as unarchive not supported by rest api
 	gitApi.Req.Entrypoint = "https://api.github.com/graphql" // Github GraphQL entrypoint
@@ -124,16 +124,16 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	// Use jq to extract isArchived and description
 	op, err = jq.Parse(".data.unarchiveRepository.repository.isArchived")
 	if err != nil {
-		ezlog.Err().Name(title).Msg(err).Out()
+		ezlog.Err().N(title).M(err).Out()
 		return
 	}
 	isArchived, err := op.Apply(*gitApi.Res.Body)
 	if err != nil {
-		ezlog.Err().Name(title).Msg(err).Out()
+		ezlog.Err().N(title).M(err).Out()
 		return
 	}
 	// No error, print result
-	ezlog.Log().Name(title).Msg(isArchived).Out()
+	ezlog.Log().N(title).M(isArchived).Out()
 }
 
 type RepoArchived struct {

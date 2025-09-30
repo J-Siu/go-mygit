@@ -33,7 +33,7 @@ var confSecretsCmd = &cobra.Command{
 	Aliases: []string{"s", "sec"},
 	Short:   "Print secret configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		ezlog.Log().NameLn("Secrets").Msg(&global.Conf.Secrets).Out()
+		ezlog.Log().Nn("Secrets").M(&global.Conf.Secrets).Out()
 	},
 }
 

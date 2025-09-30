@@ -44,13 +44,13 @@ var rootCloneCmd = &cobra.Command{
 		if len(global.Flag.Groups) != 0 || // should not have --group
 			len(global.Flag.Remotes) != 1 || // need exactly 1 --remote
 			len(args) == 0 { // need >0 repo name
-			ezlog.Log().Msg(global.TXT_REPO_CLONE_LONG).Out()
+			ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
 			os.Exit(1)
 		}
 		// Check remote name exist
 		var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 		if remote == nil {
-			ezlog.Log().Name("Remote not configured").Msg(global.Flag.Remotes[0]).Out()
+			ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
 			os.Exit(1)
 		}
 

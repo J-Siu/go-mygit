@@ -34,7 +34,7 @@ var confRemotesCmd = &cobra.Command{
 	Aliases: []string{"r", "rmt"},
 	Short:   "Print remotes configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		ezlog.Log().NameLn("Remotes").Msg(&global.Conf.Remotes).Out()
+		ezlog.Log().Nn("Remotes").M(&global.Conf.Remotes).Out()
 	},
 }
 

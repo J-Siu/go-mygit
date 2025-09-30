@@ -33,7 +33,7 @@ var confGroupsCmd = &cobra.Command{
 	Aliases: []string{"g", "grp"},
 	Short:   "Print groups configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		ezlog.Log().NameLn("Groups").Msg(&global.Conf.Groups).Out()
+		ezlog.Log().Nn("Groups").M(&global.Conf.Groups).Out()
 	},
 }
 

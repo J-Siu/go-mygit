@@ -43,7 +43,7 @@ func (cs *ConfSecret) Encrypt(pubKeyP *gitapi.RepoPublicKey) *gitapi.RepoEncrypt
 	encrypted_value, e := crypto.BoxSealAnonymous(&pubKeyP.Key, &cs.Value)
 	ep.Encrypted_value = *encrypted_value
 	if e != nil {
-		ezlog.Err().Msg(e).Out()
+		ezlog.Err().M(e).Out()
 	}
 	return &ep
 }

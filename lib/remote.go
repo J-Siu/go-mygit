@@ -79,10 +79,10 @@ func (remote *Remote) Add(workPathP *string) *cmd.Cmd {
 	}
 
 	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
 	}
 	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
 	}
 
 	return myCmd
@@ -98,10 +98,10 @@ func (remote *Remote) Remove(workPathP *string) *cmd.Cmd {
 	if myCmd != nil && !remote.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 		if myCmd.Stdout.Len() > 0 {
-			ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+			ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
 		}
 		if myCmd.Stderr.Len() > 0 {
-			ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+			ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
 		}
 	}
 	return myCmd
@@ -118,10 +118,10 @@ func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
 	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
 	}
 	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
 	}
 	return myCmd
 }
@@ -139,10 +139,10 @@ func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
 	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
 	}
 	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
 	}
 	return myCmd
 }
@@ -160,10 +160,10 @@ func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
 		title = myCmd.CmdLn
 	}
 	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stdout.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
 	}
 	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().NameLn(title).Msg(myCmd.Stderr.String()).Out()
+		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
 	}
 	return myCmd
 }

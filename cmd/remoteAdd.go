@@ -41,7 +41,7 @@ var remoteAddCmd = &cobra.Command{
 		}
 		for _, workPath := range args {
 			if gitcmd.GitRoot(&workPath) == "" {
-				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
+				ezlog.Log().N(workPath).M("is not a git repository").Out()
 				return
 			}
 			for _, remote := range global.Conf.MergedRemotes {

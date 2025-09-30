@@ -49,7 +49,7 @@ var repoSetSecretCmd = &cobra.Command{
 		}
 		// --name/--value must be used together
 		if global.Flag.Secret.Name == "" || global.Flag.Secret.Value == "" {
-			ezlog.Err().Msg("Both -n/--name and -v/--value must be set").Out()
+			ezlog.Err().M("Both -n/--name and -v/--value must be set").Out()
 			os.Exit(1)
 		}
 		for _, workPath := range args {
@@ -58,12 +58,12 @@ var repoSetSecretCmd = &cobra.Command{
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
 					// "GET" public key
-					ezlog.Log().Name(remote.Name).Out()
+					ezlog.Log().N(remote.Name).Out()
 					var pubkey gitapi.RepoPublicKey
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey)
 					gitApi.EndpointReposSecretsPubkey()
 					ok := gitApi.SetGet().Do().Ok()
-					ezlog.Log().Name("Get Actions Public Key").Msg(ok)
+					ezlog.Log().N("Get Actions Public Key").M(ok)
 					if !ok {
 						os.Exit(1)
 					}

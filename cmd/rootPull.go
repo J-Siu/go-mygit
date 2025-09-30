@@ -47,19 +47,19 @@ var rootPullCmd = &cobra.Command{
 		// Check flag
 		if len(global.Flag.Groups) != 0 || // should not have --group
 			len(global.Flag.Remotes) != 1 { // need exactly 1 --remote
-			ezlog.Log().Msg(global.TXT_REPO_CLONE_LONG).Out()
+			ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
 			os.Exit(1)
 		}
 		// Check remote name exist
 		var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 		if remote == nil {
-			ezlog.Log().Name("Remote not configured").Msg(global.Flag.Remotes[0]).Out()
+			ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
 			os.Exit(1)
 		}
 
 		for _, workPath := range args {
 			if gitcmd.GitRoot(&workPath) == "" {
-				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
+				ezlog.Log().N(workPath).M("is not a git repository").Out()
 				continue
 			}
 

@@ -43,18 +43,14 @@ var rootCmd = &cobra.Command{
 			ezlog.SetLogLevel(ezlog.DebugLevel)
 		}
 
-		ezlog.Debug().
-			Name("Version").MsgLn(global.Version).
-			NameLn("Flag").
-			Msg(&global.Flag).
-			Out()
+		ezlog.Debug().N("Version").Mn(global.Version).Nn("Flag").M(&global.Flag).Out()
 
 		global.Conf.New(&global.Flag.Groups, &global.Flag.Remotes)
 
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		if !errs.IsEmpty() {
-			ezlog.Err().NameLn("Error").Msg(errs.Errs).Out()
+			ezlog.Err().Nn("Error").M(errs.Errs).Out()
 			os.Exit(1)
 		}
 	},

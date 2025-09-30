@@ -46,7 +46,7 @@ var rootPushCmd = &cobra.Command{
 		}
 		for _, workPath := range args {
 			if gitcmd.GitRoot(&workPath) == "" {
-				ezlog.Log().Name(workPath).Msg("is not a git repository").Out()
+				ezlog.Log().N(workPath).M("is not a git repository").Out()
 				continue
 			}
 
@@ -59,7 +59,7 @@ var rootPushCmd = &cobra.Command{
 				if str.ArrayContains(&remoteLocal, &remote.Name) {
 					remoteQueue = append(remoteQueue, remote.Name)
 				} else {
-					ezlog.Log().Name(workPath).Name("Remote not setup").Msg(remote.Name)
+					ezlog.Log().N(workPath).N("Remote not setup").M(remote.Name)
 				}
 			}
 

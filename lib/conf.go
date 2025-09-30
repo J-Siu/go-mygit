@@ -58,18 +58,18 @@ func (c *TypeConf) New(flagGroups, flagRemotes *[]string) {
 	prefix := c.myType + ".Init"
 
 	c.setDefault()
-	ezlog.Debug().Name(prefix).NameLn("Default").Msg(c).Out()
+	ezlog.Debug().N(prefix).Nn("Default").M(c).Out()
 
 	c.readFileConf()
 	if c.Err == nil {
 		c.initGroups()
 		c.mergeRemotes(flagGroups, flagRemotes)
 
-		ezlog.Debug().Name(prefix).NameLn("Raw").Msg(c).Out()
+		ezlog.Debug().N(prefix).Nn("Raw").M(c).Out()
 
 		c.expand()
 
-		ezlog.Debug().Name(prefix).NameLn("Expand").Msg(c).Out()
+		ezlog.Debug().N(prefix).Nn("Expand").M(c).Out()
 	}
 }
 
@@ -84,7 +84,7 @@ func (c *TypeConf) readFileConf() {
 	if c.Err == nil {
 		viper.Unmarshal(&c)
 	} else {
-		ezlog.Debug().Name(prefix).Msg(c.Err).Out()
+		ezlog.Debug().N(prefix).M(c.Err).Out()
 	}
 }
 
