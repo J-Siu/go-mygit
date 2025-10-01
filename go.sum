@@ -1,9 +1,9 @@
-github.com/J-Siu/go-crypto v1.0.4 h1:x2h7TNVglDlEqrFrGT3V3ZHhxPeiv+GLkX1Dug3Dem8=
-github.com/J-Siu/go-crypto v1.0.4/go.mod h1:+QTN17cYM3Icdc09H9TR7XWsZmaU6VqZ3uWzqJYNSxM=
-github.com/J-Siu/go-gitapi v1.6.2 h1:CutCbUpLpbQjIX7UXgWVTUX0wOxXgKfWX5orAoixnGQ=
-github.com/J-Siu/go-gitapi v1.6.2/go.mod h1:80jg6DMOm9V7gn3RHSKdwSrWAfRcx6L71dDQWGeY41E=
-github.com/J-Siu/go-gitcmd v0.0.3 h1:DczdIzaUgS2H+y2KFkAtrUpC8IH6rBpkdVz6VNHgPqw=
-github.com/J-Siu/go-gitcmd v0.0.3/go.mod h1:mPNHN5Qd8jrJ59kXzx9s3O2nQ+XGzty9HkO/WWiO+MQ=
+github.com/J-Siu/go-crypto v1.0.5 h1:q7dRIZtJbkLGln1v4UKK2rK7Se8GlAyAn9zAtL8WwLI=
+github.com/J-Siu/go-crypto v1.0.5/go.mod h1:Tjb8ZBJ8SrhSPRc56WV1pb2g2SHJc2lqbJJ7EifgUXE=
+github.com/J-Siu/go-gitapi v1.6.4 h1:t6Irsks1swY8I5cM9nNw0O7xGjPtYiwKHVPcfiE/DG4=
+github.com/J-Siu/go-gitapi v1.6.4/go.mod h1:L4Dn1VDJp9lpWyjbOjJ3gMiGRzLv8LeI0pP2H3vB+eE=
+github.com/J-Siu/go-gitcmd v0.0.5 h1:EL9Xvpi4jHUyuthKSCqRGonh4IUbsP0Cwcdo4z/b/is=
+github.com/J-Siu/go-gitcmd v0.0.5/go.mod h1:ji7ItvGvBeOw/S4laDVBeKHLimJm+oMxZFwhrsLaZEk=
 github.com/J-Siu/go-helper/v2 v2.4.1 h1:lVjXyXWRKuZnq9uhvwGm4Qd/jebQHyDsetGUaLte0/U=
 github.com/J-Siu/go-helper/v2 v2.4.1/go.mod h1:yjoN0uaZ75FX8xKGMZ2WpY+OwQ074cTdIolarsBH9co=
 github.com/charlievieth/strcase v0.0.5 h1:gV4iXVyD6eI5KdfOV+/vIVCKXZwtCWOmDMcu7Uy00Rs=

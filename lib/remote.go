@@ -52,7 +52,7 @@ type Remote struct {
 func (remote *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
 	var fullPath string = *file.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
-	apiP := gitapi.GitApiNew(
+	apiP := gitapi.New(
 		remote.Name,
 		remote.Token,
 		remote.Entrypoint,

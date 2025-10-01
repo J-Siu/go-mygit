@@ -405,6 +405,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Upgrade go-helper/v2
 - v2.7.11
   - use basestruct
+- v2.7.12
+  - refresh dependency
 
 ### License
 
