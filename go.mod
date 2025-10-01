@@ -6,7 +6,7 @@ require (
 	github.com/J-Siu/go-crypto v1.0.4
 	github.com/J-Siu/go-gitapi v1.6.2
 	github.com/J-Siu/go-gitcmd v0.0.3
-	github.com/J-Siu/go-helper/v2 v2.3.3
+	github.com/J-Siu/go-helper/v2 v2.4.1
 	github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.21.0

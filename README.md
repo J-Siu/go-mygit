@@ -403,6 +403,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Fix output
 - v2.7.10
   - Upgrade go-helper/v2
+- v2.7.11
+  - use basestruct
 
 ### License
 

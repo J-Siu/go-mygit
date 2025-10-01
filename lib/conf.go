@@ -26,6 +26,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/J-Siu/go-helper/v2/basestruct"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-helper/v2/file"
 	"github.com/spf13/viper"
@@ -41,9 +42,7 @@ var Default = TypeConf{
 - Remotes, Secrets are read from config file by viper
 */
 type TypeConf struct {
-	Err    error
-	myType string
-	init   bool
+	*basestruct.Base
 
 	FileConf      string      `json:"FileConf"`
 	Groups        Groups      `json:"Groups"`
@@ -53,9 +52,10 @@ type TypeConf struct {
 }
 
 func (c *TypeConf) New(flagGroups, flagRemotes *[]string) {
-	c.init = true
-	c.myType = "TypeConf"
-	prefix := c.myType + ".Init"
+	c.Base = new(basestruct.Base)
+	c.Initialized = true
+	c.MyType = "TypeConf"
+	prefix := c.MyType + ".Init"
 
 	c.setDefault()
 	ezlog.Debug().N(prefix).Nn("Default").M(c).Out()
@@ -74,7 +74,7 @@ func (c *TypeConf) New(flagGroups, flagRemotes *[]string) {
 }
 
 func (c *TypeConf) readFileConf() {
-	prefix := c.myType + ".readFileConf"
+	prefix := c.MyType + ".readFileConf"
 
 	viper.SetConfigType("json")
 	viper.SetConfigFile(file.TildeEnvExpand(c.FileConf))
