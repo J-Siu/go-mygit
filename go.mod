@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	github.com/J-Siu/go-crypto v1.1.0
-	github.com/J-Siu/go-gitapi v1.6.4
+	github.com/J-Siu/go-gitapi/v2 v2.0.0
 	github.com/J-Siu/go-gitcmd v0.0.5
 	github.com/J-Siu/go-helper/v2 v2.4.2
 	github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8
@@ -13,6 +13,7 @@ require (
 )
 
 require (
+	github.com/J-Siu/go-restapi v1.0.0 // indirect
 	github.com/charlievieth/strcase v0.0.5 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect

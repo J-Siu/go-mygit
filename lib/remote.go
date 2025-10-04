@@ -26,7 +26,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/cmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
@@ -39,28 +39,32 @@ type Remote struct {
 	Group string `json:"group,omitempty"` // Group name
 	Ssh   string `json:"ssh,omitempty"`   // Ssh url for git server
 
-	Entrypoint string `json:"entrypoint,omitempty"` // Api entrypoint url
-	Token      string `json:"token,omitempty"`      // Api token
-	User       string `json:"user,omitempty"`       // Api user
-	Private    bool   `json:"private,omitempty"`    // Default private value
-	Vendor     string `json:"vendor,omitempty"`     // Api vendor/brand
-	SkipVerify bool   `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)
+	EntryPoint string        `json:"entrypoint,omitempty"` // Api entrypoint url
+	Token      string        `json:"token,omitempty"`      // Api token.
+	User       string        `json:"user,omitempty"`       // Api user
+	Private    bool          `json:"private,omitempty"`    // Default private value
+	Vendor     gitapi.Vendor `json:"vendor,omitempty"`     // Api vendor/brand
+	SkipVerify bool          `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)
 
 	NoTitle bool `json:"no_title,omitempty"` // This is pass from global.Flag
 }
 
-func (remote *Remote) GetGitApi(workPathP *string, info gitapi.GitApiInfo) *gitapi.GitApi {
+func (remote *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {
 	var fullPath string = *file.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
-	apiP := gitapi.New(
-		remote.Name,
-		remote.Token,
-		remote.Entrypoint,
-		remote.User,
-		remote.Vendor,
-		remote.SkipVerify,
-		repo,
-		info)
+
+	property := gitapi.Property{
+		Name:       remote.Name,
+		Token:      remote.Token,
+		EntryPoint: remote.EntryPoint,
+		User:       remote.User,
+		Vendor:     remote.Vendor,
+		SkipVerify: remote.SkipVerify,
+		Repo:       repo,
+		Info:       info,
+		Debug:      debug}
+
+	apiP := gitapi.New(&property)
 	// Set Github header
 	apiP.HeaderGithub()
 	return apiP

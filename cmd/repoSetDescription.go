@@ -25,7 +25,8 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
@@ -37,13 +38,13 @@ var repoSetDescriptionCmd = &cobra.Command{
 	Short:   "Set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		var info gitapi.RepoDescription
+		var info repo.Description
 		if len(args) > 0 {
 			info.Description = args[0]
 		}
 		for _, remote := range global.Conf.MergedRemotes {
 			wg.Add(1)
-			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
+			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
 			gitApi.EndpointRepos()
 			gitApi.SetPatch()
 			if global.Flag.NoParallel {

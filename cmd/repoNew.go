@@ -25,7 +25,8 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-helper/v2/file"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
@@ -46,10 +47,10 @@ var repoNewCmd = &cobra.Command{
 		for _, workPath := range args {
 			for _, remote := range global.Conf.MergedRemotes {
 				wg.Add(1)
-				var info gitapi.RepoInfo
+				var info repo.Info
 				info.Name = path.Base(workPath)
 				info.Private = remote.Private
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 				gitApi.EndpointUserRepos()
 				gitApi.SetPost()
 				if global.Flag.NoParallel {

@@ -25,7 +25,8 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
@@ -40,14 +41,14 @@ var repoListCmd = &cobra.Command{
 		var wg sync.WaitGroup
 		for _, remote := range global.Conf.MergedRemotes {
 			wg.Add(1)
-			var info gitapi.RepoInfoList
-			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info)
+			var info repo.InfoList
+			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
 			gitApi.EndpointUserRepos()
 			gitApi.Req.UrlValInit()
 			switch remote.Vendor {
-			case gitapi.Vendor_Github:
+			case gitapi.VendorGithub:
 				gitApi.Req.UrlVal.Add("per_page", "100")
-			case gitapi.Vendor_Gitea:
+			case gitapi.VendorGitea:
 				gitApi.Req.UrlVal.Add("limit", "100")
 			}
 			gitApi.Req.UrlVal.Add("page", strconv.Itoa(global.Flag.Page))

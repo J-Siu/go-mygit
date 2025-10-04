@@ -27,7 +27,8 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
@@ -54,13 +55,13 @@ var repoSetSecretCmd = &cobra.Command{
 		}
 		for _, workPath := range args {
 			for _, remote := range global.Conf.MergedRemotes {
-				if remote.Vendor != gitapi.Vendor_Github {
+				if remote.Vendor != gitapi.VendorGithub {
 					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 				} else {
 					// "GET" public key
 					ezlog.Log().N(remote.Name).Out()
-					var pubkey gitapi.RepoPublicKey
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey)
+					var pubkey repo.PublicKey
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey, global.Flag.Debug)
 					gitApi.EndpointReposSecretsPubkey()
 					ok := gitApi.SetGet().Do().Ok()
 					ezlog.Log().N("Get Actions Public Key").M(ok)
@@ -79,8 +80,8 @@ var repoSetSecretCmd = &cobra.Command{
 					// Use config secrets
 					for _, secret := range *secretsP {
 						wg.Add(1)
-						var infoP *gitapi.RepoEncryptedPair = secret.Encrypt(&pubkey)
-						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP)
+						var infoP *repo.EncryptedPair = secret.Encrypt(&pubkey)
+						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP, global.Flag.Debug)
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
 						gitApi.SetPut()

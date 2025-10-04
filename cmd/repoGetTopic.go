@@ -24,7 +24,8 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
@@ -42,9 +43,9 @@ var repoGetTopicCmd = &cobra.Command{
 		}
 		for _, workPath := range args {
 			for _, remote := range global.Conf.MergedRemotes {
-				var info gitapi.RepoTopics
+				var info repo.Topics
 				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 				gitApi.EndpointReposTopics()
 				gitApi.SetGet()
 				if global.Flag.NoParallel {

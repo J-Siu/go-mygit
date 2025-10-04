@@ -24,7 +24,7 @@ package lib
 
 import (
 	"github.com/J-Siu/go-crypto/crypto"
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 )
 
@@ -37,8 +37,8 @@ type ConfSecret struct {
 type ConfSecrets []ConfSecret
 
 // Do NACL box encryption
-func (cs *ConfSecret) Encrypt(pubKeyP *gitapi.RepoPublicKey) *gitapi.RepoEncryptedPair {
-	var ep gitapi.RepoEncryptedPair
+func (cs *ConfSecret) Encrypt(pubKeyP *repo.PublicKey) *repo.EncryptedPair {
+	var ep repo.EncryptedPair
 	ep.Key_id = pubKeyP.Key_id
 	encrypted_value, e := crypto.BoxSealAnonymous(&pubKeyP.Key, &cs.Value)
 	ep.Encrypted_value = *encrypted_value

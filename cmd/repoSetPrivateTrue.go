@@ -24,7 +24,8 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
@@ -37,7 +38,7 @@ var repoSetPrivateTrueCmd = &cobra.Command{
 	Long:    "Set to true. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		var info gitapi.RepoPrivate
+		var info repo.Private
 		info.Private = true
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
@@ -46,7 +47,7 @@ var repoSetPrivateTrueCmd = &cobra.Command{
 		for _, workPath := range args {
 			for _, remote := range global.Conf.MergedRemotes {
 				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 				gitApi.EndpointRepos()
 				gitApi.SetPatch()
 				if global.Flag.NoParallel {

@@ -25,7 +25,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/savaki/jq"
@@ -103,7 +103,7 @@ func repoUnarchiveGithub(gitApi *gitapi.GitApi, wg *sync.WaitGroup) {
 	ezlog.Debug().Nn("RepoNodeId").M(&info).Out()
 
 	// Use Github GraphQL as unarchive not supported by rest api
-	gitApi.Req.Entrypoint = "https://api.github.com/graphql" // Github GraphQL entrypoint
+	gitApi.Req.EntryPoint = "https://api.github.com/graphql" // Github GraphQL entrypoint
 	gitApi.Req.Endpoint = ""                                 // No endpoint for GraphGL
 	gitApi.Info = nil                                        // Not using struct, not a REST operation
 	// GraphQL query

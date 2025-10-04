@@ -409,6 +409,8 @@ https://github.com/J-Siu/go-mygit/releases
   - refresh dependency
 - v2.7.13
   - Update go-crypto
+- v2.7.14
+  - Update go-gitapi to v2
 
 ### License
 

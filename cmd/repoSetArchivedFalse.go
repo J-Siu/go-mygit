@@ -24,7 +24,7 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi"
+	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
 )
@@ -46,17 +46,17 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 		for _, workPath := range args {
 			for _, remote := range global.Conf.MergedRemotes {
 				wg.Add(1)
-				if remote.Vendor == gitapi.Vendor_Github {
+				if remote.Vendor == gitapi.VendorGithub {
 					// Github need graph api
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil)
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
 					if global.Flag.NoParallel {
 						repoUnarchiveGithub(gitApi, &wg)
 					} else {
 						go repoUnarchiveGithub(gitApi, &wg)
 					}
 				}
-				if remote.Vendor == gitapi.Vendor_Gitea {
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info)
+				if remote.Vendor == gitapi.VendorGitea {
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 					gitApi.EndpointRepos()
 					gitApi.SetPatch()
 					if global.Flag.NoParallel {
