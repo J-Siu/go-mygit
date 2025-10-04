@@ -407,6 +407,8 @@ https://github.com/J-Siu/go-mygit/releases
   - use basestruct
 - v2.7.12
   - refresh dependency
+- v2.7.13
+  - Update go-crypto
 
 ### License
 

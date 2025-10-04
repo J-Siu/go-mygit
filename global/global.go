@@ -33,7 +33,7 @@ const (
 )
 
 var (
-	Version = "v2.7.12"
+	Version = "v2.7.13"
 
 	Conf lib.TypeConf
 	Flag lib.TypeFlag
