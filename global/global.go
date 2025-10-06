@@ -22,7 +22,10 @@ THE SOFTWARE.
 
 package global
 
-import "github.com/J-Siu/go-mygit/v2/lib"
+import (
+	"github.com/J-Siu/go-helper/v2/ver"
+	"github.com/J-Siu/go-mygit/v2/lib"
+)
 
 const (
 	TXT_FLAGS_USE       = "If -r/-g not specified, all remotes in config file will be used. "
@@ -33,7 +36,7 @@ const (
 )
 
 var (
-	Version = "v2.7.13"
+	Version = ver.M(2).N(7).P(14)
 
 	Conf lib.TypeConf
 	Flag lib.TypeFlag

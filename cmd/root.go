@@ -36,7 +36,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "go-mygit",
 	Short:   `Git and Repo automation made easy.`,
-	Version: global.Version,
+	Version: global.Version.String(),
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		ezlog.SetLogLevel(ezlog.ERR)
 		if global.Flag.Debug {
@@ -50,7 +50,8 @@ var rootCmd = &cobra.Command{
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		if !errs.IsEmpty() {
-			ezlog.Err().Nn("Error").M(errs.Errs).Out()
+			ezlog.Err().Ln().M(errs.Errs).Out()
+			cmd.Usage()
 			os.Exit(1)
 		}
 	},
