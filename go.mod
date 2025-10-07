@@ -4,10 +4,9 @@ go 1.25.1
 
 require (
 	github.com/J-Siu/go-crypto v1.1.0
-	github.com/J-Siu/go-gitapi/v2 v2.0.0
+	github.com/J-Siu/go-gitapi/v2 v2.0.1
 	github.com/J-Siu/go-gitcmd v0.0.5
-	github.com/J-Siu/go-helper/v2 v2.4.2
-	github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8
+	github.com/J-Siu/go-helper/v2 v2.5.1
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.21.0
 )

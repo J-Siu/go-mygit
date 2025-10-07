@@ -22,12 +22,11 @@ THE SOFTWARE.
 
 package global
 
-import (
-	"github.com/J-Siu/go-helper/v2/ver"
-	"github.com/J-Siu/go-mygit/v2/lib"
-)
+import "github.com/J-Siu/go-mygit/v2/lib"
 
 const (
+	Version = "v2.7.15"
+
 	TXT_FLAGS_USE       = "If -r/-g not specified, all remotes in config file will be used. "
 	TXT_REPO_CLONE_LONG = "Provide at least one repository name(not url). Need exactly one -r/--remote. Do not accept -g/--group."
 	TXT_REPO_CLONE_USE  = "<repository ...>"
@@ -36,8 +35,6 @@ const (
 )
 
 var (
-	Version = ver.M(2).N(7).P(14)
-
 	Conf lib.TypeConf
 	Flag lib.TypeFlag
 )

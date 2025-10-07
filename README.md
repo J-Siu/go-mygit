@@ -404,13 +404,17 @@ https://github.com/J-Siu/go-mygit/releases
 - v2.7.10
   - Upgrade go-helper/v2
 - v2.7.11
-  - use basestruct
+  - Use basestruct
 - v2.7.12
-  - refresh dependency
+  - Refresh dependency
 - v2.7.13
   - Update go-crypto
 - v2.7.14
   - Update go-gitapi to v2
+- v2.7.15
+  - Move repoDo() to lib
+  - Update go-gitapi/v2
+  - Use go-gitapi to handle github archive, unarchive
 
 ### License
 

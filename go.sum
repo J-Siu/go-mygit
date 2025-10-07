@@ -1,11 +1,11 @@
 github.com/J-Siu/go-crypto v1.1.0 h1:YjlRnFiRqLHUwD7WrusADTzlC1qAuBqkuRGwC3uRO8s=
 github.com/J-Siu/go-crypto v1.1.0/go.mod h1:8cZ7japm6Wa6z5JYZu1QKcHqx5i+ZQuAUlyrZoIKdiM=
-github.com/J-Siu/go-gitapi/v2 v2.0.0 h1:shY/qhsfiswLHFgNtcBhSGqsVvFzCh2BARIihpOl5L0=
-github.com/J-Siu/go-gitapi/v2 v2.0.0/go.mod h1:HAvgYrXXqw+J6QlrxfsqgOOt2fuC7E4SFLq5KfH048U=
+github.com/J-Siu/go-gitapi/v2 v2.0.1 h1:CXhV+JSXYG2jj2MvraZtnHv3XfP75n5VOyvR3qpwk/c=
+github.com/J-Siu/go-gitapi/v2 v2.0.1/go.mod h1:zweTDVqRKznaNq3fPwrD9yzkxPPyISdbRA3XSl1A8bE=
 github.com/J-Siu/go-gitcmd v0.0.5 h1:EL9Xvpi4jHUyuthKSCqRGonh4IUbsP0Cwcdo4z/b/is=
 github.com/J-Siu/go-gitcmd v0.0.5/go.mod h1:ji7ItvGvBeOw/S4laDVBeKHLimJm+oMxZFwhrsLaZEk=
-github.com/J-Siu/go-helper/v2 v2.4.2 h1:/qYtHqCcsqS6cx1Ulgsx2EcfL72lvsknC7JwgfojBy0=
-github.com/J-Siu/go-helper/v2 v2.4.2/go.mod h1:yjoN0uaZ75FX8xKGMZ2WpY+OwQ074cTdIolarsBH9co=
+github.com/J-Siu/go-helper/v2 v2.5.1 h1:LxLhgsIo4YVAflxPk2HMa0pOZ4er8QKi2ZPea/efe3c=
+github.com/J-Siu/go-helper/v2 v2.5.1/go.mod h1:yjoN0uaZ75FX8xKGMZ2WpY+OwQ074cTdIolarsBH9co=
 github.com/J-Siu/go-restapi v1.0.0 h1:b7TqLnQ45Uo8ejUZS/SuB14g30i9Hg0X6e99t3JBa8M=
 github.com/J-Siu/go-restapi v1.0.0/go.mod h1:dsZa4Mrb3Lvyojx6eJQ8aEOElN7J2mr+iEItWGzhapk=
 github.com/charlievieth/strcase v0.0.5 h1:gV4iXVyD6eI5KdfOV+/vIVCKXZwtCWOmDMcu7Uy00Rs=
@@ -36,8 +36,6 @@ github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/f
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/sagikazarmark/locafero v0.12.0 h1:/NQhBAkUb4+fH1jivKHWusDYFjMOOKU88eegjfxfHb4=
 github.com/sagikazarmark/locafero v0.12.0/go.mod h1:sZh36u/YSZ918v0Io+U9ogLYQJ9tLLBmM4eneO6WwsI=
-github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8 h1:ajJQhvqPSQFJJ4aV5mDAMx8F7iFi6Dxfo6y62wymLNs=
-github.com/savaki/jq v0.0.0-20161209013833-0e6baecebbf8/go.mod h1:Nw/CCOXNyF5JDd6UpYxBwG5WWZ2FOJ/d5QnXL4KQ6vY=
 github.com/spf13/afero v1.15.0 h1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=
 github.com/spf13/afero v1.15.0/go.mod h1:NC2ByUVxtQs4b3sIUphxK0NioZnmxgyCrfzeuq8lxMg=
 github.com/spf13/cast v1.10.0 h1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=
