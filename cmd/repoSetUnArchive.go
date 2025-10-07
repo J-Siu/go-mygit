@@ -23,16 +23,46 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"sync"
+
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
 // publicCmd represents the public command
-var repoSetArchivedCmd = &cobra.Command{
-	Use:     "archived",
-	Aliases: []string{"a"},
-	Short:   "Set archived status",
+var repoSetUnarchive = &cobra.Command{
+	Use:     "unarchive " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"u"},
+	Short:   "Set archived to false.",
+	Long:    "Set archived to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+	Run: func(cmd *cobra.Command, args []string) {
+		var wg sync.WaitGroup
+		var info repo.Archived
+		info.Archived = false
+		// If no repo/dir specified in command line, add a ""
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+		for _, workPath := range args {
+			for _, remote := range global.Conf.MergedRemotes {
+				wg.Add(1)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+				gitApi.EndpointRepos()
+				gitApi.SetPatch()
+				if global.Flag.NoParallel {
+					lib.RepoDo(gitApi, &wg, true, &global.Flag)
+				} else {
+					go lib.RepoDo(gitApi, &wg, true, &global.Flag)
+				}
+			}
+		}
+		wg.Wait()
+	},
 }
 
 func init() {
-	repoSetCmd.AddCommand(repoSetArchivedCmd)
+	repoSetCmd.AddCommand(repoSetUnarchive)
 }

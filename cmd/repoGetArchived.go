@@ -26,7 +26,9 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -44,14 +46,14 @@ var repoGetArchivedCmd = &cobra.Command{
 		for _, workPath := range args {
 			for _, remote := range global.Conf.MergedRemotes {
 				wg.Add(1)
-				var info RepoArchived
+				var info repo.Archived
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 				gitApi.EndpointRepos()
 				gitApi.SetGet()
 				if global.Flag.NoParallel {
-					repoDo(gitApi, &wg, false)
+					lib.RepoDo(gitApi, &wg, false, &global.Flag)
 				} else {
-					go repoDo(gitApi, &wg, false)
+					go lib.RepoDo(gitApi, &wg, false, &global.Flag)
 				}
 			}
 		}

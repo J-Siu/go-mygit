@@ -26,20 +26,22 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
-// publicCmd represents the public command
-var repoSetArchivedFalseCmd = &cobra.Command{
-	Use:     "false " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"f"},
-	Short:   "Set to false.",
-	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+// privateCmd represents the private command
+var repoSetArchive = &cobra.Command{
+	Use:     "archive " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"a"},
+	Short:   "Set archived to true.",
+	Long:    "Set archived to true. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var wg sync.WaitGroup
-		var info RepoArchived
-		info.Archived = false
+		var info repo.Archived
+		info.Archived = true
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
@@ -47,24 +49,13 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 		for _, workPath := range args {
 			for _, remote := range global.Conf.MergedRemotes {
 				wg.Add(1)
-				if remote.Vendor == gitapi.VendorGithub {
-					// Github need graph api
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
-					if global.Flag.NoParallel {
-						repoUnarchiveGithub(gitApi, &wg)
-					} else {
-						go repoUnarchiveGithub(gitApi, &wg)
-					}
-				}
-				if remote.Vendor == gitapi.VendorGitea {
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
-					gitApi.EndpointRepos()
-					gitApi.SetPatch()
-					if global.Flag.NoParallel {
-						repoDo(gitApi, &wg, true)
-					} else {
-						go repoDo(gitApi, &wg, true)
-					}
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+				gitApi.EndpointRepos()
+				gitApi.SetPatch()
+				if global.Flag.NoParallel {
+					lib.RepoDo(gitApi, &wg, true, &global.Flag)
+				} else {
+					go lib.RepoDo(gitApi, &wg, true, &global.Flag)
 				}
 			}
 		}
@@ -73,5 +64,5 @@ var repoSetArchivedFalseCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetArchivedCmd.AddCommand(repoSetArchivedFalseCmd)
+	repoSetCmd.AddCommand(repoSetArchive)
 }
