@@ -20,52 +20,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package lib
 
 import (
-	"path"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
-	"github.com/J-Siu/go-gitapi/v2/repo"
-	"github.com/J-Siu/go-helper/v2/file"
-	"github.com/J-Siu/go-mygit/v2/global"
-	"github.com/J-Siu/go-mygit/v2/lib"
-	"github.com/spf13/cobra"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 )
 
-// repo new
-var repoNewCmd = &cobra.Command{
-	Use:     "new " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"n"},
-	Short:   "Create remote repository",
-	Long:    "Create remote repository. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
-	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		// args == array of repos from command line
-		if len(args) == 0 {
-			args = append(args, *file.CurrentDirBase())
-		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
-				var info repo.Info
-				info.Name = path.Base(workPath)
-				info.Private = remote.Private
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
-				gitApi.EndpointUserRepos()
-				gitApi.SetPost()
-				if global.Flag.NoParallel {
-					lib.RepoDo(gitApi, &wg, true, &global.Flag)
+func RepoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool, flag *TypeFlag) {
+	if wg != nil {
+		defer wg.Done()
+	}
+	var title string
+	if !flag.NoTitle {
+		title = gitApi.Repo + "(" + gitApi.Name + ")"
+	}
+
+	status := gitApi.Do().Ok()
+	if status {
+		if statusOnly {
+			// helper.ReportStatus(status, title, true)
+			ezlog.Log().N(title).M(status).Out()
+		} else {
+			singleLine := false
+			output := gitApi.Output()
+			switch *output {
+			case "true", "false", "public", "private":
+				singleLine = true
+			default:
+				singleLine = false
+			}
+			if !(output == nil || *output == "") || flag.NoSkip {
+				if singleLine {
+					ezlog.Log().N(title).M(output).Out()
 				} else {
-					go lib.RepoDo(gitApi, &wg, true, &global.Flag)
+					ezlog.Log().Nn(title).M(output).Out()
 				}
 			}
 		}
-		wg.Wait()
-	},
-}
-
-func init() {
-	repoCmd.AddCommand(repoNewCmd)
+	} else {
+		// API or HTTP GET failed, try to extract error message
+		ezlog.Err().N(title).M(gitApi.Err()).Out()
+	}
 }

@@ -28,6 +28,7 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -50,9 +51,9 @@ var repoGetPrivateCmd = &cobra.Command{
 				gitApi.EndpointRepos()
 				gitApi.SetGet()
 				if global.Flag.NoParallel {
-					repoDo(gitApi, &wg, false)
+					lib.RepoDo(gitApi, &wg, false, &global.Flag)
 				} else {
-					go repoDo(gitApi, &wg, false)
+					go lib.RepoDo(gitApi, &wg, false, &global.Flag)
 				}
 			}
 		}
