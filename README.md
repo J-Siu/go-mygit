@@ -417,6 +417,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Use go-gitapi to handle github archive, unarchive
 - v2.7.16
   - Update go-gitapi/v2, go-crypto, go-gitapi, go-gitcmd
+- v2.8.0
+  - Add enable/disable support for discussions, projects and wiki
 
 ### License
 

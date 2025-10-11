@@ -20,50 +20,47 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package lib
+package cmd
 
 import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
-	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/spf13/cobra"
 )
 
-// 'statusOnly': display request(http) status only
-func RepoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool, flag *TypeFlag) {
-	prefix := "RepoDo"
-	if wg != nil {
-		defer wg.Done()
-	}
-	var title string
-	if !flag.NoTitle {
-		title = gitApi.Repo + "(" + gitApi.Name + ")"
-	}
-
-	status := gitApi.Do().Ok()
-	if status {
-		if statusOnly {
-			ezlog.Log().N(title).N("request").M(status).Out()
-		} else {
-			singleLine := false
-			output := gitApi.Output()
-			ezlog.Debug().N(prefix).N("output").M(output).Out()
-			switch *output {
-			case "true", "false", "public", "private":
-				singleLine = true
-			default:
-				singleLine = false
-			}
-			if !(output == nil || *output == "") || flag.NoSkip {
-				if singleLine {
-					ezlog.Log().N(title).M(output).Out()
+// Get repo visibility
+var repoGetProjectsCmd = &cobra.Command{
+	Use:     "projects " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"proj", "projects"},
+	Short:   "Get projects status",
+	Long:    "Get projects status. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+	Run: func(cmd *cobra.Command, args []string) {
+		var wg sync.WaitGroup
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+		for _, workPath := range args {
+			for _, remote := range global.Conf.MergedRemotes {
+				wg.Add(1)
+				var info repo.Projects
+				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+				gitApi.EndpointRepos()
+				gitApi.SetGet()
+				if global.Flag.NoParallel {
+					lib.RepoDo(gitApi, &wg, false, &global.Flag)
 				} else {
-					ezlog.Log().Nn(title).M(output).Out()
+					go lib.RepoDo(gitApi, &wg, false, &global.Flag)
 				}
 			}
 		}
-	} else {
-		// API or HTTP GET failed, try to extract error message
-		ezlog.Err().N(title).M(gitApi.Err()).Out()
-	}
+		wg.Wait()
+	},
+}
+
+func init() {
+	repoGetCmd.AddCommand(repoGetProjectsCmd)
 }
