@@ -57,7 +57,7 @@ var rootPushCmd = &cobra.Command{
 
 			for _, remote := range global.Conf.MergedRemotes {
 				// Only add to queue if exist locally
-				if str.ArrayContains(&remoteLocal, &remote.Name) {
+				if str.ArrayContains(&remoteLocal, &remote.Name, false) {
 					remoteQueue = append(remoteQueue, remote.Name)
 				} else {
 					ezlog.Log().N(workPath).N("Remote not setup").M(remote.Name)

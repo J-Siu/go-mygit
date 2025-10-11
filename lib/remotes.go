@@ -78,7 +78,7 @@ func (remotes *Remotes) GetByGroup(groupP *string) *Remotes {
 func (remotes *Remotes) GetNames() *[]string {
 	var names []string
 	for _, r := range *remotes {
-		if !str.ArrayContains(&names, &r.Name) {
+		if !str.ArrayContains(&names, &r.Name, false) {
 			names = append(names, r.Name)
 		}
 	}

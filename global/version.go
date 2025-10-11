@@ -20,30 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package lib
+package global
 
-import "github.com/J-Siu/go-helper/v2/str"
-
-// Group names
-//
-// Embedded in TypeConf. No initialization
-type Groups []string
-
-func (groupsP *Groups) Add(groupP *string) {
-	if groupP != nil && !groupsP.Has(groupP) {
-		*groupsP = append(*groupsP, (string)(*groupP))
-	}
-}
-
-func (groupsP *Groups) Get(name string) *string {
-	for _, g := range *groupsP {
-		if (string)(g) == name {
-			return &g
-		}
-	}
-	return nil
-}
-
-func (groupsP *Groups) Has(groupP *string) bool {
-	return str.ArrayContains((*[]string)(groupsP), groupP, false)
-}
+const (
+	Version = "v2.7.16"
+)

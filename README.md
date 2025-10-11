@@ -415,6 +415,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Move repoDo() to lib
   - Update go-gitapi/v2
   - Use go-gitapi to handle github archive, unarchive
+- v2.7.16
+  - Update go-gitapi/v2, go-crypto, go-gitapi, go-gitcmd
 
 ### License
 
