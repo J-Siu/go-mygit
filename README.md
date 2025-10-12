@@ -419,6 +419,8 @@ https://github.com/J-Siu/go-mygit/releases
   - Update go-gitapi/v2, go-crypto, go-gitapi, go-gitcmd
 - v2.8.0
   - Add enable/disable support for discussions, projects and wiki
+- v2.8.1
+  - Add enable/disable support for actions
 
 ### License
 

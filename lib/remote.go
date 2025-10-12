@@ -35,18 +35,18 @@ import (
 
 // Remote entry in config file
 type Remote struct {
-	Name  string `json:"name,omitempty"`  // Name of remote entry, also use as git remote name
-	Group string `json:"group,omitempty"` // Group name
-	Ssh   string `json:"ssh,omitempty"`   // Ssh url for git server
+	Group  string        `json:"group,omitempty"`  // Group name
+	Name   string        `json:"name,omitempty"`   // Name of remote entry, also use as git remote name
+	Ssh    string        `json:"ssh,omitempty"`    // Ssh url for git server
+	Vendor gitapi.Vendor `json:"vendor,omitempty"` // Api vendor/brand
 
-	EntryPoint string        `json:"entrypoint,omitempty"` // Api entrypoint url
-	Token      string        `json:"token,omitempty"`      // Api token.
-	User       string        `json:"user,omitempty"`       // Api user
-	Private    bool          `json:"private,omitempty"`    // Default private value
-	Vendor     gitapi.Vendor `json:"vendor,omitempty"`     // Api vendor/brand
-	SkipVerify bool          `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)
+	EntryPoint string `json:"entrypoint,omitempty"` // Api entrypoint url
+	Private    bool   `json:"private,omitempty"`    // Default private value
+	Token      string `json:"token,omitempty"`      // Api token.
+	User       string `json:"user,omitempty"`       // Api user
 
-	NoTitle bool `json:"no_title,omitempty"` // This is pass from global.Flag
+	NoTitle    bool `json:"no_title,omitempty"`   // This is pass from global.Flag
+	SkipVerify bool `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)
 }
 
 func (remote *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {

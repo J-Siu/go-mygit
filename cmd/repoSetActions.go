@@ -20,50 +20,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package lib
+package cmd
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi/v2"
-	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/spf13/cobra"
 )
 
-// 'statusOnly': display request(http) status only
-func RepoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool, flag *TypeFlag) {
-	prefix := "RepoDo"
-	if wg != nil {
-		defer wg.Done()
-	}
-	var title string
-	if !flag.NoTitle {
-		title = gitApi.Repo + "(" + gitApi.Name + ")"
-	}
+var repoSetActionsCmd = &cobra.Command{
+	Use:     "actions",
+	Aliases: []string{"act", "action"},
+	Short:   "Set wiki status",
+}
 
-	status := gitApi.Do().Ok()
-	if status {
-		if statusOnly {
-			ezlog.Log().N(title).N("Request").Ok(status).Out()
-		} else {
-			singleLine := false
-			output := gitApi.Output()
-			ezlog.Debug().N(prefix).N("output").M(output).Out()
-			switch *output {
-			case "true", "false", "public", "private":
-				singleLine = true
-			default:
-				singleLine = false
-			}
-			if !(output == nil || *output == "") || flag.NoSkip {
-				if singleLine {
-					ezlog.Log().N(title).M(output).Out()
-				} else {
-					ezlog.Log().Nn(title).M(output).Out()
-				}
-			}
-		}
-	} else {
-		// API or HTTP GET failed, try to extract error message
-		ezlog.Err().N(title).M(gitApi.Err()).Out()
-	}
+func init() {
+	repoSetCmd.AddCommand(repoSetActionsCmd)
 }
