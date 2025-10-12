@@ -3,8 +3,9 @@
 Command line tool for easy mass configuration of git remotes, and working with Github/Gites repositories API.
 
 ### Table Of Content
-<!-- TOC -->
 
+- [Install](#install)
+- [Supported Platforms](#supported-platforms)
 - [Highlight](#highlight)
   - [Push multiple repository](#push-multiple-repository)
   - [Set Archived](#set-archived)
@@ -14,8 +15,6 @@ Command line tool for easy mass configuration of git remotes, and working with G
 - [What It Does](#what-it-does)
 - [What It Does Not](#what-it-does-not)
 - [Features](#features)
-- [Limitation](#limitation)
-- [Go Install](#go-install)
 - [Usage](#usage)
   - [Debug](#debug)
   - [Selector](#selector)
@@ -28,17 +27,32 @@ Command line tool for easy mass configuration of git remotes, and working with G
       - [--all](#--all)
 - [Configuration](#configuration)
 - [Packages Used](#packages-used)
-- [Binary](#binary)
 - [Repository](#repository)
 - [Contributors](#contributors)
 - [Change Log](#change-log)
 - [License](#license)
 
-<!-- /TOC -->
-
 <!--more-->
 
-> This replaces [mygit](https://github.com/J-Siu/mygit), implemented in Bash.
+> This replaces the bash implementation [mygit](https://github.com/J-Siu/mygit).
+
+### Install
+
+Go install
+
+```sh
+go install github.com/J-Siu/go-mygit/v2@latest
+```
+
+Download
+
+- https://github.com/J-Siu/go-mygit/releases
+
+### Supported Platforms
+
+- github
+- gitea
+- gogs(not tested)
 
 ### Highlight
 
@@ -96,7 +110,7 @@ go-mygit repo set topic golang go project
 ### What It Does Not
 
 - Replace `git` command. (`git` command is required for git function to work.)
-- Replace Github cli `gh` (`go-mygit` only cover very few api in comparison.)
+- Replace Github cli `gh` (`go-mygit` only cover limited number of api in comparison.)
 
 ### Features
 
@@ -120,29 +134,19 @@ go-mygit repo set topic golang go project
   - [x] list all repo on server
   - [x] create repo on server
   - [x] get / set
+    - [x] actions (enable/disable)
     - [x] archived
     - [x] description
+    - [x] discussions (enable/disable)
     - [x] private
-    - [x] public key(get only)
+    - [x] projects (enable/disable)
+    - [x] public key (get only)
     - [x] secret
     - [x] topic
     - [x] visibility
   - [x] delete
     - [x] repository
     - [x] secret
-
-### Limitation
-
-- Current supported git servers
-  - github
-  - gitea
-  - gogs(not tested)
-
-### Go Install
-
-```sh
-go install github.com/J-Siu/go-mygit/v2@latest
-```
 
 ### Usage
 
@@ -310,13 +314,9 @@ See [go-mygit.json.md](go-mygit.json.md)
 ### Packages Used
 
 - [go-gitapi](https://github.com/J-Siu/go-gitapi)
-- [go-helper](https://github.com/J-Siu/go-helper)
+- [go-helper/v2](https://github.com/J-Siu/go-helper)
 - [cobra](//github.com/spf13/cobra)
 - [viper](//github.com/spf13/viper)
-
-### Binary
-
-https://github.com/J-Siu/go-mygit/releases
 
 ### Repository
 
@@ -390,8 +390,7 @@ https://github.com/J-Siu/go-mygit/releases
   - Fix Github workflow
 - v2.7.6
   - Upgrade go-helper to v1.1.8
-  - Fix config logic
-  - Fix debug logic
+  - Fix config, debug, logic
   - Fix receiver name
 - v2.7.7
   - Upgrade go-helper to v1.1.10
