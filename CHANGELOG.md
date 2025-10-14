@@ -1,0 +1,92 @@
+- v1.0.0
+  - Feature complete
+- v1.0.1
+  - Fix repo new endpoint
+- v2.0.0
+  - Command line restructure
+  - Clean up func name
+  - Clean up file name
+  - Fix typos
+- v2.0.1
+  - upgrade go-helper and go-gitapi for bugfix
+- v2.1.0
+  - Add repo name support for all repoGet* commands
+- v2.2.0
+  - Support deletion of github repository action secret
+- v2.3.0
+  - Add repo(dir) name support for init, push, repo new, and all remote* commands
+- v2.4.0
+  - Add global --noskip flag
+  - Improve commands Use, Short, Long
+  - Improve repo/dir handling from command line
+  - lib.GitApiFromRemote() -> Remote.GetGitApi()
+- v2.4.1
+  - Fix `goreleaser`
+- v2.4.2
+  - Proper go mod path for v2
+- v2.5.0
+  - Add global flag
+    - `--no-parallel`, don't process in parallel
+    - `--no-title`, don't print title in output
+  - Add support for handling `archived` status
+  - Fix exiting on non-git directory
+  - Fix remote listing not work for current directory
+  - Fix push to use git directory remotes
+- v2.5.1
+  - Remove Go workspace file
+- v2.6.0
+  - Detect if no configuration file
+  - Add git clone
+  - Add git pull
+- v2.7.0
+  - Upgrade go-helper to v1.1.6
+  - Upgrade go-gitapi to v1.4.0
+  - Add "skipverify" in "remotes" config
+    - support site with self-signed cert
+- v2.7.1
+  - Fix github workflows
+  - GitAPI partial fix
+- v2.7.2
+  - Upgrade go-gitapi to v1.4.1
+  - Upgrade go-helper to v1.1.7
+  - Use proper receiver name
+  - Fix `repo get info` error
+- v2.7.3
+  - Set go version to 1.23
+- v2.7.4
+  - Upgrade go-gitapi to v1.6.0
+  - Consolidate repo*Func() to repoDo()
+- v2.7.5
+  - Fix Github workflow
+- v2.7.6
+  - Upgrade go-helper to v1.1.8
+  - Fix config, debug, logic
+  - Fix receiver name
+- v2.7.7
+  - Upgrade go-helper to v1.1.10
+  - Move default config file `~/.go-mygit.json` -> `~/.config/go-mygit.json`
+  - Fix receiver name
+- v2.7.8
+  - Upgrade go-helper/v2
+- v2.7.9
+  - Fix output
+- v2.7.10
+  - Upgrade go-helper/v2
+- v2.7.11
+  - Use basestruct
+- v2.7.12
+  - Refresh dependency
+- v2.7.13
+  - Update go-crypto
+- v2.7.14
+  - Update go-gitapi to v2
+- v2.7.15
+  - Move repoDo() to lib
+  - Update go-gitapi/v2
+  - Use go-gitapi to handle github archive, unarchive
+- v2.7.16
+  - Update go-gitapi/v2, go-crypto, go-gitapi, go-gitcmd
+- v2.8.0
+  - Add enable/disable support for discussions, projects and wiki
+- v2.8.1
+  - Add enable/disable support for actions
