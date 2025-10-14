@@ -55,6 +55,7 @@ func repoDoProcess(property *RepoDoProperty) {
 	var (
 		gitApi = property.GitApi
 		wg     = property.Wg
+		log    = new(ezlog.EzLog).New().SetLogLevel(ezlog.GetLogLevel())
 	)
 	if wg != nil {
 		defer wg.Done()
@@ -67,21 +68,21 @@ func repoDoProcess(property *RepoDoProperty) {
 	status := gitApi.Do().Ok()
 	if status {
 		if property.StatusOnly {
-			ezlog.Log().N(title).Success(status).Out()
+			log.Log().N(title).Success(status).Out()
 		} else {
 			output := gitApi.Output()
-			ezlog.Debug().N(prefix).N("output").M(output).Out()
+			log.Debug().N(prefix).N("output").M(output).Out()
 			if !(output == nil || *output == "") || property.NoSkip {
 				if property.SingleLine {
-					ezlog.Log().N(title).M(output).Out()
+					log.Log().N(title).M(output).Out()
 				} else {
-					ezlog.Log().Nn(title).M(output).Out()
+					log.Log().Nn(title).M(output).Out()
 				}
 			}
 		}
 	} else {
 		// API or HTTP GET failed, try to extract error message
-		ezlog.Err().N(title).M(gitApi.Err())
-		errs.Queue("", errors.New(ezlog.String()))
+		log.Err().N(title).M(gitApi.Err())
+		errs.Queue("", errors.New(log.String()))
 	}
 }
