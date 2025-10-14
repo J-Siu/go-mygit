@@ -23,39 +23,56 @@ THE SOFTWARE.
 package lib
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-helper/v2/errs"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 )
 
-// 'statusOnly': display request(http) status only
-func RepoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool, flag *TypeFlag) {
-	prefix := "RepoDo"
+type RepoDoProperty struct {
+	GitApi     *gitapi.GitApi  `json:"GitApi"`
+	NoSkip     bool            `json:"NoSkip"`
+	NoTitle    bool            `json:"NoTitle"`
+	NoParallel bool            `json:"NoParallel"`
+	SingleLine bool            `json:"SingleLine"`
+	StatusOnly bool            `json:"StatusOnly"` // Display api request status
+	Wg         *sync.WaitGroup `json:"Wg"`
+}
+
+// parallel wrapper
+func RepoDo(property *RepoDoProperty) {
+	if property.NoParallel {
+		repoDoProcess(property)
+	} else {
+		go repoDoProcess(property)
+	}
+}
+
+func repoDoProcess(property *RepoDoProperty) {
+	prefix := "RepoDo2"
+	var (
+		gitApi = property.GitApi
+		wg     = property.Wg
+	)
 	if wg != nil {
 		defer wg.Done()
 	}
 	var title string
-	if !flag.NoTitle {
+	if !property.NoTitle {
 		title = gitApi.Repo + "(" + gitApi.Name + ")"
 	}
 
 	status := gitApi.Do().Ok()
 	if status {
-		if statusOnly {
-			ezlog.Log().N(title).N("Request").Ok(status).Out()
+		if property.StatusOnly {
+			ezlog.Log().N(title).Success(status).Out()
 		} else {
-			singleLine := false
 			output := gitApi.Output()
 			ezlog.Debug().N(prefix).N("output").M(output).Out()
-			switch *output {
-			case "true", "false", "public", "private":
-				singleLine = true
-			default:
-				singleLine = false
-			}
-			if !(output == nil || *output == "") || flag.NoSkip {
-				if singleLine {
+			if !(output == nil || *output == "") || property.NoSkip {
+				if property.SingleLine {
 					ezlog.Log().N(title).M(output).Out()
 				} else {
 					ezlog.Log().Nn(title).M(output).Out()
@@ -64,6 +81,7 @@ func RepoDo(gitApi *gitapi.GitApi, wg *sync.WaitGroup, statusOnly bool, flag *Ty
 		}
 	} else {
 		// API or HTTP GET failed, try to extract error message
-		ezlog.Err().N(title).M(gitApi.Err()).Out()
+		ezlog.Err().N(title).M(gitApi.Err())
+		errs.Queue("", errors.New(ezlog.String()))
 	}
 }
