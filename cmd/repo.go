@@ -23,6 +23,11 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"sync"
+
+	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -35,4 +40,18 @@ var repoCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(repoCmd)
+}
+
+// `lib.RepoDo` wrapper
+func repoDoWrapper(gitApi *gitapi.GitApi, singleLine, statusOnly bool, wg *sync.WaitGroup) {
+	property := lib.RepoDoProperty{
+		GitApi:     gitApi,
+		NoParallel: global.Flag.NoParallel,
+		NoSkip:     global.Flag.NoSkip,
+		NoTitle:    global.Flag.NoTitle,
+		SingleLine: singleLine,
+		StatusOnly: statusOnly,
+		Wg:         wg,
+	}
+	lib.RepoDo(&property)
 }

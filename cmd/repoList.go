@@ -29,7 +29,6 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
-	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -55,11 +54,7 @@ var repoListCmd = &cobra.Command{
 			}
 			gitApi.Req.UrlVal.Add("page", strconv.Itoa(global.Flag.Page))
 			gitApi.SetGet()
-			if global.Flag.NoParallel {
-				lib.RepoDo(gitApi, &wg, false, &global.Flag)
-			} else {
-				go lib.RepoDo(gitApi, &wg, false, &global.Flag)
-			}
+			repoDoWrapper(gitApi, false, false, &wg)
 		}
 		wg.Wait()
 	},

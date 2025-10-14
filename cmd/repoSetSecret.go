@@ -86,11 +86,7 @@ var repoSetSecretCmd = &cobra.Command{
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
 						gitApi.SetPut()
-						if global.Flag.NoParallel {
-							lib.RepoDo(gitApi, &wg, true, &global.Flag)
-						} else {
-							go lib.RepoDo(gitApi, &wg, true, &global.Flag)
-						}
+						repoDoWrapper(gitApi, true, true, &wg)
 					}
 				}
 			}

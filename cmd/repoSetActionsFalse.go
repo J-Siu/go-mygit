@@ -28,7 +28,6 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
-	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -53,20 +52,18 @@ var repoSetActionsFalseCmd = &cobra.Command{
 				)
 
 				if remote.Vendor == gitapi.VendorGithub {
-					info = &repo.ActionsGithub{Enabled: false} // Github API
+					// Github API
+					info = &repo.ActionsGithub{Enabled: false}
 					gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointReposActionsGithub()
 					gitApi.SetPut()
 				} else {
-					info = &repo.Actions{Has: false} // Gitea API
+					// Gitea API
+					info = &repo.Actions{Has: false}
 					gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointRepos()
 					gitApi.SetPatch()
 				}
 
-				if global.Flag.NoParallel {
-					lib.RepoDo(gitApi, &wg, true, &global.Flag)
-				} else {
-					go lib.RepoDo(gitApi, &wg, true, &global.Flag)
-				}
+				repoDoWrapper(gitApi, true, true, &wg)
 			}
 		}
 		wg.Wait()

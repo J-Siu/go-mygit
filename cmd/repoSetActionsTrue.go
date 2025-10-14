@@ -28,7 +28,6 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
-	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -62,11 +61,7 @@ var repoSetActionsTrueCmd = &cobra.Command{
 					gitApi.SetPatch()
 				}
 
-				if global.Flag.NoParallel {
-					lib.RepoDo(gitApi, &wg, true, &global.Flag)
-				} else {
-					go lib.RepoDo(gitApi, &wg, true, &global.Flag)
-				}
+				repoDoWrapper(gitApi, true, true, &wg)
 			}
 		}
 		wg.Wait()

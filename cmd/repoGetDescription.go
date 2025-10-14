@@ -28,14 +28,13 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
-	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
 // Get repo description
 var repoGetDescriptionCmd = &cobra.Command{
 	Use:     "description " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"d"},
+	Aliases: []string{"d", "desc"},
 	Short:   "Get description",
 	Long:    "Get description. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -50,11 +49,7 @@ var repoGetDescriptionCmd = &cobra.Command{
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 				gitApi.EndpointRepos()
 				gitApi.SetGet()
-				if global.Flag.NoParallel {
-					lib.RepoDo(gitApi, &wg, false, &global.Flag)
-				} else {
-					go lib.RepoDo(gitApi, &wg, false, &global.Flag)
-				}
+				repoDoWrapper(gitApi, true, false, &wg)
 			}
 		}
 		wg.Wait()
