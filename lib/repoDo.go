@@ -60,24 +60,29 @@ func repoDoProcess(property *RepoDoProperty) {
 	if wg != nil {
 		defer wg.Done()
 	}
-	var title string
-	if !property.NoTitle {
-		title = gitApi.Repo + "(" + gitApi.Name + ")"
-	}
 
+	title := gitApi.Repo + "(" + gitApi.Name + ")"
 	status := gitApi.Do().Ok()
 	if status {
 		if property.StatusOnly {
-			log.Log().N(title).Success(status).Out()
+			log.Log()
+			if !property.NoTitle {
+				log.N(title)
+			}
+			log.Success(status).Out()
 		} else {
 			output := gitApi.Output()
 			log.Debug().N(prefix).N("output").M(output).Out()
 			if !(output == nil || *output == "") || property.NoSkip {
-				if property.SingleLine {
-					log.Log().N(title).M(output).Out()
-				} else {
-					log.Log().Nn(title).M(output).Out()
+				log.Log()
+				if !property.NoTitle {
+					if property.SingleLine {
+						log.N(title)
+					} else {
+						log.Nn(title)
+					}
 				}
+				log.M(output).Out()
 			}
 		}
 	} else {
