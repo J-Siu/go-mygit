@@ -81,14 +81,7 @@ func (remote *Remote) Add(workPathP *string) *cmd.Cmd {
 	if !remote.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-
-	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
-	}
-	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
-	}
-
+	myCmdLog(myCmd, title)
 	return myCmd
 }
 
@@ -101,12 +94,7 @@ func (remote *Remote) Remove(workPathP *string) *cmd.Cmd {
 	var title string
 	if myCmd != nil && !remote.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
-		if myCmd.Stdout.Len() > 0 {
-			ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
-		}
-		if myCmd.Stderr.Len() > 0 {
-			ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
-		}
+		myCmdLog(myCmd, title)
 	}
 	return myCmd
 }
@@ -121,12 +109,7 @@ func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 	if !noTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
-	}
-	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
-	}
+	myCmdLog(myCmd, title)
 	return myCmd
 }
 
@@ -142,12 +125,7 @@ func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 	if !noTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
-	}
-	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
-	}
+	myCmdLog(myCmd, title)
 	return myCmd
 }
 
@@ -163,11 +141,15 @@ func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
 	if !noTitle {
 		title = myCmd.CmdLn
 	}
+	myCmdLog(myCmd, title)
+	return myCmd
+}
+
+func myCmdLog(myCmd *cmd.Cmd, title string) {
 	if myCmd.Stdout.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stdout.String()).Out()
+		ezlog.Log().N(title).Lm(myCmd.Stdout.String()).Out()
 	}
 	if myCmd.Stderr.Len() > 0 {
-		ezlog.Log().Nn(title).M(myCmd.Stderr.String()).Out()
+		ezlog.Log().N(title).Lm(myCmd.Stderr.String()).Out()
 	}
-	return myCmd
 }

@@ -90,3 +90,5 @@
   - Add enable/disable support for discussions, projects and wiki
 - v2.8.1
   - Add enable/disable support for actions
+- v2.8.2
+  - update go-helper/v2

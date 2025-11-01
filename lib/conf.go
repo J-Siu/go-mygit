@@ -58,18 +58,18 @@ func (c *TypeConf) New(flagGroups, flagRemotes *[]string) {
 	prefix := c.MyType + ".Init"
 
 	c.setDefault()
-	ezlog.Debug().N(prefix).Nn("Default").M(c).Out()
+	ezlog.Debug().N(prefix).N("Default").Lm(c).Out()
 
 	c.readFileConf()
 	if c.Err == nil {
 		c.initGroups()
 		c.mergeRemotes(flagGroups, flagRemotes)
 
-		ezlog.Debug().N(prefix).Nn("Raw").M(c).Out()
+		ezlog.Debug().N(prefix).N("Raw").Lm(c).Out()
 
 		c.expand()
 
-		ezlog.Debug().N(prefix).Nn("Expand").M(c).Out()
+		ezlog.Debug().N(prefix).N("Expand").Lm(c).Out()
 	}
 }
 

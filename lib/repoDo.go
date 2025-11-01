@@ -79,7 +79,7 @@ func repoDoProcess(property *RepoDoProperty) {
 					if property.SingleLine {
 						log.N(title)
 					} else {
-						log.Nn(title)
+						log.Nl(title)
 					}
 				}
 				log.M(output).Out()

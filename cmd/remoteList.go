@@ -49,7 +49,7 @@ var remoteListCmd = &cobra.Command{
 			if !global.Flag.NoTitle {
 				title = workPath
 			}
-			ezlog.Log().Nn(title).M(gitRemoteList).Out()
+			ezlog.Log().N(title).Lm(gitRemoteList).Out()
 		}
 	},
 }
