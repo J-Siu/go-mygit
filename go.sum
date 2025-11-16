@@ -4,8 +4,8 @@ github.com/J-Siu/go-gitapi/v2 v2.1.1 h1:oy6zG4BByfHRhVRhq/HKRaxLaKcWKSvpg/w5moQK
 github.com/J-Siu/go-gitapi/v2 v2.1.1/go.mod h1:8eDUO0TJzapHQQCcBPTB6JfcT9/nsdbirye6f016q+U=
 github.com/J-Siu/go-gitcmd v1.0.0 h1:AiAthPWLon2XONfmTJqS2xcMyh3mKUGRDhAnuSdxIfI=
 github.com/J-Siu/go-gitcmd v1.0.0/go.mod h1:+pedLFr78VWui4LlrZQKWYPkFD1QmIliQpV42o64WA8=
-github.com/J-Siu/go-helper/v2 v2.6.1 h1:NjW6W3Haz9IIsHnha+3B6nItONBUMfHpzguS91PqYcs=
-github.com/J-Siu/go-helper/v2 v2.6.1/go.mod h1:E4Z/J6PPW8Tknvef+sGla1h3OVQb0fHbVdpH/zZBVvg=
+github.com/J-Siu/go-helper/v2 v2.6.2 h1:u0QntwBGmxjwMmO9hDGuCreGwPg3oRq6AnmTBdpSTNs=
+github.com/J-Siu/go-helper/v2 v2.6.2/go.mod h1:fd6Xwr+ZMgFSwN1bnVZwSTvmReEKI7Huky4bT526bz4=
 github.com/J-Siu/go-restapi v1.0.2 h1:7ksA1U2RzczndSlnqlILZOFY7NGUTW/SnqaYyjlohuc=
 github.com/J-Siu/go-restapi v1.0.2/go.mod h1:6kDKL2bFWN16aWHq5SjI4l0WggqPblrAjGAJFnQF8TY=
 github.com/charlievieth/strcase v0.0.5 h1:gV4iXVyD6eI5KdfOV+/vIVCKXZwtCWOmDMcu7Uy00Rs=

@@ -146,6 +146,12 @@ func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
 }
 
 func myCmdLog(myCmd *cmd.Cmd, title string) {
-	ezlog.Log().Se().N(title).Lm(myCmd.Stdout.String()).Out()
-	ezlog.Log().Se().N(title).Lm(myCmd.Stderr.String()).Out()
+	se := ezlog.GetSkipEmpty()
+	ezlog.SetSkipEmpty(false)
+	if len(title) > 0 {
+		ezlog.Log().N(title).Out()
+	}
+	ezlog.Log().Se().M(myCmd.Stdout.String()).Out()
+	ezlog.Log().Se().M(myCmd.Stderr.String()).Out()
+	ezlog.SetSkipEmpty(se)
 }
