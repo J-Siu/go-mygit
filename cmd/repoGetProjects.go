@@ -28,6 +28,7 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -49,7 +50,7 @@ var repoGetProjectsCmd = &cobra.Command{
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 				gitApi.EndpointRepos()
 				gitApi.SetGet()
-				repoDoWrapper(gitApi, true, false, &wg)
+				lib.RepoDoRun(gitApi, global.Flag, true, false, &wg)
 			}
 		}
 		wg.Wait()

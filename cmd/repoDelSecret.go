@@ -29,6 +29,7 @@ import (
 
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -61,7 +62,7 @@ var repoDelSecretCmd = &cobra.Command{
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
 						gitApi.SetDel()
-						repoDoWrapper(gitApi, true, true, &wg)
+						lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
 					}
 				}
 			}

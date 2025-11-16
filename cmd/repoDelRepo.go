@@ -27,6 +27,7 @@ import (
 
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -50,7 +51,7 @@ var repoDelRepoCmd = &cobra.Command{
 				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
 				gitApi.EndpointRepos()
 				gitApi.SetDel()
-				repoDoWrapper(gitApi, true, true, &wg)
+				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
 			}
 		}
 		wg.Wait()

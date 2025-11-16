@@ -27,6 +27,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-helper/v2/basestruct"
 	"github.com/J-Siu/go-helper/v2/errs"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 )
@@ -41,20 +42,34 @@ type RepoDoProperty struct {
 	Wg         *sync.WaitGroup `json:"Wg"`
 }
 
-// parallel wrapper
-func RepoDo(property *RepoDoProperty) {
-	if property.NoParallel {
-		repoDoProcess(property)
-	} else {
-		go repoDoProcess(property)
-	}
+type RepoDo struct {
+	*basestruct.Base
+	*RepoDoProperty
 }
 
-func repoDoProcess(property *RepoDoProperty) {
-	prefix := "RepoDo2"
+func (t *RepoDo) New(property *RepoDoProperty) *RepoDo {
+	t.Base = new(basestruct.Base)
+	t.Initialized = true
+	t.MyType = "Repo"
+
+	t.RepoDoProperty = property
+	return t
+}
+
+func (t *RepoDo) Run() *RepoDo {
+	if t.NoParallel {
+		t.process()
+	} else {
+		go t.process()
+	}
+	return t
+}
+
+func (t *RepoDo) process() {
+	prefix := t.MyType + ".process"
 	var (
-		gitApi = property.GitApi
-		wg     = property.Wg
+		gitApi = t.GitApi
+		wg     = t.Wg
 		log    = new(ezlog.EzLog).New().SetLogLevel(ezlog.GetLogLevel())
 	)
 	if wg != nil {
@@ -64,19 +79,19 @@ func repoDoProcess(property *RepoDoProperty) {
 	title := gitApi.Repo + "(" + gitApi.Name + ")"
 	status := gitApi.Do().Ok()
 	if status {
-		if property.StatusOnly {
+		if t.StatusOnly {
 			log.Log()
-			if !property.NoTitle {
+			if !t.NoTitle {
 				log.N(title)
 			}
 			log.Success(status).Out()
 		} else {
 			output := gitApi.Output()
 			log.Debug().N(prefix).N("output").M(output).Out()
-			if !(output == nil || *output == "") || property.NoSkip {
+			if !(output == nil || *output == "") || t.NoSkip {
 				log.Log()
-				if !property.NoTitle {
-					if property.SingleLine {
+				if !t.NoTitle {
+					if t.SingleLine {
 						log.N(title)
 					} else {
 						log.Nl(title)
@@ -90,4 +105,18 @@ func repoDoProcess(property *RepoDoProperty) {
 		log.Err().N(title).M(gitApi.Err())
 		errs.Queue("", errors.New(log.String()))
 	}
+}
+
+// `lib.RepoDoRun` wrapper
+func RepoDoRun(gitApi *gitapi.GitApi, flag TypeFlag, singleLine, statusOnly bool, wg *sync.WaitGroup) {
+	property := RepoDoProperty{
+		GitApi:     gitApi,
+		NoParallel: flag.NoParallel,
+		NoSkip:     flag.NoSkip,
+		NoTitle:    flag.NoTitle,
+		SingleLine: singleLine,
+		StatusOnly: statusOnly,
+		Wg:         wg,
+	}
+	new(RepoDo).New(&property).Run()
 }

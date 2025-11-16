@@ -28,6 +28,7 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -61,7 +62,7 @@ var repoSetActionsTrueCmd = &cobra.Command{
 					gitApi.SetPatch()
 				}
 
-				repoDoWrapper(gitApi, true, true, &wg)
+				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
 			}
 		}
 		wg.Wait()

@@ -55,7 +55,7 @@ func (t *TypeConf) New(flagGroups, flagRemotes *[]string) {
 	t.Base = new(basestruct.Base)
 	t.Initialized = true
 	t.MyType = "TypeConf"
-	prefix := t.MyType + ".Init"
+	prefix := t.MyType + ".New"
 
 	t.setDefault()
 	ezlog.Debug().N(prefix).N("Default").Lm(t).Out()

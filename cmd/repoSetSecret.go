@@ -86,7 +86,7 @@ var repoSetSecretCmd = &cobra.Command{
 						gitApi.EndpointReposSecrets()
 						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
 						gitApi.SetPut()
-						repoDoWrapper(gitApi, true, true, &wg)
+						lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
 					}
 				}
 			}
