@@ -91,4 +91,13 @@
 - v2.8.1
   - Add enable/disable support for actions
 - v2.8.2
+  - don't print usage on error
+  - fix log output for go routine
+  - fix no title output
+  - refactor RepoDo to use property and handle go routine creation
+  - refactor cmd.repoDoWrapper
+  - remove un-use flag
+  - simplify status output
   - update go-helper/v2
+  - use errs.Queue for errors
+  - use ezlog SkipEmpty()

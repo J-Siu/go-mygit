@@ -41,7 +41,7 @@ var rootCmd = &cobra.Command{
 		if global.Flag.Debug {
 			ezlog.SetLogLevel(ezlog.DEBUG)
 		}
-		ezlog.SetSkipEmpty(true)
+		ezlog.EnableSkipEmpty(true)
 		ezlog.Debug().N("Version").M(global.Version).Ln("Flag").M(&global.Flag).Out()
 
 		global.Conf.New(&global.Flag.Groups, &global.Flag.Remotes)
