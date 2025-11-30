@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
@@ -38,34 +39,44 @@ var repoSetActionsTrueCmd = &cobra.Command{
 	Short:   "Set to true.",
 	Long:    "Set to true. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					wg.Add(1)
 
-				var (
-					info   gitapi.IInfo
-					gitApi *gitapi.GitApi
-				)
+					var (
+						info   gitapi.IInfo
+						gitApi *gitapi.GitApi
+					)
 
-				if remote.Vendor == gitapi.VendorGithub {
-					info = &repo.ActionsGithub{Enabled: true} // Github API
-					gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointReposActionsGithub()
-					gitApi.SetPut()
-				} else {
-					info = &repo.Actions{Has: true} // Gitea API
-					gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointRepos()
-					gitApi.SetPatch()
+					if remote.Vendor == gitapi.VendorGithub {
+						info = &repo.ActionsGithub{Enabled: true} // Github API
+						gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointReposActionsGithub()
+						gitApi.SetPut()
+					} else {
+						info = &repo.Actions{Has: true} // Gitea API
+						gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointRepos()
+						gitApi.SetPatch()
+					}
+
+					lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
 				}
-
-				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

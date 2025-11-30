@@ -44,6 +44,7 @@ var remoteAddCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
+
 		go func() {
 			for _, workPath := range args {
 				if gitcmd.GitRoot(&workPath) == "" {
@@ -56,7 +57,7 @@ var remoteAddCmd = &cobra.Command{
 			}
 		}()
 		for o := range out {
-			fmt.Println(*o)
+			fmt.Print(*o)
 		}
 	},
 }

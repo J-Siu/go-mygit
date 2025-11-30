@@ -44,7 +44,10 @@ var repoSetSecretCmd = &cobra.Command{
 	Short:   "Set action secret",
 	Long:    "Set action secret. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
@@ -54,44 +57,51 @@ var repoSetSecretCmd = &cobra.Command{
 			ezlog.Err().M("Both -n/--name and -v/--value must be set").Out()
 			os.Exit(1)
 		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				if remote.Vendor != gitapi.VendorGithub {
-					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
-				} else {
-					// "GET" public key
-					ezlog.Log().N(remote.Name).Out()
-					var pubkey repo.PublicKey
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey, global.Flag.Debug)
-					gitApi.EndpointReposSecretsPubkey()
-					ok := gitApi.SetGet().Do().Ok()
-					ezlog.Log().N("Get Actions Public Key").M(ok)
-					if !ok {
-						os.Exit(1)
-					}
-					// A list of secret to use
-					var secretsP *lib.ConfSecrets
-					if global.Flag.Secret.Name != "" && global.Flag.Secret.Value != "" {
-						// Use command line value
-						secretsP = &lib.ConfSecrets{global.Flag.Secret}
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					if remote.Vendor != gitapi.VendorGithub {
+						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 					} else {
-						// Use Conf secrets
-						secretsP = &global.Conf.Secrets
-					}
-					// Use config secrets
-					for _, secret := range *secretsP {
-						wg.Add(1)
-						var infoP *repo.EncryptedPair = secret.Encrypt(&pubkey)
-						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP, global.Flag.Debug)
-						gitApi.EndpointReposSecrets()
-						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
-						gitApi.SetPut()
-						lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
+						// "GET" public key
+						ezlog.Log().N(remote.Name).Out()
+						var pubkey repo.PublicKey
+						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey, global.Flag.Debug)
+						gitApi.EndpointReposSecretsPubkey()
+						ok := gitApi.SetGet().Do().Ok()
+						ezlog.Log().N("Get Actions Public Key").M(ok)
+						if !ok {
+							os.Exit(1)
+						}
+						// A list of secret to use
+						var secretsP *lib.ConfSecrets
+						if global.Flag.Secret.Name != "" && global.Flag.Secret.Value != "" {
+							// Use command line value
+							secretsP = &lib.ConfSecrets{global.Flag.Secret}
+						} else {
+							// Use Conf secrets
+							secretsP = &global.Conf.Secrets
+						}
+						// Use config secrets
+						for _, secret := range *secretsP {
+							wg.Add(1)
+							var infoP *repo.EncryptedPair = secret.Encrypt(&pubkey)
+							var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP, global.Flag.Debug)
+							gitApi.EndpointReposSecrets()
+							gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
+							gitApi.SetPut()
+							lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+						}
 					}
 				}
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

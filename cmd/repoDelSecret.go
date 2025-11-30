@@ -40,7 +40,10 @@ var repoDelSecretCmd = &cobra.Command{
 	Short:   "Delete action secret",
 	Long:    "Delete action secret. If --name is not set, all secrets in config will be used. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		// If no repo specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
@@ -51,23 +54,30 @@ var repoDelSecretCmd = &cobra.Command{
 				global.Flag.SecretsDel = append(global.Flag.SecretsDel, s.Name)
 			}
 		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				if remote.Vendor != gitapi.VendorGithub {
-					fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
-				} else {
-					for _, secret := range global.Flag.SecretsDel {
-						wg.Add(1)
-						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
-						gitApi.EndpointReposSecrets()
-						gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
-						gitApi.SetDel()
-						lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					if remote.Vendor != gitapi.VendorGithub {
+						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
+					} else {
+						for _, secret := range global.Flag.SecretsDel {
+							wg.Add(1)
+							var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
+							gitApi.EndpointReposSecrets()
+							gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
+							gitApi.SetDel()
+							lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+						}
 					}
 				}
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

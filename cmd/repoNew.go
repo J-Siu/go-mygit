@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"path"
 	"sync"
 
@@ -41,24 +42,34 @@ var repoNewCmd = &cobra.Command{
 	Short:   "Create remote repository",
 	Long:    "Create remote repository. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		// args == array of repos from command line
 		if len(args) == 0 {
 			args = append(args, *file.CurrentDirBase())
 		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
-				var info repo.Info
-				info.Name = path.Base(workPath)
-				info.Private = remote.Private
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
-				gitApi.EndpointUserRepos()
-				gitApi.SetPost()
-				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					wg.Add(1)
+					var info repo.Info
+					info.Name = path.Base(workPath)
+					info.Private = remote.Private
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+					gitApi.EndpointUserRepos()
+					gitApi.SetPost()
+					lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+				}
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

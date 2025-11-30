@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -40,25 +41,35 @@ var repoListCmd = &cobra.Command{
 	Short:   "List all remote repositories",
 	Long:    "List all remote repositories. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
-		for _, remote := range global.Conf.MergedRemotes {
-			wg.Add(1)
-			var info repo.InfoList
-			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
-			gitApi.EndpointUserRepos()
-			gitApi.Req.UrlValInit()
-			switch remote.Vendor {
-			case gitapi.VendorGithub:
-				gitApi.Req.UrlVal.Add("per_page", "100")
-			case gitapi.VendorGitea:
-				gitApi.Req.UrlVal.Add("limit", "100")
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
+		go func() {
+			for _, remote := range global.Conf.MergedRemotes {
+				wg.Add(1)
+				var info repo.InfoList
+				var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
+				gitApi.EndpointUserRepos()
+				gitApi.Req.UrlValInit()
+				switch remote.Vendor {
+				case gitapi.VendorGithub:
+					gitApi.Req.UrlVal.Add("per_page", "100")
+				case gitapi.VendorGitea:
+					gitApi.Req.UrlVal.Add("limit", "100")
+				}
+				gitApi.Req.UrlVal.Add("page", strconv.Itoa(global.Flag.Page))
+				gitApi.SetGet()
+				gitApi.Repo = ""
+				lib.RepoDoRun(gitApi, global.Flag, false, false, &wg, out)
 			}
-			gitApi.Req.UrlVal.Add("page", strconv.Itoa(global.Flag.Page))
-			gitApi.SetGet()
-			gitApi.Repo = ""
-			lib.RepoDoRun(gitApi, global.Flag, false, false, &wg)
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

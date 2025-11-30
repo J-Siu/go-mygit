@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
@@ -39,18 +40,27 @@ var repoSetTopicCmd = &cobra.Command{
 	Short:   "Set topics",
 	Long:    "Set topic. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		var info repo.Topics
 		info.Topics = &args
 		info.Names = &args
-		for _, remote := range global.Conf.MergedRemotes {
-			wg.Add(1)
-			var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
-			gitApi.EndpointReposTopics()
-			gitApi.SetPut()
-			lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
+		go func() {
+			for _, remote := range global.Conf.MergedRemotes {
+				wg.Add(1)
+				var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
+				gitApi.EndpointReposTopics()
+				gitApi.SetPut()
+				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
 	},
 }
 

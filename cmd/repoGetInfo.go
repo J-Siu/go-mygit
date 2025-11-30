@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
@@ -38,20 +39,30 @@ var repoGetInfoCmd = &cobra.Command{
 	Short:   "Get info(json)",
 	Long:    "Get info(json). " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
-				gitApi.EndpointRepos()
-				gitApi.SetGet()
-				lib.RepoDoRun(gitApi, global.Flag, false, false, &wg)
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					wg.Add(1)
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
+					gitApi.EndpointRepos()
+					gitApi.SetGet()
+					lib.RepoDoRun(gitApi, global.Flag, false, false, &wg, out)
+				}
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

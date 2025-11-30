@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
@@ -39,32 +40,42 @@ var repoGetActionsCmd = &cobra.Command{
 	Short:   "Get wiki status",
 	Long:    "Get wiki status. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					wg.Add(1)
 
-				var (
-					info   gitapi.IInfo
-					gitApi *gitapi.GitApi
-				)
+					var (
+						info   gitapi.IInfo
+						gitApi *gitapi.GitApi
+					)
 
-				if remote.Vendor == gitapi.VendorGithub {
-					info = &repo.ActionsGithub{} // Github API
-					gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointReposActionsGithub()
-				} else {
-					info = &repo.Actions{} // Gitea API
-					gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointRepos()
+					if remote.Vendor == gitapi.VendorGithub {
+						info = &repo.ActionsGithub{} // Github API
+						gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointReposActionsGithub()
+					} else {
+						info = &repo.Actions{} // Gitea API
+						gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointRepos()
+					}
+
+					gitApi.SetGet()
+					lib.RepoDoRun(gitApi, global.Flag, true, false, &wg, out)
 				}
-
-				gitApi.SetGet()
-				lib.RepoDoRun(gitApi, global.Flag, true, false, &wg)
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

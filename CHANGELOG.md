@@ -103,3 +103,5 @@
   - use ezlog SkipEmpty()
 - v2.8.3
   - remote use channel for output
+- v2.8.4
+  - repoDo use channel for output

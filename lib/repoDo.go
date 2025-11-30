@@ -34,9 +34,10 @@ import (
 
 type RepoDoProperty struct {
 	GitApi     *gitapi.GitApi  `json:"GitApi"`
+	NoParallel bool            `json:"NoParallel"`
 	NoSkip     bool            `json:"NoSkip"`
 	NoTitle    bool            `json:"NoTitle"`
-	NoParallel bool            `json:"NoParallel"`
+	Output     chan *string    `json:"Output"`
 	SingleLine bool            `json:"SingleLine"`
 	StatusOnly bool            `json:"StatusOnly"` // Display api request status
 	Wg         *sync.WaitGroup `json:"Wg"`
@@ -84,10 +85,10 @@ func (t *RepoDo) process() {
 			if !t.NoTitle {
 				log.N(title)
 			}
-			log.Success(status).Out()
+			t.Output <- log.Success(status).L().StringP()
 		} else {
 			output := gitApi.Output()
-			log.Debug().N(prefix).N("output").M(output).Out()
+			t.Output <- log.Debug().N(prefix).N("output").M(output).StringP()
 			if !(output == nil || *output == "") || t.NoSkip {
 				log.Log()
 				if !t.NoTitle {
@@ -97,7 +98,7 @@ func (t *RepoDo) process() {
 						log.Nl(title)
 					}
 				}
-				log.M(output).Out()
+				t.Output <- log.M(output).L().StringP()
 			}
 		}
 	} else {
@@ -108,12 +109,13 @@ func (t *RepoDo) process() {
 }
 
 // `lib.RepoDoRun` wrapper
-func RepoDoRun(gitApi *gitapi.GitApi, flag TypeFlag, singleLine, statusOnly bool, wg *sync.WaitGroup) {
+func RepoDoRun(gitApi *gitapi.GitApi, flag TypeFlag, singleLine, statusOnly bool, wg *sync.WaitGroup, out chan *string) {
 	property := RepoDoProperty{
 		GitApi:     gitApi,
 		NoParallel: flag.NoParallel,
 		NoSkip:     flag.NoSkip,
 		NoTitle:    flag.NoTitle,
+		Output:     out,
 		SingleLine: singleLine,
 		StatusOnly: statusOnly,
 		Wg:         wg,

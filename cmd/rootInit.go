@@ -55,7 +55,7 @@ var rootInitCmd = &cobra.Command{
 			close(out)
 		}()
 		for o := range out {
-			fmt.Println(*o)
+			fmt.Print(*o)
 		}
 	},
 }

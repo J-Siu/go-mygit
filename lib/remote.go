@@ -155,20 +155,14 @@ func myCmdLog(myCmd *cmd.Cmd, title string) *string {
 		str2 = title + ":"
 	}
 	if str2 != "" {
-		str1 += str2
+		str1 += str2 + "\n"
 	}
 	str2 = myCmd.Stdout.String()
 	if str2 != "" {
-		if str1 != "" {
-			str1 += "\n"
-		}
 		str1 += str2
 	}
 	str2 = myCmd.Stderr.String()
 	if str2 != "" {
-		if str1 != "" {
-			str1 += "\n"
-		}
 		str1 += str2
 	}
 	return &str1

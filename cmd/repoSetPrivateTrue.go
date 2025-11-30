@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
@@ -39,23 +40,33 @@ var repoSetPrivateTrueCmd = &cobra.Command{
 	Short:   "Set to true.",
 	Long:    "Set to true. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		var info repo.Private
 		info.Private = true
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
-				gitApi.EndpointRepos()
-				gitApi.SetPatch()
-				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					wg.Add(1)
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+					gitApi.EndpointRepos()
+					gitApi.SetPatch()
+					lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+				}
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 

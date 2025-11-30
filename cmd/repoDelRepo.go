@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2"
@@ -38,23 +39,33 @@ var repoDelRepoCmd = &cobra.Command{
 	Short:   "Delete remote repository",
 	Long:    "Delete remote repository. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 
 		// If no repo specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
 		}
 
-		for _, workPath := range args {
-			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
-				var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
-				gitApi.EndpointRepos()
-				gitApi.SetDel()
-				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg)
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					wg.Add(1)
+					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
+					gitApi.EndpointRepos()
+					gitApi.SetDel()
+					lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+				}
 			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
+
 	},
 }
 
