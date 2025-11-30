@@ -101,3 +101,5 @@
   - update go-helper/v2
   - use errs.Queue for errors
   - use ezlog SkipEmpty()
+- v2.8.3
+  - remote use channel for output

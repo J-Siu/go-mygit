@@ -29,7 +29,6 @@ import (
 	"github.com/J-Siu/go-gitapi/v2"
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/cmd"
-	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-helper/v2/file"
 )
 
@@ -47,6 +46,8 @@ type Remote struct {
 
 	NoTitle    bool `json:"no_title,omitempty"`   // This is pass from global.Flag
 	SkipVerify bool `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)
+
+	Output chan *string
 }
 
 func (remote *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {
@@ -81,7 +82,7 @@ func (remote *Remote) Add(workPathP *string) *cmd.Cmd {
 	if !remote.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	myCmdLog(myCmd, title)
+	remote.Output <- myCmdLog(myCmd, title)
 	return myCmd
 }
 
@@ -94,13 +95,13 @@ func (remote *Remote) Remove(workPathP *string) *cmd.Cmd {
 	var title string
 	if myCmd != nil && !remote.NoTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
-		myCmdLog(myCmd, title)
+		remote.Output <- myCmdLog(myCmd, title)
 	}
 	return myCmd
 }
 
 // Push all Remotes in git repository
-func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
+func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
@@ -109,12 +110,12 @@ func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 	if !noTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	myCmdLog(myCmd, title)
+	out <- myCmdLog(myCmd, title)
 	return myCmd
 }
 
 // Push all Remotes in git repository
-func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
+func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
@@ -125,12 +126,12 @@ func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 	if !noTitle {
 		title = *workPathP + ": " + myCmd.CmdLn
 	}
-	myCmdLog(myCmd, title)
+	out <- myCmdLog(myCmd, title)
 	return myCmd
 }
 
 // git clone to current directory
-func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
+func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
@@ -141,17 +142,34 @@ func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool) *cmd.Cmd {
 	if !noTitle {
 		title = myCmd.CmdLn
 	}
-	myCmdLog(myCmd, title)
+	out <- myCmdLog(myCmd, title)
 	return myCmd
 }
 
-func myCmdLog(myCmd *cmd.Cmd, title string) {
-	se := ezlog.GetSkipEmpty()
-	ezlog.SetSkipEmpty(false)
+func myCmdLog(myCmd *cmd.Cmd, title string) *string {
+	var (
+		str1 string
+		str2 string
+	)
 	if len(title) > 0 {
-		ezlog.Log().N(title).Out()
+		str2 = title + ":"
 	}
-	ezlog.Log().Se().M(myCmd.Stdout.String()).Out()
-	ezlog.Log().Se().M(myCmd.Stderr.String()).Out()
-	ezlog.SetSkipEmpty(se)
+	if str2 != "" {
+		str1 += str2
+	}
+	str2 = myCmd.Stdout.String()
+	if str2 != "" {
+		if str1 != "" {
+			str1 += "\n"
+		}
+		str1 += str2
+	}
+	str2 = myCmd.Stderr.String()
+	if str2 != "" {
+		if str1 != "" {
+			str1 += "\n"
+		}
+		str1 += str2
+	}
+	return &str1
 }

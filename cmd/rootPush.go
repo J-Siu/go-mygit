@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitcmd"
@@ -41,45 +42,54 @@ var rootPushCmd = &cobra.Command{
 	Short:   "Git push",
 	Long:    "Git push. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
-		var wg sync.WaitGroup
+		var (
+			out = make(chan *string)
+			wg  sync.WaitGroup
+		)
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workPath := range args {
-			if gitcmd.GitRoot(&workPath) == "" {
-				ezlog.Log().N(workPath).M("is not a git repository").Out()
-				continue
-			}
+		go func() {
+			for _, workPath := range args {
+				if gitcmd.GitRoot(&workPath) == "" {
+					ezlog.Log().N(workPath).M("is not a git repository").Out()
+					continue
+				}
 
-			// Create queue base on local remote
-			var remoteLocal []string = *gitcmd.GitRemote(&workPath, false)
-			var remoteQueue []string
+				// Create queue base on local remote
+				var remoteLocal []string = *gitcmd.GitRemote(&workPath, false)
+				var remoteQueue []string
 
-			for _, remote := range global.Conf.MergedRemotes {
-				// Only add to queue if exist locally
-				if str.ArrayContains(&remoteLocal, &remote.Name, false) {
-					remoteQueue = append(remoteQueue, remote.Name)
-				} else {
-					ezlog.Log().N(workPath).N("Remote not setup").M(remote.Name)
+				for _, remote := range global.Conf.MergedRemotes {
+					// Only add to queue if exist locally
+					if str.ArrayContains(&remoteLocal, &remote.Name, false) {
+						remoteQueue = append(remoteQueue, remote.Name)
+					} else {
+						ezlog.Log().N(workPath).N("Remote not setup").M(remote.Name)
+					}
+				}
+
+				for _, remote := range remoteQueue {
+					// make a local copy of workPath for go routine
+					var wp string = workPath
+					options1 := []string{remote}
+					options2 := options1
+					if global.Flag.PushAll {
+						options2 = append(options1, "--all")
+					}
+					push(&wp, &options2, &wg, out)
+					if global.Flag.PushTag {
+						options2 = append(options1, "--tags")
+						push(&wp, &options2, &wg, out)
+					}
 				}
 			}
-
-			for _, remote := range remoteQueue {
-				// make a local copy of workPath for go routine
-				var wp string = workPath
-				options1 := []string{remote}
-				options2 := options1
-				if global.Flag.PushAll {
-					options2 = append(options1, "--all")
-				}
-				push(&wp, &options2, &wg)
-				if global.Flag.PushTag {
-					options2 = append(options1, "--tags")
-					push(&wp, &options2, &wg)
-				}
-			}
+			wg.Wait()
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
-		wg.Wait()
 	},
 }
 
@@ -89,13 +99,13 @@ func init() {
 	rootPushCmd.Flags().BoolVarP(&global.Flag.PushTag, "tags", "t", false, "Push with tags")
 }
 
-func push(wp *string, options *[]string, wg *sync.WaitGroup) {
+func push(wp *string, options *[]string, wg *sync.WaitGroup, out chan *string) {
 	wg.Add(1)
 	w := *wp
 	opts := *options
 	if global.Flag.NoParallel {
-		lib.GitPush(&w, &opts, wg, global.Flag.NoTitle)
+		lib.GitPush(&w, &opts, wg, global.Flag.NoTitle, out)
 	} else {
-		go lib.GitPush(&w, &opts, wg, global.Flag.NoTitle)
+		go lib.GitPush(&w, &opts, wg, global.Flag.NoTitle, out)
 	}
 }
