@@ -39,7 +39,7 @@ var remoteAddCmd = &cobra.Command{
 	Long:    "Add git remote. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
+			out = make(chan *string, 10)
 		)
 		if len(args) == 0 {
 			args = []string{"."}

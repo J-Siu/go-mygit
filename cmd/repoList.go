@@ -42,7 +42,7 @@ var repoListCmd = &cobra.Command{
 	Long:    "List all remote repositories. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		go func() {

@@ -40,7 +40,7 @@ var repoSetActionsFalseCmd = &cobra.Command{
 	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo/dir specified in command line, add a ""

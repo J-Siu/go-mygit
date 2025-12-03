@@ -48,7 +48,7 @@ var rootPushCmd = &cobra.Command{
 	Long:    "Git push. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out         = make(chan *string)
+			out         = make(chan *string, 10)
 			remoteLocal []string
 			remoteQueue []*remoteQueueStruct
 			wg          sync.WaitGroup

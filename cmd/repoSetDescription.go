@@ -40,7 +40,7 @@ var repoSetDescriptionCmd = &cobra.Command{
 	Short:   "Set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		var info repo.Description

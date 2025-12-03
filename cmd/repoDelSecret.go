@@ -41,7 +41,7 @@ var repoDelSecretCmd = &cobra.Command{
 	Long:    "Delete action secret. If --name is not set, all secrets in config will be used. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo specified in command line, add a ""

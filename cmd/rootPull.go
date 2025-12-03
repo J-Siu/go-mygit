@@ -56,7 +56,7 @@ var rootPullCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out                = make(chan *string)
+			out                = make(chan *string, 10)
 			remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 			wg     sync.WaitGroup
 		)

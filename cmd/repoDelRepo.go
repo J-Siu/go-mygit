@@ -40,7 +40,7 @@ var repoDelRepoCmd = &cobra.Command{
 	Long:    "Delete remote repository. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 
