@@ -105,3 +105,9 @@
   - remote use channel for output
 - v2.8.4
   - repoDo use channel for output
+- v2.8.5
+  - change option "no-parallel" to "single-thread", "1"
+  - fix single thread wg counter -1 bug
+  - move wg.Add(1) into repoDo.Run()
+  - update go-gitapi
+  - use buffered channel
