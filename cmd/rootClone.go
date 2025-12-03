@@ -39,34 +39,37 @@ var rootCloneCmd = &cobra.Command{
 	Aliases: []string{"cl"},
 	Short:   "Git clone",
 	Long:    "Git clone. " + global.TXT_REPO_CLONE_LONG,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		// Check flag
+		if len(global.Flag.Groups) != 0 || // should not have --group
+			len(global.Flag.Remotes) != 1 || // need exactly 1 --remote
+			len(args) == 0 { // need >0 repo name
+			ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
+			os.Exit(1)
+		}
+		// Check remote name exist
+		var remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
+		if remote == nil {
+			ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
+			os.Exit(1)
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
-			wg  sync.WaitGroup
+			out    = make(chan *string)
+			remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
+			wg     sync.WaitGroup
 		)
 		go func() {
-			// Check flag
-			if len(global.Flag.Groups) != 0 || // should not have --group
-				len(global.Flag.Remotes) != 1 || // need exactly 1 --remote
-				len(args) == 0 { // need >0 repo name
-				ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
-				os.Exit(1)
-			}
-			// Check remote name exist
-			var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
-			if remote == nil {
-				ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
-				os.Exit(1)
-			}
-
 			for _, repoName := range args {
-				wg.Add(1)
-
-				// construct url
-				var options []string = []string{remote.Ssh + ":/" + remote.User + "/" + repoName}
+				var (
+					// construct url
+					options []string = []string{remote.Ssh + ":/" + remote.User + "/" + repoName}
+				)
 				if global.Flag.NoParallel {
-					lib.GitClone(&options, &wg, global.Flag.NoTitle, out)
+					lib.GitClone(&options, nil, global.Flag.NoTitle, out)
 				} else {
+					wg.Add(1)
 					go lib.GitClone(&options, &wg, global.Flag.NoTitle, out)
 				}
 			}

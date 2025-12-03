@@ -40,38 +40,36 @@ var rootPullCmd = &cobra.Command{
 	Use:   "pull " + global.TXT_REPO_DIR_USE,
 	Short: "Git pull",
 	Long:  "Git pull. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		// Check flag
+		if len(global.Flag.Groups) != 0 || // should not have --group
+			len(global.Flag.Remotes) != 1 { // need exactly 1 --remote
+			ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
+			os.Exit(1)
+		}
+		// Check remote name exist
+		var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
+		if remote == nil {
+			ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
+			os.Exit(1)
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string)
-			wg  sync.WaitGroup
+			out                = make(chan *string)
+			remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
+			wg     sync.WaitGroup
 		)
 		if len(args) == 0 {
 			args = []string{"."}
 		}
 		go func() {
-			// Check flag
-			if len(global.Flag.Groups) != 0 || // should not have --group
-				len(global.Flag.Remotes) != 1 { // need exactly 1 --remote
-				ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
-				os.Exit(1)
-			}
-			// Check remote name exist
-			var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
-			if remote == nil {
-				ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
-				os.Exit(1)
-			}
-
 			for _, workPath := range args {
-				if gitcmd.GitRoot(&workPath) == "" {
-					ezlog.Log().N(workPath).M("is not a git repository").Out()
-					continue
-				}
-
-				var wp string = workPath
-				var branch string = strings.TrimSpace(gitcmd.GitBranchCurrent(&wp).Stdout.String())
-				var options []string = []string{remote.Name, branch}
-
+				var (
+					wp      string   = workPath
+					branch  string   = strings.TrimSpace(gitcmd.GitBranchCurrent(&wp).Stdout.String())
+					options []string = []string{remote.Name, branch}
+				)
 				pull(&wp, &options, &wg, out)
 
 				if global.Flag.PushTag {
@@ -95,12 +93,12 @@ func init() {
 }
 
 func pull(wp *string, options *[]string, wg *sync.WaitGroup, out chan *string) {
-	wg.Add(1)
 	w := *wp
 	opts := *options
 	if global.Flag.NoParallel {
-		lib.GitPull(&w, &opts, wg, global.Flag.NoTitle, out)
+		lib.GitPull(&w, &opts, nil, global.Flag.NoTitle, out)
 	} else {
+		wg.Add(1)
 		go lib.GitPull(&w, &opts, wg, global.Flag.NoTitle, out)
 	}
 }
