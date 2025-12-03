@@ -28,7 +28,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/gitapi"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/global"
@@ -84,7 +84,6 @@ var repoSetSecretCmd = &cobra.Command{
 						}
 						// Use config secrets
 						for _, secret := range *secretsP {
-							wg.Add(1)
 							var infoP *repo.EncryptedPair = secret.Encrypt(&pubkey)
 							var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP, global.Flag.Debug)
 							gitApi.EndpointReposSecrets()

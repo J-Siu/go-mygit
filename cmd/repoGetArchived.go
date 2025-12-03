@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/gitapi"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
@@ -50,9 +50,10 @@ var repoGetArchivedCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					wg.Add(1)
-					var info repo.Archived
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+					var (
+						info   repo.Archived
+						gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+					)
 					gitApi.EndpointRepos()
 					gitApi.SetGet()
 					lib.RepoDoRun(gitApi, global.Flag, true, false, &wg, out)

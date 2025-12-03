@@ -27,7 +27,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/gitapi"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -61,7 +61,6 @@ var repoDelSecretCmd = &cobra.Command{
 						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 					} else {
 						for _, secret := range global.Flag.SecretsDel {
-							wg.Add(1)
 							var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
 							gitApi.EndpointReposSecrets()
 							gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)

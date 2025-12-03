@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/gitapi"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
@@ -50,7 +50,6 @@ var repoGetDiscussionsCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					wg.Add(1)
 					var info repo.Discussions
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 					gitApi.EndpointRepos()

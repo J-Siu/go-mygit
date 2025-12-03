@@ -27,7 +27,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/gitapi"
 	"github.com/J-Siu/go-gitapi/v2/repo"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
@@ -47,7 +47,6 @@ var repoListCmd = &cobra.Command{
 		)
 		go func() {
 			for _, remote := range global.Conf.MergedRemotes {
-				wg.Add(1)
 				var info repo.InfoList
 				var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
 				gitApi.EndpointUserRepos()

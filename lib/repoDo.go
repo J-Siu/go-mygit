@@ -26,7 +26,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/gitapi"
 	"github.com/J-Siu/go-helper/v2/basestruct"
 	"github.com/J-Siu/go-helper/v2/errs"
 	"github.com/J-Siu/go-helper/v2/ezlog"
@@ -59,8 +59,10 @@ func (t *RepoDo) New(property *RepoDoProperty) *RepoDo {
 
 func (t *RepoDo) Run() *RepoDo {
 	if t.NoParallel {
+		t.Wg = nil
 		t.process()
 	} else {
+		t.Wg.Add(1)
 		go t.process()
 	}
 	return t
