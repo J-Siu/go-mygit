@@ -64,7 +64,7 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&global.Flag.Debug, "debug", "d", false, "Enable debug")
-	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoParallel, "no-parallel", "", false, "Don't process in parallel")
+	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoParallel, "single-thread", "1", false, "Don't process in parallel")
 	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoSkip, "no-skip", "", false, "Don't skip empty output")
 	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
 	rootCmd.PersistentFlags().StringArrayVarP(&global.Flag.Groups, "group", "g", nil, "Specify group")
