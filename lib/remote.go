@@ -26,7 +26,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2"
+	"github.com/J-Siu/go-gitapi/v2/gitapi"
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/cmd"
 	"github.com/J-Siu/go-helper/v2/file"
