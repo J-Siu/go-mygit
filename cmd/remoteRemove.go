@@ -23,6 +23,8 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/J-Siu/go-gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/global"
@@ -36,21 +38,31 @@ var remoteRemoveCmd = &cobra.Command{
 	Short:   "Delete git remote",
 	Long:    "Delete git remote. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
+		var (
+			out = make(chan *string, 10)
+		)
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workPath := range args {
-			if gitcmd.GitRoot(&workPath) == "" {
-				ezlog.Log().N(workPath).M("is not a git repository").Out()
-				return
-			}
-			if global.Flag.RemoteRemoveAll {
-				gitcmd.GitRemoteRemoveAll(&workPath)
-			} else {
-				for _, remote := range global.Conf.MergedRemotes {
-					remote.Remove(&workPath)
+		go func() {
+			for _, workPath := range args {
+				if gitcmd.GitRoot(&workPath) == "" {
+					ezlog.Log().N(workPath).M("is not a git repository").Out()
+					return
+				}
+				if global.Flag.RemoteRemoveAll {
+					gitcmd.GitRemoteRemoveAll(&workPath)
+				} else {
+					for _, remote := range global.Conf.MergedRemotes {
+						remote.Output = out
+						remote.Remove(&workPath)
+					}
 				}
 			}
+			close(out)
+		}()
+		for o := range out {
+			fmt.Print(*o)
 		}
 	},
 }

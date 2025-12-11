@@ -44,7 +44,6 @@ var remoteAddCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-
 		go func() {
 			for _, workPath := range args {
 				if gitcmd.GitRoot(&workPath) == "" {
@@ -52,9 +51,11 @@ var remoteAddCmd = &cobra.Command{
 					return
 				}
 				for _, remote := range global.Conf.MergedRemotes {
+					remote.Output = out
 					remote.Add(&workPath)
 				}
 			}
+			close(out)
 		}()
 		for o := range out {
 			fmt.Print(*o)
