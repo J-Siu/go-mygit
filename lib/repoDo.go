@@ -57,6 +57,7 @@ func (t *RepoDo) New(property *RepoDoProperty) *RepoDo {
 	return t
 }
 
+// Run encapsulate wait group add amd done
 func (t *RepoDo) Run() *RepoDo {
 	if t.NoParallel {
 		t.Wg = nil
@@ -68,19 +69,26 @@ func (t *RepoDo) Run() *RepoDo {
 	return t
 }
 
-func (t *RepoDo) process() {
-	prefix := t.MyType + ".process"
-	var (
-		gitApi = t.GitApi
-		wg     = t.Wg
-		log    = new(ezlog.EzLog).New().SetLogLevel(ezlog.GetLogLevel())
-	)
-	if wg != nil {
-		defer wg.Done()
+func (t *RepoDo) process() *RepoDo {
+
+	if t.Wg != nil {
+		defer t.Wg.Done()
 	}
 
+	t.GitApi.Do()
+	t.output()
+	return t
+}
+
+func (t *RepoDo) output() {
+	var (
+		gitApi = t.GitApi
+		log    = new(ezlog.EzLog).New().SetLogLevel(ezlog.GetLogLevel())
+	)
+
+	// --- repoOut
 	title := gitApi.Repo + "(" + gitApi.Name + ")"
-	status := gitApi.Do().Ok()
+	status := gitApi.Ok()
 	if status {
 		if t.StatusOnly {
 			log.Log()
@@ -90,7 +98,6 @@ func (t *RepoDo) process() {
 			t.Output <- log.Success(status).L().StringP()
 		} else {
 			output := gitApi.Output()
-			t.Output <- log.Debug().N(prefix).N("output").M(output).StringP()
 			if !(output == nil || *output == "") || t.NoSkip {
 				log.Log()
 				if !t.NoTitle {
@@ -108,6 +115,8 @@ func (t *RepoDo) process() {
 		log.Err().N(title).M(gitApi.Err())
 		errs.Queue("", errors.New(log.String()))
 	}
+	// ---
+
 }
 
 // `lib.RepoDoRun` wrapper

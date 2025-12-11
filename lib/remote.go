@@ -50,20 +50,21 @@ type Remote struct {
 	Output chan *string
 }
 
-func (remote *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {
+func (t *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {
 	var fullPath string = *file.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
 
 	property := gitapi.Property{
-		Name:       remote.Name,
-		Token:      remote.Token,
-		EntryPoint: remote.EntryPoint,
-		User:       remote.User,
-		Vendor:     remote.Vendor,
-		SkipVerify: remote.SkipVerify,
+		Name:       t.Name,
+		Token:      t.Token,
+		EntryPoint: t.EntryPoint,
+		User:       t.User,
+		Vendor:     t.Vendor,
+		SkipVerify: t.SkipVerify,
 		Repo:       repo,
 		Info:       info,
-		Debug:      debug}
+		Debug:      debug,
+	}
 
 	apiP := gitapi.New(&property)
 	// Set Github header
@@ -72,30 +73,28 @@ func (remote *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool
 }
 
 // Add all Remotes into git repository
-func (remote *Remote) Add(workPathP *string) *cmd.Cmd {
-	remote.Remove(workPathP)
-	var fullPath string = *file.FullPath(workPathP)
-	var repo string = path.Base(fullPath)
-	var git string = remote.Ssh + ":/" + remote.User + "/" + repo + ".git"
-	var myCmd = gitcmd.GitRemoteAdd(&fullPath, remote.Name, git)
-	var title string
-	if !remote.NoTitle {
-		title = *workPathP + ": " + myCmd.CmdLn
-	}
-	remote.Output <- myCmdLog(myCmd, title)
+func (t *Remote) Add(workPathP *string) *cmd.Cmd {
+	t.Remove(workPathP)
+	var (
+		fullPath string   = *file.FullPath(workPathP)
+		repo     string   = path.Base(fullPath)
+		git      string   = t.Ssh + ":/" + t.User + "/" + repo + ".git"
+		myCmd    *cmd.Cmd = gitcmd.GitRemoteAdd(&fullPath, t.Name, git)
+	)
+	t.Output <- myCmdLog(myCmd, workPathP, t.NoTitle)
 	return myCmd
 }
 
 // Remove all Remotes in git repository
-func (remote *Remote) Remove(workPathP *string) *cmd.Cmd {
-	var myCmd *cmd.Cmd
-	if gitcmd.GitRemoteExist(workPathP, remote.Name) {
-		myCmd = gitcmd.GitRemoteRemove(workPathP, remote.Name)
+func (t *Remote) Remove(workPathP *string) *cmd.Cmd {
+	var (
+		myCmd *cmd.Cmd
+	)
+	if gitcmd.GitRemoteExist(workPathP, t.Name) {
+		myCmd = gitcmd.GitRemoteRemove(workPathP, t.Name)
 	}
-	var title string
-	if myCmd != nil && !remote.NoTitle {
-		title = *workPathP + ": " + myCmd.CmdLn
-		remote.Output <- myCmdLog(myCmd, title)
+	if myCmd != nil {
+		t.Output <- myCmdLog(myCmd, workPathP, t.NoTitle)
 	}
 	return myCmd
 }
@@ -106,11 +105,7 @@ func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 		defer wgP.Done()
 	}
 	var myCmd *cmd.Cmd = gitcmd.GitPush(workPathP, optionsP)
-	var title string
-	if !noTitle {
-		title = *workPathP + ": " + myCmd.CmdLn
-	}
-	out <- myCmdLog(myCmd, title)
+	out <- myCmdLog(myCmd, workPathP, noTitle)
 	return myCmd
 }
 
@@ -119,14 +114,8 @@ func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 	if wgP != nil {
 		defer wgP.Done()
 	}
-
 	var myCmd *cmd.Cmd = gitcmd.GitPull(workPathP, optionsP)
-
-	var title string
-	if !noTitle {
-		title = *workPathP + ": " + myCmd.CmdLn
-	}
-	out <- myCmdLog(myCmd, title)
+	out <- myCmdLog(myCmd, workPathP, noTitle)
 	return myCmd
 }
 
@@ -135,22 +124,24 @@ func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *s
 	if wgP != nil {
 		defer wgP.Done()
 	}
-
 	var myCmd *cmd.Cmd = gitcmd.GitClone(nil, optionsP)
-
-	var title string
-	if !noTitle {
-		title = myCmd.CmdLn
-	}
-	out <- myCmdLog(myCmd, title)
+	out <- myCmdLog(myCmd, nil, noTitle)
 	return myCmd
 }
 
-func myCmdLog(myCmd *cmd.Cmd, title string) *string {
+func myCmdLog(myCmd *cmd.Cmd, workPathP *string, noTitle bool) *string {
 	var (
-		str1 string
-		str2 string
+		str1  string
+		str2  string
+		title string
 	)
+	if !noTitle {
+		if workPathP == nil {
+			title = myCmd.CmdLn
+		} else {
+			title = *workPathP + ": " + myCmd.CmdLn
+		}
+	}
 	if len(title) > 0 {
 		str2 = title + ":"
 	}
