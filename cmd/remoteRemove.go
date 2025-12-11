@@ -48,7 +48,7 @@ var remoteRemoveCmd = &cobra.Command{
 			for _, workPath := range args {
 				if gitcmd.GitRoot(&workPath) == "" {
 					ezlog.Log().N(workPath).M("is not a git repository").Out()
-					return
+					continue
 				}
 				if global.Flag.RemoteRemoveAll {
 					gitcmd.GitRemoteRemoveAll(&workPath)

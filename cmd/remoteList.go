@@ -42,7 +42,7 @@ var remoteListCmd = &cobra.Command{
 		for _, workPath := range args {
 			if gitcmd.GitRoot(&workPath) == "" {
 				ezlog.Log().N(workPath).M("is not a git repository").Out()
-				return
+				continue
 			}
 			var gitRemoteList *[]string = gitcmd.GitRemote(&workPath, true)
 			var title string
