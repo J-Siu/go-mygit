@@ -26,19 +26,10 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/J-Siu/go-gitcmd"
-
-	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-helper/v2/str"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
 )
-
-type remoteQueueStruct struct {
-	Name     *string
-	WorkPath *string
-}
 
 // Mass git push
 var rootPushCmd = &cobra.Command{
@@ -49,31 +40,16 @@ var rootPushCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			out         = make(chan *string, 10)
-			remoteLocal []string
-			remoteQueue []*remoteQueueStruct
+			remoteQueue = new(lib.RemoteQueue)
 			wg          sync.WaitGroup
 		)
 
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		for _, workPath := range args {
-			// Create queue base on local remote
-			remoteLocal = *gitcmd.GitRemote(&workPath, false)
-			for _, remote := range global.Conf.MergedRemotes {
-				// Only add to queue if exist locally
-				if str.ArrayContains(&remoteLocal, &remote.Name, false) {
-					rs := remoteQueueStruct{Name: &remote.Name, WorkPath: &workPath}
-					remoteQueue = append(remoteQueue, &rs)
-				} else {
-					ezlog.Log().N(workPath).N("Remote not setup").M(remote.Name)
-				}
-			}
-		}
-		ezlog.Debug().N("RemoteQueue").Lm(remoteQueue).Out()
-
+		remoteQueue.New(&args, &global.Conf.MergedRemotes)
 		go func() {
-			for _, remote := range remoteQueue {
+			for _, remote := range remoteQueue.Queue {
 				var (
 					options1 = []string{*remote.Name}
 					options2 = options1
