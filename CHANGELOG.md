@@ -111,3 +111,5 @@
   - move wg.Add(1) into repoDo.Run()
   - update go-gitapi
   - use buffered channel
+- v2.8.6
+  - fix output crash and early return crash
