@@ -23,50 +23,53 @@ THE SOFTWARE.
 package lib
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-helper/v2/basestruct"
+	"github.com/J-Siu/go-helper/v2/errs"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 )
 
-type RepoDoProperty struct {
-	GitApi     *gitapi.GitApi      `json:"GitApi"`
-	NoParallel bool                `json:"NoParallel"`
-	Output     chan *gitapi.GitApi `json:"Output"`
-	Wg         *sync.WaitGroup     `json:"Wg"`
+// `lib.RepoDoRun` wrapper
+// Encapsulate RepoDo setup and run, sync.WaitGroup add amd done
+func RepoDoRun(gitApi *gitapi.GitApi, noParallel bool, wg *sync.WaitGroup, out chan *gitapi.GitApi) {
+	property := RepoDoProperty{
+		GitApi:     gitApi,
+		NoParallel: noParallel,
+		Output:     out,
+		Wg:         wg,
+	}
+	new(RepoDo).New(&property).Run()
 }
 
-type RepoDo struct {
-	*basestruct.Base
-	*RepoDoProperty
-}
-
-func (t *RepoDo) New(property *RepoDoProperty) *RepoDo {
-	t.Base = new(basestruct.Base)
-	t.Initialized = true
-	t.MyType = "Repo"
-
-	t.RepoDoProperty = property
-	return t
-}
-
-// Encapsulate wait group add amd done
-func (t *RepoDo) Run() *RepoDo {
-	if t.NoParallel {
-		t.Wg = nil
-		t.process()
+func RepoOutput(gitApi *gitapi.GitApi, flag TypeFlag, singleLine, statusOnly bool) {
+	title := gitApi.Repo + "(" + gitApi.Name + ")"
+	status := gitApi.Ok()
+	if status {
+		if statusOnly {
+			ezlog.Log()
+			if !flag.NoTitle {
+				ezlog.N(title)
+			}
+			ezlog.Success(status).Out()
+		} else {
+			output := gitApi.Output()
+			if !(output == nil || *output == "") || flag.NoSkip {
+				ezlog.Log()
+				if !flag.NoTitle {
+					if singleLine {
+						ezlog.N(title)
+					} else {
+						ezlog.Nl(title)
+					}
+				}
+				ezlog.M(output).Out()
+			}
+		}
 	} else {
-		t.Wg.Add(1)
-		go t.process()
+		// API or HTTP GET failed, try to extract error message
+		ezlog.Err().N(title).M(gitApi.Err())
+		errs.Queue("", errors.New(ezlog.String()))
 	}
-	return t
-}
-
-func (t *RepoDo) process() *RepoDo {
-	if t.Wg != nil {
-		defer t.Wg.Done()
-	}
-	t.GitApi.Do()
-	t.Output <- t.GitApi
-	return t
 }

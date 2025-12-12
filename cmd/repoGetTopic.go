@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2/gitapi"
@@ -41,7 +40,7 @@ var repoGetTopicCmd = &cobra.Command{
 	Long:    "Get topics. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string, 10)
+			out = make(chan *gitapi.GitApi, 10)
 			wg  sync.WaitGroup
 		)
 		if len(args) == 0 {
@@ -54,14 +53,14 @@ var repoGetTopicCmd = &cobra.Command{
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 					gitApi.EndpointReposTopics()
 					gitApi.SetGet()
-					lib.RepoDoRun(gitApi, global.Flag, true, false, &wg, out)
+					lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
 				}
 			}
 			wg.Wait()
 			close(out)
 		}()
-		for o := range out {
-			fmt.Print(*o)
+		for gitApi := range out {
+			lib.RepoOutput(gitApi, global.Flag, true, false)
 		}
 
 	},

@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"path"
 	"sync"
 
@@ -43,7 +42,7 @@ var repoNewCmd = &cobra.Command{
 	Long:    "Create remote repository. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string, 10)
+			out = make(chan *gitapi.GitApi, 10)
 			wg  sync.WaitGroup
 		)
 		// args == array of repos from command line
@@ -59,16 +58,15 @@ var repoNewCmd = &cobra.Command{
 					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
 					gitApi.EndpointUserRepos()
 					gitApi.SetPost()
-					lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+					lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
 				}
 			}
 			wg.Wait()
 			close(out)
 		}()
-		for o := range out {
-			fmt.Print(*o)
+		for gitApi := range out {
+			lib.RepoOutput(gitApi, global.Flag, true, true)
 		}
-
 	},
 }
 

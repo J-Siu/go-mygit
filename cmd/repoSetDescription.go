@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2/gitapi"
@@ -40,7 +39,7 @@ var repoSetDescriptionCmd = &cobra.Command{
 	Short:   "Set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string, 10)
+			out = make(chan *gitapi.GitApi, 10)
 			wg  sync.WaitGroup
 		)
 		var info repo.Description
@@ -52,15 +51,14 @@ var repoSetDescriptionCmd = &cobra.Command{
 				var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
 				gitApi.EndpointRepos()
 				gitApi.SetPatch()
-				lib.RepoDoRun(gitApi, global.Flag, true, true, &wg, out)
+				lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
 			}
 			wg.Wait()
 			close(out)
 		}()
-		for o := range out {
-			fmt.Print(*o)
+		for gitApi := range out {
+			lib.RepoOutput(gitApi, global.Flag, true, true)
 		}
-
 	},
 }
 

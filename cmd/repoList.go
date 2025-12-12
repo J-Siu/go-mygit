@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"strconv"
 	"sync"
 
@@ -42,7 +41,8 @@ var repoListCmd = &cobra.Command{
 	Long:    "List all remote repositories. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *string, 10)
+			// out = make(chan *string, 10)
+			out = make(chan *gitapi.GitApi, 10)
 			wg  sync.WaitGroup
 		)
 		go func() {
@@ -60,15 +60,14 @@ var repoListCmd = &cobra.Command{
 				gitApi.Req.UrlVal.Add("page", strconv.Itoa(global.Flag.Page))
 				gitApi.SetGet()
 				gitApi.Repo = ""
-				lib.RepoDoRun(gitApi, global.Flag, false, false, &wg, out)
+				lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
 			}
 			wg.Wait()
 			close(out)
 		}()
-		for o := range out {
-			fmt.Print(*o)
+		for gitApi := range out {
+			lib.RepoOutput(gitApi, global.Flag, false, false)
 		}
-
 	},
 }
 
