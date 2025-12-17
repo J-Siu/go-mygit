@@ -113,3 +113,6 @@
   - use buffered channel
 - v2.8.6
   - fix output crash and early return crash
+- v2.8.7
+  - refactor repo output to lib.RepoOutput()
+  - update dependencies
