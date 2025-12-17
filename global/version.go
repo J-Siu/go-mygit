@@ -23,5 +23,5 @@ THE SOFTWARE.
 package global
 
 const (
-	Version = "v2.8.8"
+	Version = "v2.8.7"
 )
