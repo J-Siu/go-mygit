@@ -2,8 +2,8 @@ github.com/J-Siu/go-crypto v1.1.3 h1:qnzTVMfC3UWCLkuPk+/YO6RZUKGDMXlr1LGSz57CoJQ
 github.com/J-Siu/go-crypto v1.1.3/go.mod h1:YX/p1EfkwoltASB8kHY6wH8Xe3mutmlaLGdtK85zDSY=
 github.com/J-Siu/go-gitapi/v2 v2.2.1 h1:usfVdMOa6adZVhe+tesQc4B7+mcbyULyTj4yzO+0Iwc=
 github.com/J-Siu/go-gitapi/v2 v2.2.1/go.mod h1:fqdhuPZmHizEbON9vwrmJGXlIjju1kimNiCKaNAR568=
-github.com/J-Siu/go-gitcmd v1.0.2 h1:xl5Orv4aJo92yO7aGM+AZA6cUtT3yC3tqTaWXgAZhlY=
-github.com/J-Siu/go-gitcmd v1.0.2/go.mod h1:/3EvWb2T/HmCNtRSq38wdNdJs5wNhdbsOflDfg67XAA=
+github.com/J-Siu/go-gitcmd/v2 v2.0.0 h1:VFvJkr1jPMzTA9Z1y7lmQxZ27Sc/pMtWViTEbDsTc4g=
+github.com/J-Siu/go-gitcmd/v2 v2.0.0/go.mod h1:Sk4VNLoaurSQDSep8Rc4FSc1n/bC6CAQONri2BjuRKk=
 github.com/J-Siu/go-helper/v2 v2.6.5 h1:EVTjsBacgeT0CUvsCXGSxWgZGLo+5kvJz771HiGG7MM=
 github.com/J-Siu/go-helper/v2 v2.6.5/go.mod h1:xMmpBESfx/Z5eab1bTNgu6YpEOvBZUorjNfLdGu4fN4=
 github.com/J-Siu/go-restapi v1.0.3 h1:FhCqCjskaMS3yHrrCKU/WwfG3pVEi1CrPFPfOBH/cHE=

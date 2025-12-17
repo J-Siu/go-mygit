@@ -27,7 +27,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitcmd"
+	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
 	"github.com/J-Siu/go-helper/v2/cmd"
 	"github.com/J-Siu/go-helper/v2/file"
 )
@@ -79,7 +79,7 @@ func (t *Remote) Add(workPathP *string) *cmd.Cmd {
 		fullPath string   = *file.FullPath(workPathP)
 		repo     string   = path.Base(fullPath)
 		git      string   = t.Ssh + ":/" + t.User + "/" + repo + ".git"
-		myCmd    *cmd.Cmd = gitcmd.GitRemoteAdd(&fullPath, t.Name, git)
+		myCmd    *cmd.Cmd = gitcmd.RemoteAdd(&fullPath, t.Name, git)
 	)
 	t.Output <- myCmdLog(myCmd, workPathP, t.NoTitle)
 	return myCmd
@@ -90,8 +90,8 @@ func (t *Remote) Remove(workPathP *string) *cmd.Cmd {
 	var (
 		myCmd *cmd.Cmd
 	)
-	if gitcmd.GitRemoteExist(workPathP, t.Name) {
-		myCmd = gitcmd.GitRemoteRemove(workPathP, t.Name)
+	if gitcmd.RemoteExist(workPathP, t.Name) {
+		myCmd = gitcmd.RemoteRemove(workPathP, t.Name)
 	}
 	if myCmd != nil {
 		t.Output <- myCmdLog(myCmd, workPathP, t.NoTitle)
@@ -104,7 +104,7 @@ func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 	if wgP != nil {
 		defer wgP.Done()
 	}
-	var myCmd *cmd.Cmd = gitcmd.GitPush(workPathP, optionsP)
+	var myCmd *cmd.Cmd = gitcmd.Push(workPathP, optionsP)
 	out <- myCmdLog(myCmd, workPathP, noTitle)
 	return myCmd
 }
@@ -114,7 +114,7 @@ func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle
 	if wgP != nil {
 		defer wgP.Done()
 	}
-	var myCmd *cmd.Cmd = gitcmd.GitPull(workPathP, optionsP)
+	var myCmd *cmd.Cmd = gitcmd.Pull(workPathP, optionsP)
 	out <- myCmdLog(myCmd, workPathP, noTitle)
 	return myCmd
 }
@@ -124,7 +124,7 @@ func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *s
 	if wgP != nil {
 		defer wgP.Done()
 	}
-	var myCmd *cmd.Cmd = gitcmd.GitClone(nil, optionsP)
+	var myCmd *cmd.Cmd = gitcmd.Clone(nil, optionsP)
 	out <- myCmdLog(myCmd, nil, noTitle)
 	return myCmd
 }

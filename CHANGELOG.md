@@ -116,3 +116,5 @@
 - v2.8.7
   - refactor repo output to lib.RepoOutput()
   - update dependencies
+- v2.8.7
+  - update go-gitcmd

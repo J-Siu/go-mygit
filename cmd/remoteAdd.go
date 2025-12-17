@@ -25,7 +25,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/J-Siu/go-gitcmd"
+	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/spf13/cobra"
@@ -46,7 +46,7 @@ var remoteAddCmd = &cobra.Command{
 		}
 		go func() {
 			for _, workPath := range args {
-				if gitcmd.GitRoot(&workPath) == "" {
+				if gitcmd.Root(&workPath) == "" {
 					ezlog.Log().N(workPath).M("is not a git repository").Out()
 					continue
 				}

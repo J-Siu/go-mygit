@@ -23,7 +23,7 @@ THE SOFTWARE.
 package lib
 
 import (
-	"github.com/J-Siu/go-gitcmd"
+	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-helper/v2/str"
 )
@@ -44,7 +44,7 @@ func (t *RemoteQueue) New(workPaths *[]string, remotes *Remotes) *RemoteQueue {
 	t.Queue = nil
 	for _, workPath := range *workPaths {
 		// Create queue base on local remote
-		remoteLocal = *gitcmd.GitRemote(&workPath, false)
+		remoteLocal = *gitcmd.Remote(&workPath, false)
 		for _, remote := range *remotes {
 			// Only add to queue if exist locally
 			if str.ArrayContains(&remoteLocal, &remote.Name, false) {

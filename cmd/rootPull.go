@@ -28,7 +28,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/J-Siu/go-gitcmd"
+	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
@@ -67,7 +67,7 @@ var rootPullCmd = &cobra.Command{
 			for _, workPath := range args {
 				var (
 					wp      string   = workPath
-					branch  string   = strings.TrimSpace(gitcmd.GitBranchCurrent(&wp).Stdout.String())
+					branch  string   = strings.TrimSpace(gitcmd.BranchCurrent(&wp).Stdout.String())
 					options []string = []string{remote.Name, branch}
 				)
 				pull(&wp, &options, &wg, out)
