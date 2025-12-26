@@ -53,11 +53,10 @@ var repoNewCmd = &cobra.Command{
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Info)
+						ga       = new(api.Repo).New(property).Create()
 					)
 					ga.Info.Name = path.Base(workPath)
 					ga.Info.Private = remote.Private
-					ga.New(property).SetGet()
 					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 				}
 			}
