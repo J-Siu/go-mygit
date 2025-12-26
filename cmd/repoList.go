@@ -45,11 +45,13 @@ var repoListCmd = &cobra.Command{
 		)
 		go func() {
 			for _, remote := range global.Conf.MergedRemotes {
-				var (
-					property = remote.GitApiProperty(nil, global.Flag.Debug)
-					ga       = new(api.InfoList).New(property, remote.Vendor, global.Flag.Page).Get()
-				)
-				lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+				for p := 1; p < global.Flag.Page+1; p++ {
+					var (
+						property = remote.GitApiProperty(nil, global.Flag.Debug)
+						ga       = new(api.InfoList).New(property, remote.Vendor, p).Get()
+					)
+					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+				}
 			}
 			wg.Wait()
 			close(out)
