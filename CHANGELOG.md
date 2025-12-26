@@ -117,3 +117,5 @@
   - refactor repo output to lib.RepoOutput()
   - update dependencies
   - update go-gitcmd
+- v3.0.0
+  - use go-gitapi/v3

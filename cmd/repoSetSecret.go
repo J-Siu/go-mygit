@@ -25,11 +25,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
+	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
@@ -45,7 +44,7 @@ var repoSetSecretCmd = &cobra.Command{
 	Long:    "Set action secret. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo/dir specified in command line, add a ""
@@ -60,18 +59,19 @@ var repoSetSecretCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					if remote.Vendor != gitapi.VendorGithub {
+					if remote.Vendor != base.VendorGithub {
 						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 					} else {
 						// "GET" public key
 						ezlog.Log().N(remote.Name).Out()
-						var pubkey repo.PublicKey
-						var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &pubkey, global.Flag.Debug)
-						gitApi.EndpointReposSecretsPubkey()
-						ok := gitApi.SetGet().Do().Ok()
+						var (
+							property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+							gaPubKey = new(api.PublicKey).New(property).Get()
+							ok       = gaPubKey.Do().Ok()
+						)
 						ezlog.Log().N("Get Actions Public Key").M(ok)
 						if !ok {
-							os.Exit(1)
+							continue
 						}
 						// A list of secret to use
 						var secretsP *lib.ConfSecrets
@@ -84,12 +84,12 @@ var repoSetSecretCmd = &cobra.Command{
 						}
 						// Use config secrets
 						for _, secret := range *secretsP {
-							var infoP *repo.EncryptedPair = secret.Encrypt(&pubkey)
-							var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, infoP, global.Flag.Debug)
-							gitApi.EndpointReposSecrets()
-							gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret.Name)
-							gitApi.SetPut()
-							lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+							var (
+								ga    = new(api.EncryptedPair).New(property).Set()
+								infoP = secret.Encrypt(&gaPubKey.Info)
+							)
+							ga.Info = *infoP
+							lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 						}
 					}
 				}

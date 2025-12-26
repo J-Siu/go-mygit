@@ -25,8 +25,7 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -39,25 +38,25 @@ var repoSetDescriptionCmd = &cobra.Command{
 	Short:   "Set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
-		var info repo.Description
 		if len(args) > 0 {
-			info.Description = args[0]
-		}
-		go func() {
-			for _, remote := range global.Conf.MergedRemotes {
-				var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
-				gitApi.EndpointRepos()
-				gitApi.SetPatch()
-				lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+			go func() {
+				for _, remote := range global.Conf.MergedRemotes {
+					var (
+						property = remote.GitApiProperty(nil, global.Flag.Debug)
+						ga       = new(api.Description).New(property).Set()
+					)
+					ga.Info.Description = args[0]
+					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+				}
+				wg.Wait()
+				close(out)
+			}()
+			for gitApi := range out {
+				lib.RepoOutput(gitApi, global.Flag, true, true)
 			}
-			wg.Wait()
-			close(out)
-		}()
-		for gitApi := range out {
-			lib.RepoOutput(gitApi, global.Flag, true, true)
 		}
 	},
 }

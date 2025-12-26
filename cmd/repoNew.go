@@ -26,8 +26,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-helper/v2/file"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
@@ -42,7 +41,7 @@ var repoNewCmd = &cobra.Command{
 	Long:    "Create remote repository. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
 		// args == array of repos from command line
@@ -52,13 +51,14 @@ var repoNewCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					var info repo.Info
-					info.Name = path.Base(workPath)
-					info.Private = remote.Private
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
-					gitApi.EndpointUserRepos()
-					gitApi.SetPost()
-					lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+					var (
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Info)
+					)
+					ga.Info.Name = path.Base(workPath)
+					ga.Info.Private = remote.Private
+					ga.New(property).SetGet()
+					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 				}
 			}
 			wg.Wait()

@@ -26,7 +26,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
+	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
 	"github.com/J-Siu/go-helper/v2/cmd"
 	"github.com/J-Siu/go-helper/v2/file"
@@ -34,10 +34,10 @@ import (
 
 // Remote entry in config file
 type Remote struct {
-	Group  string        `json:"group,omitempty"`  // Group name
-	Name   string        `json:"name,omitempty"`   // Name of remote entry, also use as git remote name
-	Ssh    string        `json:"ssh,omitempty"`    // Ssh url for git server
-	Vendor gitapi.Vendor `json:"vendor,omitempty"` // Api vendor/brand
+	Group  string      `json:"group,omitempty"`  // Group name
+	Name   string      `json:"name,omitempty"`   // Name of remote entry, also use as git remote name
+	Ssh    string      `json:"ssh,omitempty"`    // Ssh url for git server
+	Vendor base.Vendor `json:"vendor,omitempty"` // Api vendor/brand
 
 	EntryPoint string `json:"entrypoint,omitempty"` // Api entrypoint url
 	Private    bool   `json:"private,omitempty"`    // Default private value
@@ -50,11 +50,33 @@ type Remote struct {
 	Output chan *string
 }
 
-func (t *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {
+// func (t *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {
+// 	var fullPath string = *file.FullPath(workPathP)
+// 	var repo string = path.Base(fullPath)
+
+// 	property := gitapi.Property{
+// 		Name:       t.Name,
+// 		Token:      t.Token,
+// 		EntryPoint: t.EntryPoint,
+// 		User:       t.User,
+// 		Vendor:     t.Vendor,
+// 		SkipVerify: t.SkipVerify,
+// 		Repo:       repo,
+// 		Info:       info,
+// 		Debug:      debug,
+// 	}
+
+// 	apiP := gitapi.New(&property)
+// 	// Set Github header
+// 	apiP.HeaderGithub()
+// 	return apiP
+// }
+
+func (t *Remote) GitApiProperty(workPathP *string, debug bool) *base.Property {
 	var fullPath string = *file.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
 
-	property := gitapi.Property{
+	property := base.Property{
 		Name:       t.Name,
 		Token:      t.Token,
 		EntryPoint: t.EntryPoint,
@@ -62,14 +84,10 @@ func (t *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gi
 		Vendor:     t.Vendor,
 		SkipVerify: t.SkipVerify,
 		Repo:       repo,
-		Info:       info,
 		Debug:      debug,
 	}
 
-	apiP := gitapi.New(&property)
-	// Set Github header
-	apiP.HeaderGithub()
-	return apiP
+	return &property
 }
 
 // Add all Remotes into git repository

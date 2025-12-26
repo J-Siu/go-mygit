@@ -25,8 +25,7 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -40,11 +39,9 @@ var repoSetVisibilityPublicCmd = &cobra.Command{
 	Long:    "Set to public. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
-		var info repo.Visibility
-		info.Visibility = "public"
 		// If no repo/dir specified in command line, add a ""
 		if len(args) == 0 {
 			args = []string{"."}
@@ -52,10 +49,12 @@ var repoSetVisibilityPublicCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
-					gitApi.EndpointRepos()
-					gitApi.SetPatch()
-					lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+					var (
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Visibility).New(property).Set()
+					)
+					ga.Info.Visibility = "public"
+					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 				}
 			}
 			wg.Wait()

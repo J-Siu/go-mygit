@@ -25,7 +25,7 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -39,7 +39,7 @@ var repoDelRepoCmd = &cobra.Command{
 	Long:    "Delete remote repository. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
 
@@ -51,10 +51,11 @@ var repoDelRepoCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
-					gitApi.EndpointRepos()
-					gitApi.SetDel()
-					lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+					var (
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Repo).New(property).Del()
+					)
+					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 				}
 			}
 			wg.Wait()

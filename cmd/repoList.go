@@ -23,11 +23,9 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"strconv"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -42,25 +40,16 @@ var repoListCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			// out = make(chan *string, 10)
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
 		go func() {
 			for _, remote := range global.Conf.MergedRemotes {
-				var info repo.InfoList
-				var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
-				gitApi.EndpointUserRepos()
-				gitApi.Req.UrlValInit()
-				switch remote.Vendor {
-				case gitapi.VendorGithub:
-					gitApi.Req.UrlVal.Add("per_page", "100")
-				case gitapi.VendorGitea:
-					gitApi.Req.UrlVal.Add("limit", "100")
-				}
-				gitApi.Req.UrlVal.Add("page", strconv.Itoa(global.Flag.Page))
-				gitApi.SetGet()
-				gitApi.Repo = ""
-				lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+				var (
+					property = remote.GitApiProperty(nil, global.Flag.Debug)
+					ga       = new(api.InfoList).New(property, remote.Vendor, global.Flag.Page).Get()
+				)
+				lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 			}
 			wg.Wait()
 			close(out)

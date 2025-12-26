@@ -24,10 +24,10 @@ package cmd
 
 import (
 	"fmt"
-	"path"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
+	"github.com/J-Siu/go-gitapi/v3/api"
+	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -41,7 +41,7 @@ var repoDelSecretCmd = &cobra.Command{
 	Long:    "Delete action secret. If --name is not set, all secrets in config will be used. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo specified in command line, add a ""
@@ -57,15 +57,15 @@ var repoDelSecretCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					if remote.Vendor != gitapi.VendorGithub {
+					if remote.Vendor != base.VendorGithub {
 						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 					} else {
 						for _, secret := range global.Flag.SecretsDel {
-							var gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, nil, global.Flag.Debug)
-							gitApi.EndpointReposSecrets()
-							gitApi.Req.Endpoint = path.Join(gitApi.Req.Endpoint, secret)
-							gitApi.SetDel()
-							lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+							var (
+								property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+								ga       = new(api.Repo).New(property).DelSecret(secret)
+							)
+							lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 						}
 					}
 				}

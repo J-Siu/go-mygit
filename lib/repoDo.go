@@ -25,15 +25,15 @@ package lib
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-helper/v2/basestruct"
 )
 
 type RepoDoProperty struct {
-	GitApi     *gitapi.GitApi      `json:"GitApi"`
-	NoParallel bool                `json:"NoParallel"`
-	Output     chan *gitapi.GitApi `json:"Output"`
-	Wg         *sync.WaitGroup     `json:"Wg"`
+	GitApi     api.IApi        `json:"GitApi"`
+	NoParallel bool            `json:"NoParallel"`
+	Output     chan api.IApi   `json:"Output"`
+	Wg         *sync.WaitGroup `json:"Wg"`
 }
 
 type RepoDo struct {

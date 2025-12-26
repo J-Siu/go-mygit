@@ -26,14 +26,14 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-helper/v2/errs"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 )
 
 // `lib.RepoDoRun` wrapper
 // Encapsulate RepoDo setup and run, sync.WaitGroup add amd done
-func RepoDoRun(gitApi *gitapi.GitApi, noParallel bool, wg *sync.WaitGroup, out chan *gitapi.GitApi) {
+func RepoDoRun(gitApi api.IApi, noParallel bool, wg *sync.WaitGroup, out chan api.IApi) {
 	property := RepoDoProperty{
 		GitApi:     gitApi,
 		NoParallel: noParallel,
@@ -43,8 +43,8 @@ func RepoDoRun(gitApi *gitapi.GitApi, noParallel bool, wg *sync.WaitGroup, out c
 	new(RepoDo).New(&property).Run()
 }
 
-func RepoOutput(gitApi *gitapi.GitApi, flag TypeFlag, singleLine, statusOnly bool) {
-	title := gitApi.Repo + "(" + gitApi.Name + ")"
+func RepoOutput(gitApi api.IApi, flag TypeFlag, singleLine, statusOnly bool) {
+	title := *gitApi.Repo() + "(" + gitApi.Name() + ")"
 	status := gitApi.Ok()
 	if status {
 		if statusOnly {

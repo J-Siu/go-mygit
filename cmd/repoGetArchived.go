@@ -25,8 +25,7 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -40,7 +39,7 @@ var repoGetArchivedCmd = &cobra.Command{
 	Long:    "Get archived status. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
 		if len(args) == 0 {
@@ -50,12 +49,10 @@ var repoGetArchivedCmd = &cobra.Command{
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
-						info   repo.Archived
-						gitApi *gitapi.GitApi = remote.GetGitApi(&workPath, &info, global.Flag.Debug)
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Archived).New(property).Get()
 					)
-					gitApi.EndpointRepos()
-					gitApi.SetGet()
-					lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 				}
 			}
 			wg.Wait()

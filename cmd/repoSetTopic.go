@@ -25,8 +25,7 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -40,18 +39,18 @@ var repoSetTopicCmd = &cobra.Command{
 	Long:    "Set topic. " + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
-		var info repo.Topics
-		info.Topics = &args
-		info.Names = &args
 		go func() {
 			for _, remote := range global.Conf.MergedRemotes {
-				var gitApi *gitapi.GitApi = remote.GetGitApi(nil, &info, global.Flag.Debug)
-				gitApi.EndpointReposTopics()
-				gitApi.SetPut()
-				lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+				var (
+					property = remote.GitApiProperty(nil, global.Flag.Debug)
+					ga       = new(api.Topics).New(property).Set()
+				)
+				ga.Info.Topics = &args
+				ga.Info.Names = &args
+				lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 			}
 			wg.Wait()
 			close(out)

@@ -25,8 +25,8 @@ package cmd
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v2/gitapi"
-	"github.com/J-Siu/go-gitapi/v2/repo"
+	"github.com/J-Siu/go-gitapi/v3/api"
+	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-mygit/v2/global"
 	"github.com/J-Siu/go-mygit/v2/lib"
 	"github.com/spf13/cobra"
@@ -39,7 +39,7 @@ var repoSetActionsFalseCmd = &cobra.Command{
 	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan *gitapi.GitApi, 10)
+			out = make(chan api.IApi, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo/dir specified in command line, add a ""
@@ -49,25 +49,20 @@ var repoSetActionsFalseCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-
 					var (
-						info   gitapi.IInfo
-						gitApi *gitapi.GitApi
+						ga       api.IApi
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
 					)
-
-					if remote.Vendor == gitapi.VendorGithub {
-						// Github API
-						info = &repo.ActionsGithub{Enabled: false}
-						gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointReposActionsGithub()
-						gitApi.SetPut()
+					if remote.Vendor == base.VendorGithub {
+						var _ga = new(api.ActionsGithub).New(property).Get()
+						_ga.Info.Enabled = false
+						ga = _ga
 					} else {
-						// Gitea API
-						info = &repo.Actions{Has: false}
-						gitApi = remote.GetGitApi(&workPath, info, global.Flag.Debug).EndpointRepos()
-						gitApi.SetPatch()
+						var _ga = new(api.Actions).New(property).Get()
+						_ga.Info.Has = false
+						ga = _ga
 					}
-
-					lib.RepoDoRun(gitApi, global.Flag.NoParallel, &wg, out)
+					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 				}
 			}
 			wg.Wait()
