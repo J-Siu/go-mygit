@@ -50,28 +50,6 @@ type Remote struct {
 	Output chan *string
 }
 
-// func (t *Remote) GetGitApi(workPathP *string, info gitapi.IInfo, debug bool) *gitapi.GitApi {
-// 	var fullPath string = *file.FullPath(workPathP)
-// 	var repo string = path.Base(fullPath)
-
-// 	property := gitapi.Property{
-// 		Name:       t.Name,
-// 		Token:      t.Token,
-// 		EntryPoint: t.EntryPoint,
-// 		User:       t.User,
-// 		Vendor:     t.Vendor,
-// 		SkipVerify: t.SkipVerify,
-// 		Repo:       repo,
-// 		Info:       info,
-// 		Debug:      debug,
-// 	}
-
-// 	apiP := gitapi.New(&property)
-// 	// Set Github header
-// 	apiP.HeaderGithub()
-// 	return apiP
-// }
-
 func (t *Remote) GitApiProperty(workPathP *string, debug bool) *base.Property {
 	var fullPath string = *file.FullPath(workPathP)
 	var repo string = path.Base(fullPath)
