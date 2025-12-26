@@ -29,7 +29,7 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:     "config",
-	Aliases: []string{"co", "conf"},
+	Aliases: []string{"c", "conf"},
 	Short:   "Print configurations",
 }
 
