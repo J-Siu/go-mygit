@@ -20,28 +20,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package lib
 
-import (
-	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/spf13/cobra"
-)
-
-// groupCmd represents the group command
-var confSecretsCmd = &cobra.Command{
-	Use:     "secret",
-	Aliases: []string{"s", "sec"},
-	Short:   "Print secret configuration",
-	Run: func(cmd *cobra.Command, args []string) {
-		if global.FlagConf.Secret {
-			ezlog.Log().N("Secrets").Lm(global.Conf.Secrets).Out()
-		} else {
-			ezlog.Log().N("Secrets").Lm(confSafe().Secrets).Out()
-		}
-	},
-}
-
-func init() {
-	configCmd.AddCommand(confSecretsCmd)
+// Holding all flags from command line
+type TypeFlagConf struct {
+	Secret bool
 }

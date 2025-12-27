@@ -30,8 +30,8 @@ import "github.com/J-Siu/go-helper/v2/str"
 type Remotes []Remote
 
 // Check array has Remote (by name)
-func (remotes *Remotes) Has(name *string) bool {
-	for _, r := range *remotes {
+func (t *Remotes) Has(name *string) bool {
+	for _, r := range *t {
 		if r.Name == *name {
 			return true
 		}
@@ -40,22 +40,22 @@ func (remotes *Remotes) Has(name *string) bool {
 }
 
 // Add Remote
-func (remotes *Remotes) Add(rP *Remote) {
-	if rP != nil && !remotes.Has(&rP.Name) {
-		*remotes = append(*remotes, *rP)
+func (t *Remotes) Add(rP *Remote) {
+	if rP != nil && !t.Has(&rP.Name) {
+		*t = append(*t, *rP)
 	}
 }
 
 // Add Remote Array
-func (remotes *Remotes) AddArray(raP *Remotes) {
+func (t *Remotes) AddArray(raP *Remotes) {
 	if raP != nil {
-		*remotes = append(*remotes, *raP...)
+		*t = append(*t, *raP...)
 	}
 }
 
 // Get Remote by name
-func (remotes *Remotes) GetByName(nameP *string) *Remote {
-	for _, r := range *remotes {
+func (t *Remotes) GetByName(nameP *string) *Remote {
+	for _, r := range *t {
 		if r.Name == *nameP {
 			return &r
 		}
@@ -64,9 +64,9 @@ func (remotes *Remotes) GetByName(nameP *string) *Remote {
 }
 
 // Get all Remote in a group
-func (remotes *Remotes) GetByGroup(groupP *string) *Remotes {
+func (t *Remotes) GetByGroup(groupP *string) *Remotes {
 	var tmpRemotes Remotes
-	for _, r := range *remotes {
+	for _, r := range *t {
 		if r.Group == *groupP {
 			tmpRemotes.Add(&r)
 		}
@@ -75,9 +75,9 @@ func (remotes *Remotes) GetByGroup(groupP *string) *Remotes {
 }
 
 // Get all Remote names
-func (remotes *Remotes) GetNames() *[]string {
+func (t *Remotes) GetNames() *[]string {
 	var names []string
-	for _, r := range *remotes {
+	for _, r := range *t {
 		if !str.ArrayContains(&names, &r.Name, false) {
 			names = append(names, r.Name)
 		}

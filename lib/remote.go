@@ -47,7 +47,7 @@ type Remote struct {
 	NoTitle    bool `json:"no_title,omitempty"`   // This is pass from global.Flag
 	SkipVerify bool `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)
 
-	Output chan *string
+	Output chan *string `json:"-"` // Must mark json ignore
 }
 
 func (t *Remote) GitApiProperty(workPathP *string, debug bool) *base.Property {

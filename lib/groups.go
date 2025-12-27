@@ -29,14 +29,14 @@ import "github.com/J-Siu/go-helper/v2/str"
 // Embedded in TypeConf. No initialization
 type Groups []string
 
-func (groupsP *Groups) Add(groupP *string) {
-	if groupP != nil && !groupsP.Has(groupP) {
-		*groupsP = append(*groupsP, (string)(*groupP))
+func (t *Groups) Add(groupP *string) {
+	if groupP != nil && !t.Has(groupP) {
+		*t = append(*t, (string)(*groupP))
 	}
 }
 
-func (groupsP *Groups) Get(name string) *string {
-	for _, g := range *groupsP {
+func (t *Groups) Get(name string) *string {
+	for _, g := range *t {
 		if (string)(g) == name {
 			return &g
 		}
@@ -44,6 +44,6 @@ func (groupsP *Groups) Get(name string) *string {
 	return nil
 }
 
-func (groupsP *Groups) Has(groupP *string) bool {
-	return str.ArrayContains((*[]string)(groupsP), groupP, false)
+func (t *Groups) Has(groupP *string) bool {
+	return str.ArrayContains((*[]string)(t), groupP, false)
 }

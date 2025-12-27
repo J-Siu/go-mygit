@@ -74,10 +74,10 @@ var repoSetSecretCmd = &cobra.Command{
 							continue
 						}
 						// A list of secret to use
-						var secretsP *lib.ConfSecrets
+						var secretsP *lib.Secrets
 						if global.Flag.Secret.Name != "" && global.Flag.Secret.Value != "" {
 							// Use command line value
-							secretsP = &lib.ConfSecrets{global.Flag.Secret}
+							secretsP = &lib.Secrets{global.Flag.Secret}
 						} else {
 							// Use Conf secrets
 							secretsP = &global.Conf.Secrets

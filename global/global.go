@@ -33,6 +33,7 @@ const (
 )
 
 var (
-	Conf lib.TypeConf
-	Flag lib.TypeFlag
+	Conf     lib.TypeConf
+	Flag     lib.TypeFlag
+	FlagConf lib.TypeFlagConf
 )

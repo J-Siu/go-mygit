@@ -45,9 +45,9 @@ type TypeConf struct {
 	*basestruct.Base
 
 	FileConf      string      `json:"FileConf"`
-	Groups        Groups      `json:"Groups"`
-	Remotes       Remotes     `json:"remotes"`
-	Secrets       ConfSecrets `json:"secrets"`
+	Groups        Groups      `json:"Groups,omitempty"`
+	Secrets       Secrets `json:"Secrets,omitempty"`
+	Remotes       Remotes     `json:"Remotes"`
 	MergedRemotes Remotes     `json:"MergedRemotes"`
 }
 

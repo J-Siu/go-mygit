@@ -128,3 +128,6 @@
   - update module to v3
 - v3.0.2
   - update go-helper
+- v3.0.3
+  - add config secret flag
+  - fix config output

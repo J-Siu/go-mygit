@@ -34,6 +34,6 @@ type TypeFlag struct {
 	PushTag         bool       // Flag for git push
 	RemoteRemoveAll bool       // Flag for git remote remove all
 	Remotes         []string   // Remotes specified in command line
-	Secret          ConfSecret // Secret specified in command line
+	Secret          Secret // Secret specified in command line
 	SecretsDel      []string   // Secrets specified in command line
 }

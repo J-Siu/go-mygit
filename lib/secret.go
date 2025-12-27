@@ -29,18 +29,18 @@ import (
 )
 
 // Secret entry in config file
-type ConfSecret struct {
+type Secret struct {
 	Name  string `json:"name"`
-	Value string `json:"value"`
+	Value string `json:"value,omitempty"`
 }
 
-type ConfSecrets []ConfSecret
+type Secrets []Secret
 
 // Do NACL box encryption
-func (cs *ConfSecret) Encrypt(pubKeyP *info.PublicKey) *info.EncryptedPair {
+func (t *Secret) Encrypt(pubKeyP *info.PublicKey) *info.EncryptedPair {
 	var ep info.EncryptedPair
 	ep.Key_id = pubKeyP.Key_id
-	encrypted_value, e := crypto.BoxSealAnonymous(&pubKeyP.Key, &cs.Value)
+	encrypted_value, e := crypto.BoxSealAnonymous(&pubKeyP.Key, &t.Value)
 	ep.Encrypted_value = *encrypted_value
 	if e != nil {
 		ezlog.Err().M(e).Out()
@@ -49,7 +49,7 @@ func (cs *ConfSecret) Encrypt(pubKeyP *info.PublicKey) *info.EncryptedPair {
 }
 
 // Check if secrete exist by name
-func (css *ConfSecrets) Has(name *string) bool {
+func (css *Secrets) Has(name *string) bool {
 	for _, s := range *css {
 		if s.Name == *name {
 			return true
