@@ -126,3 +126,5 @@
   - fix repo creation
   - fix repo list multiple page
   - update module to v3
+- v3.0.2
+  - update go-helper
