@@ -119,3 +119,10 @@
   - update go-gitcmd
 - v3.0.0
   - use go-gitapi/v3
+- v3.0.1
+  - add conf debug message
+  - add conf err to err queue
+  - add config alias "c"
+  - fix repo creation
+  - fix repo list multiple page
+  - update module to v3

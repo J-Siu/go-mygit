@@ -24,7 +24,7 @@ package cmd
 
 import (
 	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v2/global"
+	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/spf13/cobra"
 )
 

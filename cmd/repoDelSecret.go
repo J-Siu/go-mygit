@@ -28,8 +28,8 @@ import (
 
 	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-gitapi/v3/base"
-	"github.com/J-Siu/go-mygit/v2/global"
-	"github.com/J-Siu/go-mygit/v2/lib"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
 )
 

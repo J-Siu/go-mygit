@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 package global
 
-import "github.com/J-Siu/go-mygit/v2/lib"
+import "github.com/J-Siu/go-mygit/v3/lib"
 
 const (
 	TXT_FLAGS_USE       = "If -r/-g not specified, all remotes in config file will be used. "

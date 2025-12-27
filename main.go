@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 package main
 
-import "github.com/J-Siu/go-mygit/v2/cmd"
+import "github.com/J-Siu/go-mygit/v3/cmd"
 
 func main() {
 	cmd.Execute()

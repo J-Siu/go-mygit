@@ -1,4 +1,4 @@
-module github.com/J-Siu/go-mygit/v2
+module github.com/J-Siu/go-mygit/v3
 
 go 1.25.1
 
