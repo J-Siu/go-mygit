@@ -55,7 +55,7 @@ func RepoOutput(gitApi api.IApi, flag TypeFlag, singleLine, statusOnly bool) {
 			ezlog.Success(status).Out()
 		} else {
 			output := gitApi.Output()
-			if !(output == nil || *output == "") || flag.NoSkip {
+			if flag.NoSkip || (output != nil && *output != "") {
 				ezlog.Log()
 				if !flag.NoTitle {
 					if singleLine {
