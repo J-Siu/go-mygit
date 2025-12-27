@@ -45,6 +45,7 @@ var rootCmd = &cobra.Command{
 		ezlog.Debug().N("Version").M(global.Version).Ln("Flag").M(&global.Flag).Out()
 
 		global.Conf.New(&global.Flag.Groups, &global.Flag.Remotes)
+		errs.Queue("", global.Conf.Err)
 
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
@@ -69,5 +70,5 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&global.Flag.NoTitle, "no-title", "", false, "Don't print title for most output")
 	rootCmd.PersistentFlags().StringArrayVarP(&global.Flag.Groups, "group", "g", nil, "Specify group")
 	rootCmd.PersistentFlags().StringArrayVarP(&global.Flag.Remotes, "remote", "r", nil, "Specify remotes")
-	rootCmd.PersistentFlags().StringVarP(&global.Conf.FileConf, "config", "", lib.Default.FileConf, "Config file")
+	rootCmd.PersistentFlags().StringVarP(&global.Conf.FileConf, "config", "c", lib.Default.FileConf, "Config file")
 }
