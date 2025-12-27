@@ -62,13 +62,14 @@ func (t *TypeConf) New(flagGroups, flagRemotes *[]string) {
 
 	t.readFileConf()
 	if t.Err == nil {
-		t.initGroups()
-		t.mergeRemotes(flagGroups, flagRemotes)
-
 		ezlog.Debug().N(prefix).N("Raw").Lm(t).Out()
 
-		t.expand()
+		t.initGroups()
 
+		t.mergeRemotes(flagGroups, flagRemotes)
+		ezlog.Debug().N(prefix).N("Merged").Lm(t).Out()
+
+		t.expand()
 		ezlog.Debug().N(prefix).N("Expand").Lm(t).Out()
 	}
 }
@@ -82,8 +83,9 @@ func (t *TypeConf) readFileConf() {
 	t.Err = viper.ReadInConfig()
 
 	if t.Err == nil {
-		viper.Unmarshal(&t)
-	} else {
+		t.Err = viper.Unmarshal(&t)
+	}
+	if t.Err != nil {
 		ezlog.Debug().N(prefix).M(t.Err).Out()
 	}
 }
@@ -130,7 +132,6 @@ func (t *TypeConf) mergeRemotes(flagGroups, flagRemotes *[]string) {
 	if len(t.MergedRemotes) == 0 {
 		t.MergedRemotes = append(t.MergedRemotes, t.Remotes...)
 	}
-	// helper.ReportDebug(&Conf.MergedRemotes, "Merged Remote", true, false)
 }
 
 func (t *TypeConf) expand() {
