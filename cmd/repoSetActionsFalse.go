@@ -26,7 +26,6 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
@@ -50,18 +49,10 @@ var repoSetActionsFalseCmd = &cobra.Command{
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
-						ga       api.IApi
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Actions).New(property).Set()
 					)
-					if remote.Vendor == base.VendorGithub {
-						var _ga = new(api.ActionsGithub).New(property).Get()
-						_ga.Info.Enabled = false
-						ga = _ga
-					} else {
-						var _ga = new(api.Actions).New(property).Get()
-						_ga.Info.Has = false
-						ga = _ga
-					}
+					ga.Info.Enable(false)
 					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
 				}
 			}
