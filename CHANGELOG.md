@@ -131,3 +131,5 @@
 - v3.0.3
   - add config secret flag
   - fix config output
+- v3.0.4
+  - fix git parallel push issue
