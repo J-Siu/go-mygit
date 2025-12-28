@@ -96,22 +96,22 @@ func (t *Remote) Remove(workPathP *string) *cmd.Cmd {
 }
 
 // Push all Remotes in git repository
-func GitPush(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
+func GitPush(workPath string, options []string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
-	var myCmd *cmd.Cmd = gitcmd.Push(workPathP, optionsP)
-	out <- myCmdLog(myCmd, workPathP, noTitle)
+	var myCmd *cmd.Cmd = gitcmd.Push(&workPath, &options)
+	out <- myCmdLog(myCmd, &workPath, noTitle)
 	return myCmd
 }
 
 // Push all Remotes in git repository
-func GitPull(workPathP *string, optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
+func GitPull(workPath string, options []string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
 	if wgP != nil {
 		defer wgP.Done()
 	}
-	var myCmd *cmd.Cmd = gitcmd.Pull(workPathP, optionsP)
-	out <- myCmdLog(myCmd, workPathP, noTitle)
+	var myCmd *cmd.Cmd = gitcmd.Pull(&workPath, &options)
+	out <- myCmdLog(myCmd, &workPath, noTitle)
 	return myCmd
 }
 

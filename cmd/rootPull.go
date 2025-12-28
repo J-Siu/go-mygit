@@ -71,7 +71,6 @@ var rootPullCmd = &cobra.Command{
 					options []string = []string{remote.Name, branch}
 				)
 				pull(&wp, &options, &wg, out)
-
 				if global.Flag.PushTag {
 					options = append(options, "--tags")
 					pull(&wp, &options, &wg, out)
@@ -92,13 +91,11 @@ func init() {
 	rootPullCmd.Flags().BoolVarP(&global.Flag.PushTag, "tags", "t", false, "Pull all tags")
 }
 
-func pull(wp *string, options *[]string, wg *sync.WaitGroup, out chan *string) {
-	w := *wp
-	opts := *options
+func pull(workPathP *string, optionsP *[]string, wg *sync.WaitGroup, out chan *string) {
 	if global.Flag.NoParallel {
-		lib.GitPull(&w, &opts, nil, global.Flag.NoTitle, out)
+		lib.GitPull(*workPathP, *optionsP, nil, global.Flag.NoTitle, out)
 	} else {
 		wg.Add(1)
-		go lib.GitPull(&w, &opts, wg, global.Flag.NoTitle, out)
+		go lib.GitPull(*workPathP, *optionsP, wg, global.Flag.NoTitle, out)
 	}
 }
