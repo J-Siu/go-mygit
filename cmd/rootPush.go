@@ -57,10 +57,10 @@ var rootPushCmd = &cobra.Command{
 				if global.Flag.PushAll {
 					options1 = append(options1, "--all")
 				}
-				push(remote.WorkPath, &options1, &wg, out)
+				push(*remote.WorkPath, options1, &wg, out)
 				if global.Flag.PushTag {
 					options2 = append(options2, "--tags")
-					push(remote.WorkPath, &options2, &wg, out)
+					push(*remote.WorkPath, options2, &wg, out)
 				}
 			}
 			wg.Wait()
@@ -79,11 +79,15 @@ func init() {
 	rootPushCmd.Flags().BoolVarP(&global.Flag.PushTag, "tags", "t", false, "Push with tags")
 }
 
-func push(workPath *string, optionsP *[]string, wgP *sync.WaitGroup, out chan *string) {
+func push(workPath string, optionsP []string, wgP *sync.WaitGroup, out chan *string) {
+	var (
+		o = optionsP
+		w = workPath
+	)
 	if global.Flag.NoParallel {
-		lib.GitPush(*workPath, *optionsP, nil, global.Flag.NoTitle, out)
+		lib.GitPush(w, o, nil, global.Flag.NoTitle, out)
 	} else {
 		wgP.Add(1)
-		go lib.GitPush(*workPath, *optionsP, wgP, global.Flag.NoTitle, out)
+		go lib.GitPush(w, o, wgP, global.Flag.NoTitle, out)
 	}
 }
