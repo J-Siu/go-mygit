@@ -23,6 +23,7 @@ THE SOFTWARE.
 package lib
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 
@@ -44,11 +45,11 @@ var Default = TypeConf{
 type TypeConf struct {
 	*basestruct.Base
 
-	FileConf      string      `json:"FileConf"`
-	Groups        Groups      `json:"Groups,omitempty"`
+	FileConf      string  `json:"FileConf"`
+	Groups        Groups  `json:"Groups,omitempty"`
 	Secrets       Secrets `json:"Secrets,omitempty"`
-	Remotes       Remotes     `json:"Remotes"`
-	MergedRemotes Remotes     `json:"MergedRemotes"`
+	Remotes       Remotes `json:"Remotes"`
+	MergedRemotes Remotes `json:"MergedRemotes"`
 }
 
 func (t *TypeConf) New(flagGroups, flagRemotes *[]string) {
@@ -72,6 +73,23 @@ func (t *TypeConf) New(flagGroups, flagRemotes *[]string) {
 		t.expand()
 		ezlog.Debug().N(prefix).N("Expand").Lm(t).Out()
 	}
+}
+
+// Return a safe(no token, no secret value) copy
+func (t *TypeConf) SafeCopy() *TypeConf {
+	var safe TypeConf
+	b, _ := json.Marshal(t)
+	json.Unmarshal(b, &safe)
+	for i := range safe.Remotes {
+		safe.Remotes[i].Token = ""
+	}
+	for i := range safe.MergedRemotes {
+		safe.MergedRemotes[i].Token = ""
+	}
+	for i := range safe.Secrets {
+		safe.Secrets[i].Value = ""
+	}
+	return &safe
 }
 
 func (t *TypeConf) readFileConf() {

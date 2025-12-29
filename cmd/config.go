@@ -23,10 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"encoding/json"
-
 	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -40,20 +37,4 @@ var configCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(configCmd)
 	configCmd.PersistentFlags().BoolVarP(&global.FlagConf.Secret, "secret", "s", false, "Print secret, tokens")
-}
-
-func confSafe() *lib.TypeConf {
-	var safe lib.TypeConf
-	b, _ := json.Marshal(global.Conf)
-	json.Unmarshal(b, &safe)
-	for i := range safe.Remotes {
-		safe.Remotes[i].Token = ""
-	}
-	for i := range safe.MergedRemotes {
-		safe.MergedRemotes[i].Token = ""
-	}
-	for i := range safe.Secrets {
-		safe.Secrets[i].Value = ""
-	}
-	return &safe
 }

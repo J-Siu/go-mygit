@@ -37,7 +37,7 @@ var confRemotesCmd = &cobra.Command{
 		if global.FlagConf.Secret {
 			ezlog.Log().N("Remotes").Lm(global.Conf.Remotes).Out()
 		} else {
-			ezlog.Log().N("Remotes").Lm(confSafe().Remotes).Out()
+			ezlog.Log().N("Remotes").Lm(global.Conf.SafeCopy().Remotes).Out()
 		}
 	},
 }
