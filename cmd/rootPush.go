@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
@@ -43,7 +44,6 @@ var rootPushCmd = &cobra.Command{
 			remoteQueue = new(lib.RemoteQueue)
 			wg          sync.WaitGroup
 		)
-
 		if len(args) == 0 {
 			args = []string{"."}
 		}
@@ -51,22 +51,23 @@ var rootPushCmd = &cobra.Command{
 		go func() {
 			for _, remote := range remoteQueue.Queue {
 				var (
+					gitCmd1  = new(gitcmd.GitCmd).New(*remote.WorkPath)
+					gitCmd2  = new(gitcmd.GitCmd).New(*remote.WorkPath)
 					options1 = []string{*remote.Name}
 					options2 = options1
 				)
 				if global.Flag.PushAll {
 					options1 = append(options1, "--all")
 				}
-				push(*remote.WorkPath, options1, &wg, out)
-				if global.Flag.PushTag {
+				lib.GitRunWrapper(gitCmd1.Push(options1), *remote.WorkPath, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
+				if global.Flag.Tag {
 					options2 = append(options2, "--tags")
-					push(*remote.WorkPath, options2, &wg, out)
+					lib.GitRunWrapper(gitCmd2.Push(options2), *remote.WorkPath, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
 				}
 			}
 			wg.Wait()
 			close(out)
 		}()
-
 		for o := range out {
 			fmt.Print(*o)
 		}
@@ -76,18 +77,5 @@ var rootPushCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(rootPushCmd)
 	rootPushCmd.Flags().BoolVarP(&global.Flag.PushAll, "all", "a", false, "Push all branches")
-	rootPushCmd.Flags().BoolVarP(&global.Flag.PushTag, "tags", "t", false, "Push with tags")
-}
-
-func push(workPath string, optionsP []string, wgP *sync.WaitGroup, out chan *string) {
-	var (
-		o = optionsP
-		w = workPath
-	)
-	if global.Flag.NoParallel {
-		lib.GitPush(w, o, nil, global.Flag.NoTitle, out)
-	} else {
-		wgP.Add(1)
-		go lib.GitPush(w, o, wgP, global.Flag.NoTitle, out)
-	}
+	rootPushCmd.Flags().BoolVarP(&global.Flag.Tag, "tags", "t", false, "Push with tags")
 }

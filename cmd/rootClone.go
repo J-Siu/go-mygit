@@ -27,6 +27,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/lib"
@@ -63,15 +64,10 @@ var rootCloneCmd = &cobra.Command{
 		go func() {
 			for _, repoName := range args {
 				var (
-					// construct url
-					options []string = []string{remote.Ssh + ":/" + remote.User + "/" + repoName}
+					gitCmd  = new(gitcmd.GitCmd).New("")
+					options = []string{remote.Ssh + ":/" + remote.User + "/" + repoName} // construct url
 				)
-				if global.Flag.NoParallel {
-					lib.GitClone(&options, nil, global.Flag.NoTitle, out)
-				} else {
-					wg.Add(1)
-					go lib.GitClone(&options, &wg, global.Flag.NoTitle, out)
-				}
+				lib.GitRunWrapper(gitCmd.Clone(options), "", &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
 			}
 			wg.Wait()
 			close(out)

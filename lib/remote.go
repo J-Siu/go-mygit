@@ -27,7 +27,7 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/base"
-	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/cmd"
 	"github.com/J-Siu/go-helper/v2/file"
 )
@@ -75,9 +75,9 @@ func (t *Remote) Add(workPathP *string) *cmd.Cmd {
 		fullPath string   = *file.FullPath(workPathP)
 		repo     string   = path.Base(fullPath)
 		git      string   = t.Ssh + ":/" + t.User + "/" + repo + ".git"
-		myCmd    *cmd.Cmd = gitcmd.RemoteAdd(&fullPath, t.Name, git)
+		myCmd    *cmd.Cmd = gitcmd.RemoteAdd(fullPath, t.Name, git)
 	)
-	t.Output <- myCmdLog(myCmd, workPathP, t.NoTitle)
+	t.Output <- MyCmdLog(myCmd, workPathP, t.NoTitle)
 	return myCmd
 }
 
@@ -86,46 +86,16 @@ func (t *Remote) Remove(workPathP *string) *cmd.Cmd {
 	var (
 		myCmd *cmd.Cmd
 	)
-	if gitcmd.RemoteExist(workPathP, t.Name) {
-		myCmd = gitcmd.RemoteRemove(workPathP, t.Name)
+	if gitcmd.RemoteExist(*workPathP, t.Name) {
+		myCmd = gitcmd.RemoteRemove(*workPathP, t.Name)
 	}
 	if myCmd != nil {
-		t.Output <- myCmdLog(myCmd, workPathP, t.NoTitle)
+		t.Output <- MyCmdLog(myCmd, workPathP, t.NoTitle)
 	}
 	return myCmd
 }
 
-// Push all Remotes in git repository
-func GitPush(workPath string, options []string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
-	if wgP != nil {
-		defer wgP.Done()
-	}
-	var myCmd *cmd.Cmd = gitcmd.Push(&workPath, &options)
-	out <- myCmdLog(myCmd, &workPath, noTitle)
-	return myCmd
-}
-
-// Push all Remotes in git repository
-func GitPull(workPath string, options []string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
-	if wgP != nil {
-		defer wgP.Done()
-	}
-	var myCmd *cmd.Cmd = gitcmd.Pull(&workPath, &options)
-	out <- myCmdLog(myCmd, &workPath, noTitle)
-	return myCmd
-}
-
-// git clone to current directory
-func GitClone(optionsP *[]string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
-	if wgP != nil {
-		defer wgP.Done()
-	}
-	var myCmd *cmd.Cmd = gitcmd.Clone(nil, optionsP)
-	out <- myCmdLog(myCmd, nil, noTitle)
-	return myCmd
-}
-
-func myCmdLog(myCmd *cmd.Cmd, workPathP *string, noTitle bool) *string {
+func MyCmdLog(myCmd *cmd.Cmd, workPathP *string, noTitle bool) *string {
 	var (
 		str1  string
 		str2  string
@@ -153,4 +123,22 @@ func myCmdLog(myCmd *cmd.Cmd, workPathP *string, noTitle bool) *string {
 		str1 += str2
 	}
 	return &str1
+}
+
+func GitRunWrapper(gitCmd *gitcmd.GitCmd, workPath string, wgP *sync.WaitGroup, noParallel, noTitle bool, out chan *string) {
+	if noParallel {
+		gitRun(gitCmd, workPath, nil, noTitle, out)
+	} else {
+		wgP.Add(1)
+		go gitRun(gitCmd, workPath, wgP, noTitle, out)
+	}
+}
+
+func gitRun(gitCmd *gitcmd.GitCmd, workPath string, wgP *sync.WaitGroup, noTitle bool, out chan *string) *cmd.Cmd {
+	if wgP != nil {
+		defer wgP.Done()
+	}
+	var myCmd = gitCmd.Run()
+	out <- MyCmdLog(myCmd, &workPath, noTitle)
+	return myCmd
 }

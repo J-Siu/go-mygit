@@ -25,7 +25,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/spf13/cobra"
 )
@@ -45,8 +45,8 @@ var rootInitCmd = &cobra.Command{
 		}
 		go func() {
 			for _, workPath := range args {
-				gitcmd.Init(&workPath)
-				gitcmd.RemoteRemoveAll(&workPath)
+				gitcmd.Init(workPath)
+				gitcmd.RemoteRemoveAll(workPath)
 				for _, remote := range global.Conf.MergedRemotes {
 					remote.Output = out
 					remote.Add(&workPath)

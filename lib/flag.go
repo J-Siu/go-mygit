@@ -24,16 +24,16 @@ package lib
 
 // Holding all flags from command line
 type TypeFlag struct {
-	Debug           bool       // Enable debug output
-	Groups          []string   // Groups specified in command line
-	NoParallel      bool       // Do not process in parallel(go routine)
-	NoSkip          bool       // Flag for not skipping empty output
-	NoTitle         bool       // Do not print title in output
-	Page            int        // Page number of repository listing
-	PushAll         bool       // Flag for git push
-	PushTag         bool       // Flag for git push
-	RemoteRemoveAll bool       // Flag for git remote remove all
-	Remotes         []string   // Remotes specified in command line
-	Secret          Secret // Secret specified in command line
-	SecretsDel      []string   // Secrets specified in command line
+	Debug           bool     // Enable debug output
+	Groups          []string // Groups specified in command line
+	NoParallel      bool     // Do not process in parallel(go routine)
+	NoSkip          bool     // Flag for not skipping empty output
+	NoTitle         bool     // Do not print title in output
+	Page            int      // Page number of repository listing
+	PushAll         bool     // Flag for git push
+	RemoteRemoveAll bool     // Flag for git remote remove all
+	Remotes         []string // Remotes specified in command line
+	Secret          Secret   // Secret specified in command line
+	SecretsDel      []string // Secrets specified in command line
+	Tag             bool     // Flag for git push, pull
 }

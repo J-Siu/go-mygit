@@ -28,7 +28,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/J-Siu/go-gitcmd/v2/gitcmd"
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/lib"
@@ -56,8 +56,8 @@ var rootPullCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out                = make(chan *string, 10)
-			remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
+			out    = make(chan *string, 10)
+			remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 			wg     sync.WaitGroup
 		)
 		if len(args) == 0 {
@@ -66,14 +66,16 @@ var rootPullCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				var (
-					wp      string   = workPath
-					branch  string   = strings.TrimSpace(gitcmd.BranchCurrent(&wp).Stdout.String())
-					options []string = []string{remote.Name, branch}
+					wp       = workPath
+					branch   = strings.TrimSpace(gitcmd.BranchCurrent(wp).Stdout.String())
+					gitCmd   = new(gitcmd.GitCmd).New(wp)
+					options1 = []string{remote.Name, branch}
+					options2 = options1
 				)
-				pull(&wp, &options, &wg, out)
-				if global.Flag.PushTag {
-					options = append(options, "--tags")
-					pull(&wp, &options, &wg, out)
+				lib.GitRunWrapper(gitCmd.Pull(options1), wp, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
+				if global.Flag.Tag {
+					options2 = append(options2, "--tags")
+					lib.GitRunWrapper(gitCmd.Pull(options2), wp, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
 				}
 			}
 			wg.Wait()
@@ -88,14 +90,5 @@ var rootPullCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(rootPullCmd)
 	// Re-use push flags
-	rootPullCmd.Flags().BoolVarP(&global.Flag.PushTag, "tags", "t", false, "Pull all tags")
-}
-
-func pull(workPathP *string, optionsP *[]string, wg *sync.WaitGroup, out chan *string) {
-	if global.Flag.NoParallel {
-		lib.GitPull(*workPathP, *optionsP, nil, global.Flag.NoTitle, out)
-	} else {
-		wg.Add(1)
-		go lib.GitPull(*workPathP, *optionsP, wg, global.Flag.NoTitle, out)
-	}
+	rootPullCmd.Flags().BoolVarP(&global.Flag.Tag, "tags", "t", false, "Pull all tags")
 }
