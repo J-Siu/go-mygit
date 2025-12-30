@@ -36,4 +36,7 @@ type TypeFlag struct {
 	Secret          Secret   // Secret specified in command line
 	SecretsDel      []string // Secrets specified in command line
 	Tag             bool     // Flag for git push, pull
+
+	StatusOnly bool
+	SingleLine bool
 }

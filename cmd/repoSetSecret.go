@@ -31,6 +31,7 @@ import (
 	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/J-Siu/go-mygit/v3/lib"
 
 	"github.com/spf13/cobra"
@@ -44,7 +45,7 @@ var repoSetSecretCmd = &cobra.Command{
 	Long:    "Set action secret. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan api.IApi, 10)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo/dir specified in command line, add a ""
@@ -89,7 +90,7 @@ var repoSetSecretCmd = &cobra.Command{
 								infoP = secret.Encrypt(&gaPubKey.Info)
 							)
 							ga.Info = *infoP
-							lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+							helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
 						}
 					}
 				}
@@ -97,8 +98,10 @@ var repoSetSecretCmd = &cobra.Command{
 			wg.Wait()
 			close(out)
 		}()
-		for gitApi := range out {
-			lib.RepoOutput(gitApi, global.Flag, true, true)
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = true
+		for o := range out {
+			fmt.Print(*o)
 		}
 	},
 }

@@ -29,7 +29,7 @@ import (
 	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/J-Siu/go-mygit/v3/lib"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,7 @@ var repoDelSecretCmd = &cobra.Command{
 	Long:    "Delete action secret. If --name is not set, all secrets in config will be used. " + global.TXT_REPO_DIR_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan api.IApi, 10)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo specified in command line, add a ""
@@ -65,7 +65,7 @@ var repoDelSecretCmd = &cobra.Command{
 								property = remote.GitApiProperty(&workPath, global.Flag.Debug)
 								ga       = new(api.Repo).New(property).DelSecret(secret)
 							)
-							lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+							helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
 						}
 					}
 				}
@@ -73,8 +73,10 @@ var repoDelSecretCmd = &cobra.Command{
 			wg.Wait()
 			close(out)
 		}()
-		for gitApi := range out {
-			lib.RepoOutput(gitApi, global.Flag, true, true)
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = true
+		for o := range out {
+			fmt.Print(*o)
 		}
 
 	},

@@ -23,11 +23,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/J-Siu/go-mygit/v3/lib"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +40,7 @@ var repoGetPublickeyCmd = &cobra.Command{
 	Long:    "Get public key. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan api.IApi, 10)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		if len(args) == 0 {
@@ -52,14 +53,16 @@ var repoGetPublickeyCmd = &cobra.Command{
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
 						ga       = new(api.PublicKey).New(property).Get()
 					)
-					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
 				}
 				wg.Wait()
 				close(out)
 			}
 		}()
-		for gitApi := range out {
-			lib.RepoOutput(gitApi, global.Flag, true, false)
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = false
+		for o := range out {
+			fmt.Print(*o)
 		}
 	},
 }

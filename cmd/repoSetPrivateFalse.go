@@ -23,11 +23,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/J-Siu/go-mygit/v3/lib"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +40,7 @@ var repoSetPrivateFalseCmd = &cobra.Command{
 	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan api.IApi, 10)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		// If no repo/dir specified in command line, add a ""
@@ -51,17 +52,18 @@ var repoSetPrivateFalseCmd = &cobra.Command{
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Private).New(property).Set()
+						ga       = new(api.Private).New(property).Set(false)
 					)
-					ga.Info.Private = false
-					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
 				}
 			}
 			wg.Wait()
 			close(out)
 		}()
-		for gitApi := range out {
-			lib.RepoOutput(gitApi, global.Flag, true, true)
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = true
+		for o := range out {
+			fmt.Print(*o)
 		}
 	},
 }

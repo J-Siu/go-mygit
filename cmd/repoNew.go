@@ -23,13 +23,14 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"path"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
 	"github.com/J-Siu/go-helper/v2/file"
 	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/J-Siu/go-mygit/v3/lib"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +42,7 @@ var repoNewCmd = &cobra.Command{
 	Long:    "Create remote repository. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out = make(chan api.IApi, 10)
+			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
 		// args == array of repos from command line
@@ -57,14 +58,16 @@ var repoNewCmd = &cobra.Command{
 					)
 					ga.Info.Name = path.Base(workPath)
 					ga.Info.Private = remote.Private
-					lib.RepoDoRun(ga, global.Flag.NoParallel, &wg, out)
+					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
 				}
 			}
 			wg.Wait()
 			close(out)
 		}()
-		for gitApi := range out {
-			lib.RepoOutput(gitApi, global.Flag, true, true)
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = true
+		for o := range out {
+			fmt.Print(*o)
 		}
 	},
 }

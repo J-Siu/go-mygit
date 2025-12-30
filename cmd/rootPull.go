@@ -31,6 +31,7 @@ import (
 	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
 )
@@ -66,16 +67,28 @@ var rootPullCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				var (
-					wp       = workPath
-					branch   = strings.TrimSpace(gitcmd.BranchCurrent(wp).Stdout.String())
-					gitCmd   = new(gitcmd.GitCmd).New(wp)
-					options1 = []string{remote.Name, branch}
-					options2 = options1
+					wp         = workPath
+					branch     = strings.TrimSpace(gitcmd.BranchCurrent(wp).Stdout.String())
+					gitCmdRun1 = new(helper.GitCmdRun)
+					gitCmdRun2 = new(helper.GitCmdRun)
+					options1   = []string{remote.Name, branch}
+					options2   = append(options1, "--tags")
+					property1  = new(helper.GitCmdRunProperty)
+					property2  = new(helper.GitCmdRunProperty)
 				)
-				lib.GitRunWrapper(gitCmd.Pull(options1), wp, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
+				*property1 = helper.GitCmdRunProperty{
+					Flag:     &global.Flag,
+					OutChan:   out,
+					Wg:       &wg,
+					WorkPath: wp,
+				}
+				gitCmdRun1.New(property1).GitCmd.Pull(options1)
+				gitCmdRun1.RunWrapper()
+
 				if global.Flag.Tag {
-					options2 = append(options2, "--tags")
-					lib.GitRunWrapper(gitCmd.Pull(options2), wp, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
+					*property2 = *property1
+					gitCmdRun2.New(property2).GitCmd.Pull(options2)
+					gitCmdRun2.RunWrapper()
 				}
 			}
 			wg.Wait()

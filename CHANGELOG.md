@@ -133,3 +133,6 @@
   - fix config output
 - v3.0.4
   - fix git parallel push issue
+- v3.0.5
+  - refactor helper func
+  - update go-gitapi, go-gitcmd, go-helper

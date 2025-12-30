@@ -20,56 +20,54 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package lib
+package cmd
 
 import (
-	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-helper/v2/errs"
-	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
+	"github.com/spf13/cobra"
 )
 
-// `lib.RepoDoRun` wrapper
-// Encapsulate RepoDo setup and run, sync.WaitGroup add amd done
-func RepoDoRun(gitApi api.IApi, noParallel bool, wg *sync.WaitGroup, out chan api.IApi) {
-	property := RepoDoProperty{
-		GitApi:     gitApi,
-		NoParallel: noParallel,
-		Output:     out,
-		Wg:         wg,
-	}
-	new(RepoDo).New(&property).Run()
+// privateCmd represents the private command
+var repoSetArchive = &cobra.Command{
+	Use:     "archive " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"a"},
+	Short:   "Set archived to true.",
+	Long:    "Set archived to true. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+	Run: func(cmd *cobra.Command, args []string) {
+		var (
+			out = make(chan *string, 10)
+			wg  sync.WaitGroup
+		)
+		// If no repo/dir specified in command line, add a ""
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					var (
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Archived).New(property).Set(true)
+					)
+					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+				}
+			}
+			wg.Wait()
+			close(out)
+		}()
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = true
+		for o := range out {
+			fmt.Print(*o)
+		}
+	},
 }
 
-func RepoOutput(gitApi api.IApi, flag TypeFlag, singleLine, statusOnly bool) {
-	title := *gitApi.Repo() + "(" + gitApi.Name() + ")"
-	status := gitApi.Ok()
-	if status {
-		if statusOnly {
-			ezlog.Log()
-			if !flag.NoTitle {
-				ezlog.N(title)
-			}
-			ezlog.Success(status).Out()
-		} else {
-			output := gitApi.Output()
-			if flag.NoSkip || (output != nil && *output != "") {
-				ezlog.Log()
-				if !flag.NoTitle {
-					if singleLine {
-						ezlog.N(title)
-					} else {
-						ezlog.Nl(title)
-					}
-				}
-				ezlog.M(output).Out()
-			}
-		}
-	} else {
-		// API or HTTP GET failed, try to extract error message
-		ezlog.Err().N(title).M(gitApi.Err())
-		errs.Queue("", errors.New(ezlog.String()))
-	}
+func init() {
+	repoSetCmd.AddCommand(repoSetArchive)
 }

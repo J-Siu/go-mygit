@@ -27,6 +27,7 @@ import (
 
 	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -48,8 +49,18 @@ var rootInitCmd = &cobra.Command{
 				gitcmd.Init(workPath)
 				gitcmd.RemoteRemoveAll(workPath)
 				for _, remote := range global.Conf.MergedRemotes {
-					remote.Output = out
-					remote.Add(&workPath)
+					var (
+						gitCmdRun1 = new(helper.GitCmdRun)
+						property1  = new(helper.GitCmdRunProperty)
+					)
+					*property1 = helper.GitCmdRunProperty{
+						Flag:     &global.Flag,
+						OutChan:   out,
+						Wg:       nil,
+						WorkPath: workPath,
+					}
+					gitCmdRun1.New(property1).GitCmd.RemoteAdd(remote.Name, remote.Ssh)
+					gitCmdRun1.RunWrapper()
 				}
 			}
 			close(out)

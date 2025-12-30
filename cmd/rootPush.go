@@ -26,8 +26,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
 )
@@ -51,18 +51,29 @@ var rootPushCmd = &cobra.Command{
 		go func() {
 			for _, remote := range remoteQueue.Queue {
 				var (
-					gitCmd1  = new(gitcmd.GitCmd).New(*remote.WorkPath)
-					gitCmd2  = new(gitcmd.GitCmd).New(*remote.WorkPath)
-					options1 = []string{*remote.Name}
-					options2 = options1
+					gitCmdRun1 = new(helper.GitCmdRun)
+					gitCmdRun2 = new(helper.GitCmdRun)
+					options1   = []string{*remote.Name}
+					options2   = append(options1, "--tags")
+					property1  = new(helper.GitCmdRunProperty)
+					property2  = new(helper.GitCmdRunProperty)
 				)
+				*property1 = helper.GitCmdRunProperty{
+					Flag:     &global.Flag,
+					OutChan:   out,
+					Wg:       &wg,
+					WorkPath: *remote.WorkPath,
+				}
 				if global.Flag.PushAll {
 					options1 = append(options1, "--all")
 				}
-				lib.GitRunWrapper(gitCmd1.Push(options1), *remote.WorkPath, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
+				gitCmdRun1.New(property1).GitCmd.Push(options1)
+				gitCmdRun1.RunWrapper()
+
 				if global.Flag.Tag {
-					options2 = append(options2, "--tags")
-					lib.GitRunWrapper(gitCmd2.Push(options2), *remote.WorkPath, &wg, global.Flag.NoParallel, global.Flag.NoTitle, out)
+					*property2 = *property1
+					gitCmdRun2.New(property2).GitCmd.Push(options2)
+					gitCmdRun2.RunWrapper()
 				}
 			}
 			wg.Wait()

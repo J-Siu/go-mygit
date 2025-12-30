@@ -28,6 +28,7 @@ import (
 	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -44,6 +45,7 @@ var remoteRemoveCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
+		global.Flag.NoParallel = true
 		go func() {
 			for _, workPath := range args {
 				if gitcmd.Root(workPath) == "" {
@@ -54,8 +56,18 @@ var remoteRemoveCmd = &cobra.Command{
 					gitcmd.RemoteRemoveAll(workPath)
 				} else {
 					for _, remote := range global.Conf.MergedRemotes {
-						remote.Output = out
-						remote.Remove(&workPath)
+						var (
+							gitCmdRun1 = new(helper.GitCmdRun)
+							property1  = new(helper.GitCmdRunProperty)
+						)
+						*property1 = helper.GitCmdRunProperty{
+							Flag:     &global.Flag,
+							OutChan:   out,
+							Wg:       nil,
+							WorkPath: workPath,
+						}
+						gitCmdRun1.New(property1).GitCmd.RemoteRemove(remote.Name)
+						gitCmdRun1.RunWrapper()
 					}
 				}
 			}

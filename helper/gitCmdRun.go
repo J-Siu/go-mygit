@@ -20,53 +20,76 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package lib
+package helper
 
 import (
 	"sync"
 
-	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-helper/v2/basestruct"
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
+	"github.com/J-Siu/go-helper/v2/cmd"
+	"github.com/J-Siu/go-mygit/v3/lib"
 )
 
-type RepoDoProperty struct {
-	GitApi     api.IApi        `json:"GitApi"`
-	NoParallel bool            `json:"NoParallel"`
-	Output     chan api.IApi   `json:"Output"`
-	Wg         *sync.WaitGroup `json:"Wg"`
+type GitCmdRunProperty struct {
+	Flag     *lib.TypeFlag `json:"Flag"`
+	OutChan  chan *string
+	Wg       *sync.WaitGroup
+	WorkPath string
 }
 
-type RepoDo struct {
-	*basestruct.Base
-	*RepoDoProperty
+type GitCmdRun struct {
+	*GitCmdRunProperty
+	*gitcmd.GitCmd
 }
 
-func (t *RepoDo) New(property *RepoDoProperty) *RepoDo {
-	t.Base = new(basestruct.Base)
-	t.Initialized = true
-	t.MyType = "Repo"
-
-	t.RepoDoProperty = property
+func (t *GitCmdRun) New(property *GitCmdRunProperty) *GitCmdRun {
+	t.GitCmdRunProperty = property
+	t.GitCmd = new(gitcmd.GitCmd).New(t.WorkPath)
 	return t
 }
 
-// Encapsulate wait group add amd done
-func (t *RepoDo) Run() *RepoDo {
-	if t.NoParallel {
+// handle goroutines and output
+func (t *GitCmdRun) RunWrapper() *GitCmdRun {
+	if t.Flag.NoParallel {
 		t.Wg = nil
-		t.process()
+		t.Run()
 	} else {
 		t.Wg.Add(1)
-		go t.process()
+		go t.Run()
 	}
 	return t
 }
 
-func (t *RepoDo) process() *RepoDo {
+func (t *GitCmdRun) Run() *cmd.Cmd {
 	if t.Wg != nil {
 		defer t.Wg.Done()
 	}
-	t.GitApi.Do()
-	t.Output <- t.GitApi
-	return t
+	var myCmd = t.GitCmd.Run()
+	t.OutChan <- t.Out()
+	return myCmd
+}
+
+func (t *GitCmdRun) Out() *string {
+	var (
+		out string
+		tmp string
+	)
+	if !t.Flag.NoTitle {
+		out = t.GitCmd.CmdLn
+		if t.WorkPath != "" {
+			out = t.WorkPath + ": " + t.GitCmd.CmdLn
+		}
+	}
+	if len(out) > 0 {
+		out = out + ":\n"
+	}
+	tmp = t.GitCmd.Stdout.String()
+	if tmp != "" {
+		out += tmp
+	}
+	tmp = t.GitCmd.Stderr.String()
+	if tmp != "" {
+		out += tmp
+	}
+	return &out
 }
