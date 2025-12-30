@@ -27,7 +27,6 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-helper/v2/basestruct"
 	"github.com/J-Siu/go-helper/v2/errs"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/lib"
@@ -41,15 +40,10 @@ type GitApiDoProperty struct {
 }
 
 type GitApiDo struct {
-	*basestruct.Base
 	*GitApiDoProperty
 }
 
 func (t *GitApiDo) New(property *GitApiDoProperty) *GitApiDo {
-	t.Base = new(basestruct.Base)
-	t.Initialized = true
-	t.MyType = "Repo"
-
 	t.GitApiDoProperty = property
 	return t
 }
@@ -110,8 +104,7 @@ func (t *GitApiDo) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly b
 	}
 }
 
-// `lib.GitApiDoWrapper` wrapper
-// Encapsulate RepoDo setup and run, sync.WaitGroup add amd done
+// Encapsulate GitApiDo setup and run, sync.WaitGroup add amd done
 func GitApiDoWrapper(gitApi api.IApi, flag *lib.TypeFlag, wg *sync.WaitGroup, out chan *string) {
 	property := GitApiDoProperty{
 		Flag:    flag,
