@@ -31,10 +31,10 @@ import (
 
 // Remote entry in config file
 type Remote struct {
-	Group  string      `json:"group,omitempty"`  // Group name
-	Name   string      `json:"name,omitempty"`   // Name of remote entry, also use as git remote name
-	Ssh    string      `json:"ssh,omitempty"`    // Ssh url for git server
-	Vendor base.Vendor `json:"vendor,omitempty"` // Api vendor/brand
+	Group  string `json:"group,omitempty"`  // Group name
+	Name   string `json:"name,omitempty"`   // Name of remote entry, also use as git remote name
+	Ssh    string `json:"ssh,omitempty"`    // Ssh url for git server
+	Vendor string `json:"vendor,omitempty"` // Api vendor/brand
 
 	EntryPoint string `json:"entrypoint,omitempty"` // Api entrypoint url
 	Private    bool   `json:"private,omitempty"`    // Default private value

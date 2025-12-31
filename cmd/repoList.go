@@ -49,7 +49,7 @@ var repoListCmd = &cobra.Command{
 				for p := 1; p < global.Flag.Page+1; p++ {
 					var (
 						property = remote.GitApiProperty(nil, global.Flag.Debug)
-						ga       = new(api.InfoList).New(property, remote.Vendor, p).Get()
+						ga       = new(api.InfoList).New(property, p).Get()
 					)
 					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
 				}

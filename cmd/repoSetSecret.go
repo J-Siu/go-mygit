@@ -25,10 +25,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-gitapi/v3/base"
+	"github.com/J-Siu/go-gitapi/v3/vendor"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
@@ -60,7 +61,7 @@ var repoSetSecretCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					if remote.Vendor != base.VendorGithub {
+					if !strings.EqualFold(remote.Vendor, vendor.Github.String()) {
 						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
 					} else {
 						// "GET" public key

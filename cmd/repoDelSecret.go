@@ -23,11 +23,13 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
+	"errors"
+	"strings"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-gitapi/v3/base"
+	"github.com/J-Siu/go-gitapi/v3/vendor"
+	"github.com/J-Siu/go-helper/v2/errs"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
@@ -58,8 +60,8 @@ var repoDelSecretCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					if remote.Vendor != base.VendorGithub {
-						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
+					if !strings.EqualFold(remote.Vendor, vendor.Github.String()) {
+						errs.Queue(remote.Name+"("+remote.Vendor+")", errors.New("action secret not supported"))
 					} else {
 						for _, secret := range global.Flag.SecretsDel {
 							var (
