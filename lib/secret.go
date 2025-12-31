@@ -22,12 +22,6 @@ THE SOFTWARE.
 
 package lib
 
-import (
-	"github.com/J-Siu/go-crypto/crypto"
-	"github.com/J-Siu/go-gitapi/v3/info"
-	"github.com/J-Siu/go-helper/v2/ezlog"
-)
-
 // Secret entry in config file
 type Secret struct {
 	Name  string `json:"name"`
@@ -35,18 +29,6 @@ type Secret struct {
 }
 
 type Secrets []Secret
-
-// Do NACL box encryption
-func (t *Secret) Encrypt(pubKeyP *info.PublicKey) *info.EncryptedPair {
-	var ep info.EncryptedPair
-	ep.Key_id = pubKeyP.Key_id
-	encrypted_value, e := crypto.BoxSealAnonymous(&pubKeyP.Key, &t.Value)
-	ep.Encrypted_value = *encrypted_value
-	if e != nil {
-		ezlog.Err().M(e).Out()
-	}
-	return &ep
-}
 
 // Check if secrete exist by name
 func (css *Secrets) Has(name *string) bool {

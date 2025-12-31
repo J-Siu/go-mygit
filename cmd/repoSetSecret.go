@@ -53,8 +53,8 @@ var repoSetSecretCmd = &cobra.Command{
 			args = []string{"."}
 		}
 		// --name/--value must be used together
-		if global.Flag.Secret.Name == "" || global.Flag.Secret.Value == "" {
-			ezlog.Err().M("Both -n/--name and -v/--value must be set").Out()
+		if (global.Flag.Secret.Name != "" && global.Flag.Secret.Value == "") || (global.Flag.Secret.Name == "" && global.Flag.Secret.Value != "") {
+			ezlog.Err().M("-n/--name and -v/--value must be used together").Out()
 			os.Exit(1)
 		}
 		go func() {
@@ -67,14 +67,7 @@ var repoSetSecretCmd = &cobra.Command{
 						ezlog.Log().N(remote.Name).Out()
 						var (
 							property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-							gaPubKey = new(api.PublicKey).New(property).Get()
-							ok       = gaPubKey.Do().Ok()
 						)
-						ezlog.Log().N("Get Actions Public Key").M(ok)
-						if !ok {
-							continue
-						}
-						// A list of secret to use
 						var secretsP *lib.Secrets
 						if global.Flag.Secret.Name != "" && global.Flag.Secret.Value != "" {
 							// Use command line value
@@ -85,11 +78,10 @@ var repoSetSecretCmd = &cobra.Command{
 						}
 						// Use config secrets
 						for _, secret := range *secretsP {
+							ezlog.Log().N("secret").M(secret).Out()
 							var (
-								ga    = new(api.EncryptedPair).New(property).Set()
-								infoP = secret.Encrypt(&gaPubKey.Info)
+								ga = new(api.EncryptedPair).New(property).Set(secret.Name, secret.Value)
 							)
-							ga.Info = *infoP
 							helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
 						}
 					}
