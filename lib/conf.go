@@ -59,37 +59,40 @@ func (t *TypeConf) New(flagGroups, flagRemotes *[]string) {
 	prefix := t.MyType + ".New"
 
 	t.setDefault()
-	ezlog.Debug().N(prefix).N("Default").Lm(t).Out()
+	ezlog.Debug().N(prefix).N("Default").Lm(t.SafeCopy(true)).Out()
 
 	t.readFileConf()
 	if t.Err == nil {
-		ezlog.Debug().N(prefix).N("Raw").Lm(t).Out()
+		ezlog.Debug().N(prefix).N("Raw").Lm(t.SafeCopy(true)).Out()
 
 		t.initGroups()
 
 		t.mergeRemotes(flagGroups, flagRemotes)
-		ezlog.Debug().N(prefix).N("Merged").Lm(t).Out()
+		ezlog.Debug().N(prefix).N("Merged").Lm(t.SafeCopy(true)).Out()
 
 		t.expand()
-		ezlog.Debug().N(prefix).N("Expand").Lm(t).Out()
+		ezlog.Debug().N(prefix).N("Expand").Lm(t.SafeCopy(true)).Out()
 	}
 }
 
 // Return a safe(no token, no secret value) copy
-func (t *TypeConf) SafeCopy() *TypeConf {
-	var safe TypeConf
+func (t *TypeConf) SafeCopy(safe bool) *TypeConf {
+	if !safe {
+		return t
+	}
+	var tmp TypeConf
 	b, _ := json.Marshal(t)
-	json.Unmarshal(b, &safe)
-	for i := range safe.Remotes {
-		safe.Remotes[i].Token = ""
+	json.Unmarshal(b, &tmp)
+	for i := range tmp.Remotes {
+		tmp.Remotes[i].Token = ""
 	}
-	for i := range safe.MergedRemotes {
-		safe.MergedRemotes[i].Token = ""
+	for i := range tmp.MergedRemotes {
+		tmp.MergedRemotes[i].Token = ""
 	}
-	for i := range safe.Secrets {
-		safe.Secrets[i].Value = ""
+	for i := range tmp.Secrets {
+		tmp.Secrets[i].Value = ""
 	}
-	return &safe
+	return &tmp
 }
 
 func (t *TypeConf) readFileConf() {

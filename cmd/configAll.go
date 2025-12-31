@@ -34,11 +34,7 @@ var confAllCmd = &cobra.Command{
 	Aliases: []string{"a"},
 	Short:   "Print all configurations",
 	Run: func(cmd *cobra.Command, args []string) {
-		if global.FlagConf.Secret {
-			ezlog.Log().N("Config").Lm(global.Conf.Remotes).Out()
-		} else {
-			ezlog.Log().N("Config").Lm(global.Conf.SafeCopy().Remotes).Out()
-		}
+		ezlog.Log().N("Config").Lm(global.Conf.SafeCopy(!global.FlagConf.Secret).Remotes).Out()
 	},
 }
 
