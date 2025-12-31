@@ -136,3 +136,8 @@
 - v3.0.5
   - refactor helper func
   - update go-gitapi, go-gitcmd, go-helper
+- v3.0.6
+  - fix TypeConf debug should use safe mode
+  - fix output nil pointer issue
+  - fix repo set secret argument check
+  - update go-gitapi
