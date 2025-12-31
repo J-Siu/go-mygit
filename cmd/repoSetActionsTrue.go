@@ -23,10 +23,10 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
@@ -62,7 +62,7 @@ var repoSetActionsTrueCmd = &cobra.Command{
 		global.Flag.SingleLine = true
 		global.Flag.StatusOnly = true
 		for o := range out {
-			fmt.Print(*o)
+			ezlog.Log().Se().M(o).Out()
 		}
 	},
 }

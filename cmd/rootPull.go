@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"sync"
@@ -95,7 +94,7 @@ var rootPullCmd = &cobra.Command{
 			close(out)
 		}()
 		for o := range out {
-			fmt.Print(*o)
+			ezlog.Log().Se().M(o).Out()
 		}
 	},
 }

@@ -23,9 +23,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
+	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
@@ -66,7 +65,7 @@ var rootInitCmd = &cobra.Command{
 			close(out)
 		}()
 		for o := range out {
-			fmt.Print(*o)
+			ezlog.Log().Se().M(o).Out()
 		}
 	},
 }

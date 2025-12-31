@@ -23,7 +23,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"sync"
 
@@ -80,7 +79,7 @@ var rootCloneCmd = &cobra.Command{
 			close(out)
 		}()
 		for o := range out {
-			fmt.Print(*o)
+			ezlog.Log().Se().M(o).Out()
 		}
 	},
 }

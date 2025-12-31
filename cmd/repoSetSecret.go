@@ -101,7 +101,7 @@ var repoSetSecretCmd = &cobra.Command{
 		global.Flag.SingleLine = true
 		global.Flag.StatusOnly = true
 		for o := range out {
-			fmt.Print(*o)
+			ezlog.Log().Se().M(o).Out()
 		}
 	},
 }
