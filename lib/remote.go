@@ -64,3 +64,7 @@ func (t *Remote) GitApiProperty(workPathP *string, debug bool) *base.Property {
 	}
 	return &property
 }
+
+func (t *Remote) GitUrl(workPath string) string {
+	return t.Ssh + ":/" + t.User + "/" + path.Base(workPath) + ".git"
+}

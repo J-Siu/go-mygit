@@ -54,11 +54,11 @@ var rootInitCmd = &cobra.Command{
 					)
 					*property1 = helper.GitCmdRunProperty{
 						Flag:     &global.Flag,
-						OutChan:   out,
+						OutChan:  out,
 						Wg:       nil,
 						WorkPath: workPath,
 					}
-					gitCmdRun1.New(property1).GitCmd.RemoteAdd(remote.Name, remote.Ssh)
+					gitCmdRun1.New(property1).GitCmd.RemoteAdd(remote.Name, remote.GitUrl(workPath))
 					gitCmdRun1.RunWrapper()
 				}
 			}
