@@ -50,7 +50,7 @@ func (t *GitApiDo) New(property *GitApiDoProperty) *GitApiDo {
 
 // handle goroutines and output
 func (t *GitApiDo) DoWrapper() *GitApiDo {
-	if t.Flag.NoParallel {
+	if t.Flag.NoParallel || t.Wg == nil {
 		t.Wg = nil
 		t.Do()
 	} else {

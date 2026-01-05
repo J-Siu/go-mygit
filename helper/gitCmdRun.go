@@ -50,7 +50,7 @@ func (t *GitCmdRun) New(property *GitCmdRunProperty) *GitCmdRun {
 
 // handle goroutines and output
 func (t *GitCmdRun) RunWrapper() *GitCmdRun {
-	if t.Flag.NoParallel {
+	if t.Flag.NoParallel || t.Wg == nil {
 		t.Wg = nil
 		t.Run()
 	} else {
