@@ -3,9 +3,9 @@
 - v1.0.1
   - Fix repo new endpoint
 - v2.0.0
-  - Command line restructure
-  - Clean up func name
   - Clean up file name
+  - Clean up func name
+  - Command line restructure
   - Fix typos
 - v2.0.1
   - upgrade go-helper and go-gitapi for bugfix
@@ -30,46 +30,22 @@
     - `--no-title`, don't print title in output
   - Add support for handling `archived` status
   - Fix exiting on non-git directory
-  - Fix remote listing not work for current directory
   - Fix push to use git directory remotes
+  - Fix remote listing not work for current directory
 - v2.5.1
   - Remove Go workspace file
 - v2.6.0
-  - Detect if no configuration file
   - Add git clone
   - Add git pull
+  - Detect if no configuration file
 - v2.7.0
-  - Upgrade go-helper to v1.1.6
-  - Upgrade go-gitapi to v1.4.0
   - Add "skipverify" in "remotes" config
     - support site with self-signed cert
+  - Upgrade go-gitapi to v1.4.0
+  - Upgrade go-helper to v1.1.6
 - v2.7.1
   - Fix github workflows
   - GitAPI partial fix
-- v2.7.2
-  - Upgrade go-gitapi to v1.4.1
-  - Upgrade go-helper to v1.1.7
-  - Use proper receiver name
-  - Fix `repo get info` error
-- v2.7.3
-  - Set go version to 1.23
-- v2.7.4
-  - Upgrade go-gitapi to v1.6.0
-  - Consolidate repo*Func() to repoDo()
-- v2.7.5
-  - Fix Github workflow
-- v2.7.6
-  - Upgrade go-helper to v1.1.8
-  - Fix config, debug, logic
-  - Fix receiver name
-- v2.7.7
-  - Upgrade go-helper to v1.1.10
-  - Move default config file `~/.go-mygit.json` -> `~/.config/go-mygit.json`
-  - Fix receiver name
-- v2.7.8
-  - Upgrade go-helper/v2
-- v2.7.9
-  - Fix output
 - v2.7.10
   - Upgrade go-helper/v2
 - v2.7.11
@@ -86,6 +62,30 @@
   - Use go-gitapi to handle github archive, unarchive
 - v2.7.16
   - Update go-gitapi/v2, go-crypto, go-gitapi, go-gitcmd
+- v2.7.2
+  - Fix `repo get info` error
+  - Upgrade go-gitapi to v1.4.1
+  - Upgrade go-helper to v1.1.7
+  - Use proper receiver name
+- v2.7.3
+  - Set go version to 1.23
+- v2.7.4
+  - Consolidate repo*Func() to repoDo()
+  - Upgrade go-gitapi to v1.6.0
+- v2.7.5
+  - Fix Github workflow
+- v2.7.6
+  - Fix config, debug, logic
+  - Fix receiver name
+  - Upgrade go-helper to v1.1.8
+- v2.7.7
+  - Fix receiver name
+  - Move default config file `~/.go-mygit.json` -> `~/.config/go-mygit.json`
+  - Upgrade go-helper to v1.1.10
+- v2.7.8
+  - Upgrade go-helper/v2
+- v2.7.9
+  - Fix output
 - v2.8.0
   - Add enable/disable support for discussions, projects and wiki
 - v2.8.1
@@ -141,3 +141,6 @@
   - fix output nil pointer issue
   - fix repo set secret argument check
   - update go-gitapi
+- v3.0.7
+  - fix null WaitGroup check
+  - update go-gitapi, go-helper
