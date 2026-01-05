@@ -3,9 +3,9 @@ module github.com/J-Siu/go-mygit/v3
 go 1.25.5
 
 require (
-	github.com/J-Siu/go-gitapi/v3 v3.0.5
+	github.com/J-Siu/go-gitapi/v3 v3.0.6
 	github.com/J-Siu/go-gitcmd/v3 v3.0.0
-	github.com/J-Siu/go-helper/v2 v2.6.11
+	github.com/J-Siu/go-helper/v2 v2.7.1
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 )
