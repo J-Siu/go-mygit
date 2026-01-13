@@ -25,6 +25,7 @@ package cmd
 import (
 	"sync"
 
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
@@ -51,27 +52,18 @@ var rootPushCmd = &cobra.Command{
 		go func() {
 			for _, remote := range remoteQueue.Queue {
 				var (
-					gitCmdRun1 = new(helper.GitCmdRun)
-					gitCmdRun2 = new(helper.GitCmdRun)
-					options1   = []string{*remote.Name}
-					options2   = append(options1, "--tags")
-					property   = new(helper.GitCmdRunProperty)
+					wp       = *remote.WorkPath
+					gc1      = new(gitcmd.GitCmd).New(wp)
+					gc2      = new(gitcmd.GitCmd).New(wp)
+					options1 = []string{*remote.Name}
+					options2 = append(options1, "--tags")
 				)
-				*property = helper.GitCmdRunProperty{
-					Flag:     &global.Flag,
-					OutChan:  out,
-					Wg:       &wg,
-					WorkPath: *remote.WorkPath,
-				}
 				if global.Flag.PushAll {
 					options1 = append(options1, "--all")
 				}
-				gitCmdRun1.New(property).GitCmd.Push(options1)
-				gitCmdRun1.Run()
-
+				helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc1.Push(options1), wp)
 				if global.Flag.Tag {
-					gitCmdRun2.New(property).GitCmd.Push(options2)
-					gitCmdRun2.Run()
+					helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc2.Push(options2), wp)
 				}
 			}
 			wg.Wait()

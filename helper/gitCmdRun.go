@@ -30,6 +30,7 @@ import (
 )
 
 type GitCmdRunProperty struct {
+	*gitcmd.GitCmd
 	Flag     *lib.TypeFlag `json:"Flag"`
 	OutChan  chan *string
 	Wg       *sync.WaitGroup
@@ -38,12 +39,10 @@ type GitCmdRunProperty struct {
 
 type GitCmdRun struct {
 	*GitCmdRunProperty
-	*gitcmd.GitCmd
 }
 
 func (t *GitCmdRun) New(property *GitCmdRunProperty) *GitCmdRun {
 	t.GitCmdRunProperty = property
-	t.GitCmd = new(gitcmd.GitCmd).New(t.WorkPath)
 	return t
 }
 
@@ -85,4 +84,16 @@ func (t *GitCmdRun) Out() *string {
 		out += tmp
 	}
 	return &out
+}
+
+// Encapsulate GitApiDo setup and run, sync.WaitGroup add amd done
+func GitCmdRunWrapper(flag *lib.TypeFlag, wg *sync.WaitGroup, out chan *string, gitCmd *gitcmd.GitCmd, workPath string) {
+	property := GitCmdRunProperty{
+		GitCmd:   gitCmd,
+		Flag:     flag,
+		OutChan:  out,
+		Wg:       wg,
+		WorkPath: workPath,
+	}
+	new(GitCmdRun).New(&property).Run()
 }

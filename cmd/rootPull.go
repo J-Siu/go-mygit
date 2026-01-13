@@ -66,27 +66,18 @@ var rootPullCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				var (
-					wp         = workPath
-					branch     = strings.TrimSpace(gitcmd.BranchCurrent(wp).Stdout.String())
-					gitCmdRun1 = new(helper.GitCmdRun)
-					gitCmdRun2 = new(helper.GitCmdRun)
-					options1   = []string{remote.Name, branch}
-					options2   = append(options1, "--tags")
-					property   = new(helper.GitCmdRunProperty)
+					wp       = workPath
+					branch   = strings.TrimSpace(gitcmd.BranchCurrent(wp).Stdout.String())
+					gc1      = new(gitcmd.GitCmd).New(wp)
+					gc2      = new(gitcmd.GitCmd).New(wp)
+					options1 = []string{remote.Name, branch}
+					options2 = append(options1, "--tags")
 				)
-				*property = helper.GitCmdRunProperty{
-					Flag:     &global.Flag,
-					OutChan:  out,
-					Wg:       &wg,
-					WorkPath: wp,
-				}
-				gitCmdRun1.New(property).GitCmd.Pull(options1)
-				gitCmdRun1.Run()
-
+				helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc1.Pull(options1), wp)
 				if global.Flag.Tag {
-					gitCmdRun2.New(property).GitCmd.Pull(options2)
-					gitCmdRun2.Run()
+					helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc2.Pull(options2), wp)
 				}
+				// }
 			}
 			wg.Wait()
 			close(out)
