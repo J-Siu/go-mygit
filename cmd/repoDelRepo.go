@@ -56,7 +56,7 @@ var repoDelRepoCmd = &cobra.Command{
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
 						ga       = new(api.Repo).New(property).Del()
 					)
-					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
 				}
 			}
 			wg.Wait()

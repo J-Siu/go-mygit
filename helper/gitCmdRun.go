@@ -30,8 +30,8 @@ import (
 )
 
 type GitCmdRunProperty struct {
-	*gitcmd.GitCmd
 	Flag     *lib.TypeFlag `json:"Flag"`
+	GitCmd   *gitcmd.GitCmd
 	OutChan  chan *string
 	Wg       *sync.WaitGroup
 	WorkPath string
@@ -48,7 +48,7 @@ func (t *GitCmdRun) New(property *GitCmdRunProperty) *GitCmdRun {
 
 // handle goroutines and output
 func (t *GitCmdRun) Run() *GitCmdRun {
-	if t.Flag.NoParallel {
+	if t.Flag.NoParallel || t.Wg == nil {
 		t.run()
 	} else {
 		t.Wg.Go(t.run)

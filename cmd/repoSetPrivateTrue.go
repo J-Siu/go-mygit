@@ -54,7 +54,7 @@ var repoSetPrivateTrueCmd = &cobra.Command{
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
 						ga       = new(api.Private).New(property).Set(true)
 					)
-					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
 				}
 			}
 			wg.Wait()

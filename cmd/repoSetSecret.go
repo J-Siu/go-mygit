@@ -83,7 +83,7 @@ var repoSetSecretCmd = &cobra.Command{
 							var (
 								ga = new(api.EncryptedPair).New(property).Set(secret.Name, secret.Value)
 							)
-							helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+							helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
 						}
 					}
 				}

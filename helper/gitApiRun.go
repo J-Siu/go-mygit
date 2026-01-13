@@ -32,38 +32,38 @@ import (
 	"github.com/J-Siu/go-mygit/v3/lib"
 )
 
-type GitApiDoProperty struct {
+type GitApiRunProperty struct {
 	Flag    *lib.TypeFlag   `json:"Flag"`
 	IApi    api.IApi        `json:"IApi"`
 	OutChan chan *string    `json:"Output"`
 	Wg      *sync.WaitGroup `json:"Wg"`
 }
 
-type GitApiDo struct {
-	*GitApiDoProperty
+type GitApiRun struct {
+	*GitApiRunProperty
 }
 
-func (t *GitApiDo) New(property *GitApiDoProperty) *GitApiDo {
-	t.GitApiDoProperty = property
+func (t *GitApiRun) New(property *GitApiRunProperty) *GitApiRun {
+	t.GitApiRunProperty = property
 	return t
 }
 
 // handle goroutines and output
-func (t *GitApiDo) Do() *GitApiDo {
-	if t.Flag.NoParallel {
-		t.do()
+func (t *GitApiRun) Run() *GitApiRun {
+	if t.Flag.NoParallel || t.Wg == nil {
+		t.run()
 	} else {
-		t.Wg.Go(t.do)
+		t.Wg.Go(t.run)
 	}
 	return t
 }
 
-func (t *GitApiDo) do() {
+func (t *GitApiRun) run() {
 	t.IApi.Do()
 	t.OutChan <- t.Out()
 }
 
-func (t *GitApiDo) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly bool
+func (t *GitApiRun) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly bool
 	var (
 		log    = new(ezlog.EzLog).New()
 		status = t.IApi.Ok()
@@ -99,12 +99,12 @@ func (t *GitApiDo) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly b
 }
 
 // Encapsulate GitApiDo setup and run, sync.WaitGroup add amd done
-func GitApiDoWrapper(gitApi api.IApi, flag *lib.TypeFlag, wg *sync.WaitGroup, out chan *string) {
-	property := GitApiDoProperty{
+func GitApiRunWrapper(flag *lib.TypeFlag, wg *sync.WaitGroup, out chan *string, gitApi api.IApi) {
+	property := GitApiRunProperty{
 		Flag:    flag,
 		IApi:    gitApi,
 		OutChan: out,
 		Wg:      wg,
 	}
-	new(GitApiDo).New(&property).Do()
+	new(GitApiRun).New(&property).Run()
 }

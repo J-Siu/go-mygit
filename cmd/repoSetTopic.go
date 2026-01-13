@@ -51,7 +51,7 @@ var repoSetTopicCmd = &cobra.Command{
 				)
 				ga.Info.Topics = &args
 				ga.Info.Names = &args
-				helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+				helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
 			}
 			wg.Wait()
 			close(out)

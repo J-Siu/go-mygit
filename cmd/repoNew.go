@@ -58,7 +58,7 @@ var repoNewCmd = &cobra.Command{
 					)
 					ga.Info.Name = path.Base(workPath)
 					ga.Info.Private = remote.Private
-					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
 				}
 			}
 			wg.Wait()

@@ -68,7 +68,7 @@ var repoDelSecretCmd = &cobra.Command{
 								property = remote.GitApiProperty(&workPath, global.Flag.Debug)
 								ga       = new(api.Repo).New(property).DelSecret(secret)
 							)
-							helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+							helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
 						}
 					}
 				}

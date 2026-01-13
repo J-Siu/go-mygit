@@ -49,7 +49,7 @@ var repoSetDescriptionCmd = &cobra.Command{
 						property = remote.GitApiProperty(nil, global.Flag.Debug)
 						ga       = new(api.Description).New(property).Set(args[0])
 					)
-					helper.GitApiDoWrapper(ga, &global.Flag, &wg, out)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
 				}
 				wg.Wait()
 				close(out)
