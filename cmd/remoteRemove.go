@@ -65,7 +65,7 @@ var remoteRemoveCmd = &cobra.Command{
 							WorkPath: workPath,
 						}
 						gitCmdRun1.New(property1).GitCmd.RemoteRemove(remote.Name)
-						gitCmdRun1.RunWrapper()
+						gitCmdRun1.Run()
 					}
 				}
 			}

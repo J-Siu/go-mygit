@@ -62,18 +62,18 @@ var rootCloneCmd = &cobra.Command{
 		go func() {
 			for _, repoName := range args {
 				var (
-					gitCmdRun1 = new(helper.GitCmdRun)
-					options1   = []string{remote.Ssh + ":/" + remote.User + "/" + repoName} // construct url
-					property1  = new(helper.GitCmdRunProperty)
+					gitCmdRun = new(helper.GitCmdRun)
+					options   = []string{remote.Ssh + ":/" + remote.User + "/" + repoName} // construct url
+					property  = new(helper.GitCmdRunProperty)
 				)
-				*property1 = helper.GitCmdRunProperty{
+				*property = helper.GitCmdRunProperty{
 					Flag:     &global.Flag,
 					OutChan:   out,
 					Wg:       &wg,
 					WorkPath: "",
 				}
-				gitCmdRun1.New(property1).GitCmd.Clone(options1)
-				gitCmdRun1.RunWrapper()
+				gitCmdRun.New(property).GitCmd.Clone(options)
+				gitCmdRun.Run()
 			}
 			wg.Wait()
 			close(out)

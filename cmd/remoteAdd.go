@@ -62,7 +62,7 @@ var remoteAddCmd = &cobra.Command{
 						WorkPath: workPath,
 					}
 					gitCmdRun1.New(property1).GitCmd.RemoteAdd(remote.Name, remote.GitUrl(workPath))
-					gitCmdRun1.RunWrapper()
+					gitCmdRun1.Run()
 				}
 			}
 			close(out)

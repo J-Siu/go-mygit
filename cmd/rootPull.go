@@ -72,22 +72,20 @@ var rootPullCmd = &cobra.Command{
 					gitCmdRun2 = new(helper.GitCmdRun)
 					options1   = []string{remote.Name, branch}
 					options2   = append(options1, "--tags")
-					property1  = new(helper.GitCmdRunProperty)
-					property2  = new(helper.GitCmdRunProperty)
+					property   = new(helper.GitCmdRunProperty)
 				)
-				*property1 = helper.GitCmdRunProperty{
+				*property = helper.GitCmdRunProperty{
 					Flag:     &global.Flag,
-					OutChan:   out,
+					OutChan:  out,
 					Wg:       &wg,
 					WorkPath: wp,
 				}
-				gitCmdRun1.New(property1).GitCmd.Pull(options1)
-				gitCmdRun1.RunWrapper()
+				gitCmdRun1.New(property).GitCmd.Pull(options1)
+				gitCmdRun1.Run()
 
 				if global.Flag.Tag {
-					*property2 = *property1
-					gitCmdRun2.New(property2).GitCmd.Pull(options2)
-					gitCmdRun2.RunWrapper()
+					gitCmdRun2.New(property).GitCmd.Pull(options2)
+					gitCmdRun2.Run()
 				}
 			}
 			wg.Wait()

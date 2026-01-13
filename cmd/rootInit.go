@@ -49,17 +49,17 @@ var rootInitCmd = &cobra.Command{
 				gitcmd.RemoteRemoveAll(workPath)
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
-						gitCmdRun1 = new(helper.GitCmdRun)
-						property1  = new(helper.GitCmdRunProperty)
+						gitCmdRun = new(helper.GitCmdRun)
+						property  = new(helper.GitCmdRunProperty)
 					)
-					*property1 = helper.GitCmdRunProperty{
+					*property = helper.GitCmdRunProperty{
 						Flag:     &global.Flag,
 						OutChan:  out,
 						Wg:       nil,
 						WorkPath: workPath,
 					}
-					gitCmdRun1.New(property1).GitCmd.RemoteAdd(remote.Name, remote.GitUrl(workPath))
-					gitCmdRun1.RunWrapper()
+					gitCmdRun.New(property).GitCmd.RemoteAdd(remote.Name, remote.GitUrl(workPath))
+					gitCmdRun.Run()
 				}
 			}
 			close(out)

@@ -49,24 +49,18 @@ func (t *GitApiDo) New(property *GitApiDoProperty) *GitApiDo {
 }
 
 // handle goroutines and output
-func (t *GitApiDo) DoWrapper() *GitApiDo {
-	if t.Flag.NoParallel || t.Wg == nil {
-		t.Wg = nil
-		t.Do()
+func (t *GitApiDo) Do() *GitApiDo {
+	if t.Flag.NoParallel {
+		t.do()
 	} else {
-		t.Wg.Add(1)
-		go t.Do()
+		t.Wg.Go(t.do)
 	}
 	return t
 }
 
-func (t *GitApiDo) Do() *GitApiDo {
-	if t.Wg != nil {
-		defer t.Wg.Done()
-	}
+func (t *GitApiDo) do() {
 	t.IApi.Do()
 	t.OutChan <- t.Out()
-	return t
 }
 
 func (t *GitApiDo) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly bool
@@ -112,5 +106,5 @@ func GitApiDoWrapper(gitApi api.IApi, flag *lib.TypeFlag, wg *sync.WaitGroup, ou
 		OutChan: out,
 		Wg:      wg,
 	}
-	new(GitApiDo).New(&property).DoWrapper()
+	new(GitApiDo).New(&property).Do()
 }

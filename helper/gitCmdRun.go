@@ -26,7 +26,6 @@ import (
 	"sync"
 
 	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
-	"github.com/J-Siu/go-helper/v2/cmd"
 	"github.com/J-Siu/go-mygit/v3/lib"
 )
 
@@ -49,24 +48,18 @@ func (t *GitCmdRun) New(property *GitCmdRunProperty) *GitCmdRun {
 }
 
 // handle goroutines and output
-func (t *GitCmdRun) RunWrapper() *GitCmdRun {
-	if t.Flag.NoParallel || t.Wg == nil {
-		t.Wg = nil
-		t.Run()
+func (t *GitCmdRun) Run() *GitCmdRun {
+	if t.Flag.NoParallel {
+		t.run()
 	} else {
-		t.Wg.Add(1)
-		go t.Run()
+		t.Wg.Go(t.run)
 	}
 	return t
 }
 
-func (t *GitCmdRun) Run() *cmd.Cmd {
-	if t.Wg != nil {
-		defer t.Wg.Done()
-	}
-	var myCmd = t.GitCmd.Run()
+func (t *GitCmdRun) run() {
+	t.GitCmd.Run()
 	t.OutChan <- t.Out()
-	return myCmd
 }
 
 func (t *GitCmdRun) Out() *string {
