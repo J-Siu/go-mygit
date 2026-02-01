@@ -32,7 +32,7 @@ import (
 type GitCmdRunProperty struct {
 	Flag     *lib.TypeFlag `json:"Flag"`
 	GitCmd   *gitcmd.GitCmd
-	OutChan  chan *string
+	Out      chan *string
 	Wg       *sync.WaitGroup
 	WorkPath string
 }
@@ -58,10 +58,10 @@ func (t *GitCmdRun) Run() *GitCmdRun {
 
 func (t *GitCmdRun) run() {
 	t.GitCmd.Run()
-	t.OutChan <- t.Out()
+	t.Out <- t.out()
 }
 
-func (t *GitCmdRun) Out() *string {
+func (t *GitCmdRun) out() *string {
 	var (
 		out string
 		tmp string
@@ -91,7 +91,7 @@ func GitCmdRunWrapper(flag *lib.TypeFlag, wg *sync.WaitGroup, out chan *string, 
 	property := GitCmdRunProperty{
 		GitCmd:   gitCmd,
 		Flag:     flag,
-		OutChan:  out,
+		Out:      out,
 		Wg:       wg,
 		WorkPath: workPath,
 	}
