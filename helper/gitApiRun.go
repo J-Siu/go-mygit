@@ -33,10 +33,10 @@ import (
 )
 
 type GitApiRunProperty struct {
-	Flag    *lib.TypeFlag   `json:"Flag"`
-	IApi    api.IApi        `json:"IApi"`
-	OutChan chan *string    `json:"Output"`
-	Wg      *sync.WaitGroup `json:"Wg"`
+	Flag *lib.TypeFlag   `json:"Flag"`
+	IApi api.IApi        `json:"IApi"`
+	Out  chan *string    `json:"Out"`
+	Wg   *sync.WaitGroup `json:"Wg"`
 }
 
 type GitApiRun struct {
@@ -60,10 +60,10 @@ func (t *GitApiRun) Run() *GitApiRun {
 
 func (t *GitApiRun) run() {
 	t.IApi.Do()
-	t.OutChan <- t.Out()
+	t.Out <- t.out()
 }
 
-func (t *GitApiRun) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly bool
+func (t *GitApiRun) out() *string {
 	var (
 		log    = new(ezlog.EzLog).New()
 		status = t.IApi.Ok()
@@ -92,8 +92,8 @@ func (t *GitApiRun) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly 
 		return log.StringP()
 	} else {
 		// API or HTTP GET failed, try to extract error message
-		ezlog.Err().N(title).M(t.IApi.Err())
-		errs.Queue("", errors.New(ezlog.String()))
+		log.Err().N(title).M(t.IApi.Err())
+		errs.Queue("", errors.New(log.String()))
 		return nil
 	}
 }
@@ -101,10 +101,10 @@ func (t *GitApiRun) Out() *string { //flag lib.TypeFlag, singleLine, statusOnly 
 // Encapsulate GitApiDo setup and run, sync.WaitGroup add amd done
 func GitApiRunWrapper(flag *lib.TypeFlag, wg *sync.WaitGroup, out chan *string, gitApi api.IApi) {
 	property := GitApiRunProperty{
-		Flag:    flag,
-		IApi:    gitApi,
-		OutChan: out,
-		Wg:      wg,
+		Flag: flag,
+		IApi: gitApi,
+		Out:  out,
+		Wg:   wg,
 	}
 	new(GitApiRun).New(&property).Run()
 }
