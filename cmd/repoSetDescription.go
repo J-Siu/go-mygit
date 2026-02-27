@@ -35,7 +35,7 @@ import (
 // repo description
 var repoSetDescriptionCmd = &cobra.Command{
 	Use:     "description",
-	Aliases: []string{"d"},
+	Aliases: []string{"d", "des", "desc"},
 	Short:   "Set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
@@ -49,7 +49,7 @@ var repoSetDescriptionCmd = &cobra.Command{
 						property = remote.GitApiProperty(nil, global.Flag.Debug)
 						ga       = new(api.Description).New(property).Set(args[0])
 					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
 				wg.Wait()
 				close(out)

@@ -35,7 +35,7 @@ import (
 // Get repo description
 var repoGetDescriptionCmd = &cobra.Command{
 	Use:     "description " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"d", "desc"},
+	Aliases: []string{"d", "des", "desc"},
 	Short:   "Get description",
 	Long:    "Get description. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -53,7 +53,7 @@ var repoGetDescriptionCmd = &cobra.Command{
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
 						ga       = new(api.Description).New(property).Get()
 					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
 			}
 			wg.Wait()
