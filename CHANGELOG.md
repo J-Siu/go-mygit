@@ -144,3 +144,5 @@
 - v3.0.7
   - fix null WaitGroup check
   - update go-gitapi, go-helper
+- 3.0.8
+  - fix git init url

@@ -24,6 +24,7 @@ package lib
 
 import (
 	"path"
+	"strings"
 
 	"github.com/J-Siu/go-gitapi/v3/base"
 	"github.com/J-Siu/go-helper/v2/file"
@@ -66,5 +67,8 @@ func (t *Remote) GitApiProperty(workPathP *string, debug bool) *base.Property {
 }
 
 func (t *Remote) GitUrl(workPath string) string {
+	if len(workPath) == 0 || strings.EqualFold(workPath, ".") {
+		workPath = *file.CurrentDirBase()
+	}
 	return t.Ssh + ":/" + t.User + "/" + path.Base(workPath) + ".git"
 }
