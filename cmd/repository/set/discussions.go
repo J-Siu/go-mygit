@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
 	"sync"
@@ -32,12 +32,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// publicCmd represents the public command
-var repoSetPrivateFalseCmd = &cobra.Command{
-	Use:     "false " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"f"},
-	Short:   "Set to false.",
-	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+var discussionsCmd = &cobra.Command{
+	Use:     "discussions",
+	Aliases: []string{"dis", "discussion"},
+	Short:   global.TXT_SET_TRUE_FALSE_SHORT,
+	Long:    global.TXT_SET_TRUE_FALSE_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			out = make(chan *string, 10)
@@ -52,9 +51,9 @@ var repoSetPrivateFalseCmd = &cobra.Command{
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Private).New(property).Set(false)
+						ga       = new(api.Discussions).New(property).Set(setTrue)
 					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
 			}
 			wg.Wait()
@@ -69,5 +68,5 @@ var repoSetPrivateFalseCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetPrivateCmd.AddCommand(repoSetPrivateFalseCmd)
+	initTrueFalse(setCmd, discussionsCmd)
 }

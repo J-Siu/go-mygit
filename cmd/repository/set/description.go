@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
 	"sync"
@@ -32,42 +32,37 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// privateCmd represents the private command
-var repoSetArchive = &cobra.Command{
-	Use:     "archive " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"a"},
-	Short:   "Set archived to true.",
-	Long:    "Set archived to true. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+// repo description
+var descriptionCmd = &cobra.Command{
+	Use:     "description",
+	Aliases: []string{"d", "des", "desc"},
+	Short:   "Set description",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
-		// If no repo/dir specified in command line, add a ""
-		if len(args) == 0 {
-			args = []string{"."}
-		}
-		go func() {
-			for _, workPath := range args {
+		if len(args) > 0 {
+			go func() {
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
-						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Archived).New(property).Set(true)
+						property = remote.GitApiProperty(nil, global.Flag.Debug)
+						ga       = new(api.Description).New(property).Set(args[0])
 					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
+				wg.Wait()
+				close(out)
+			}()
+			global.Flag.SingleLine = true
+			global.Flag.StatusOnly = true
+			for o := range out {
+				ezlog.Log().Se().M(o).Out()
 			}
-			wg.Wait()
-			close(out)
-		}()
-		global.Flag.SingleLine = true
-		global.Flag.StatusOnly = true
-		for o := range out {
-			ezlog.Log().Se().M(o).Out()
 		}
 	},
 }
 
 func init() {
-	repoSetCmd.AddCommand(repoSetArchive)
+	setCmd.AddCommand(descriptionCmd)
 }

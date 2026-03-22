@@ -20,18 +20,54 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
+	"sync"
+
+	"github.com/J-Siu/go-gitapi/v3/api"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
-var repoSetActionsCmd = &cobra.Command{
-	Use:     "actions",
-	Aliases: []string{"act", "action"},
-	Short:   "Set wiki status",
+// publicCmd represents the public command
+var privateCmd = &cobra.Command{
+	Use:     "private",
+	Aliases: []string{"p"},
+	Short:   global.TXT_SET_TRUE_FALSE_SHORT,
+	Long:    global.TXT_SET_TRUE_FALSE_LONG,
+	Run: func(cmd *cobra.Command, args []string) {
+		var (
+			out = make(chan *string, 10)
+			wg  sync.WaitGroup
+		)
+		// If no repo/dir specified in command line, add a ""
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+		go func() {
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					var (
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Private).New(property).Set(setTrue)
+					)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
+				}
+			}
+			wg.Wait()
+			close(out)
+		}()
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = true
+		for o := range out {
+			ezlog.Log().Se().M(o).Out()
+		}
+	},
 }
 
 func init() {
-	repoSetCmd.AddCommand(repoSetActionsCmd)
+	initTrueFalse(setCmd, privateCmd)
 }

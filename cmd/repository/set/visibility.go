@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
 	"sync"
@@ -32,11 +32,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var repoSetActionsFalseCmd = &cobra.Command{
-	Use:     "false " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"f"},
-	Short:   "Set to false.",
-	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+// Set repo visibility to public
+var visibilityCmd = &cobra.Command{
+	Use:     "visibility",
+	Aliases: []string{"v", "vis"},
+	Short:   global.TXT_SET_PUB_PRI_SHORT,
+	Long:    global.TXT_SET_PUB_PRI_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			out = make(chan *string, 10)
@@ -51,9 +52,9 @@ var repoSetActionsFalseCmd = &cobra.Command{
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Actions).New(property).Set(false)
+						ga       = new(api.Visibility).New(property).Set(true)
 					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
 			}
 			wg.Wait()
@@ -68,5 +69,5 @@ var repoSetActionsFalseCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetActionsCmd.AddCommand(repoSetActionsFalseCmd)
+	initPublicPrivate(setCmd, visibilityCmd)
 }

@@ -20,30 +20,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
-	"fmt"
-	"os"
-	"strings"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-gitapi/v3/vendor"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
-	"github.com/J-Siu/go-mygit/v3/lib"
-
 	"github.com/spf13/cobra"
 )
 
-// setCmd represents the set command
-var repoSetSecretCmd = &cobra.Command{
-	Use:     "secret " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"s"},
-	Short:   "Set action secret",
-	Long:    "Set action secret. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+var actionsCmd = &cobra.Command{
+	Use:     "actions",
+	Aliases: []string{"act", "action"},
+	Short:   global.TXT_SET_TRUE_FALSE_SHORT,
+	Long:    global.TXT_SET_TRUE_FALSE_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			out = make(chan *string, 10)
@@ -53,39 +46,14 @@ var repoSetSecretCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"."}
 		}
-		// --name/--value must be used together
-		if (global.Flag.Secret.Name != "" && global.Flag.Secret.Value == "") || (global.Flag.Secret.Name == "" && global.Flag.Secret.Value != "") {
-			ezlog.Err().M("-n/--name and -v/--value must be used together").Out()
-			os.Exit(1)
-		}
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					if !strings.EqualFold(remote.Vendor, vendor.Github.String()) {
-						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
-					} else {
-						// "GET" public key
-						ezlog.Log().N(remote.Name).Out()
-						var (
-							property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						)
-						var secretsP *lib.Secrets
-						if global.Flag.Secret.Name != "" && global.Flag.Secret.Value != "" {
-							// Use command line value
-							secretsP = &lib.Secrets{global.Flag.Secret}
-						} else {
-							// Use Conf secrets
-							secretsP = &global.Conf.Secrets
-						}
-						// Use config secrets
-						for _, secret := range *secretsP {
-							ezlog.Log().N("secret").M(secret).Out()
-							var (
-								ga = new(api.EncryptedPair).New(property).Set(secret.Name, secret.Value)
-							)
-							helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
-						}
-					}
+					var (
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Actions).New(property).Set(setTrue)
+					)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
 			}
 			wg.Wait()
@@ -100,7 +68,5 @@ var repoSetSecretCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetCmd.AddCommand(repoSetSecretCmd)
-	repoSetSecretCmd.Flags().StringVarP(&global.Flag.Secret.Name, "name", "n", "", "Secret name")
-	repoSetSecretCmd.Flags().StringVarP(&global.Flag.Secret.Value, "value", "v", "", "Secret value")
+	initTrueFalse(setCmd, actionsCmd)
 }

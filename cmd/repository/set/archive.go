@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
 	"sync"
@@ -32,26 +32,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// repo topics
-var repoSetTopicCmd = &cobra.Command{
-	Use:     "topic",
-	Aliases: []string{"t"},
-	Short:   "Set topics",
-	Long:    "Set topic. " + global.TXT_FLAGS_USE,
+// publicCmd represents the public command
+var archiveCmd = &cobra.Command{
+	Use:     "archive " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"arch"},
+	Short:   global.TXT_SET_TRUE_FALSE_SHORT,
+	Long:    global.TXT_SET_TRUE_FALSE_LONG,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			out = make(chan *string, 10)
 			wg  sync.WaitGroup
 		)
+		// If no repo/dir specified in command line, add a ""
+		if len(args) == 0 {
+			args = []string{"."}
+		}
 		go func() {
-			for _, remote := range global.Conf.MergedRemotes {
-				var (
-					property = remote.GitApiProperty(nil, global.Flag.Debug)
-					ga       = new(api.Topics).New(property).Set()
-				)
-				ga.Info.Topics = &args
-				ga.Info.Names = &args
-				helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+			for _, workPath := range args {
+				for _, remote := range global.Conf.MergedRemotes {
+					var (
+						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						ga       = new(api.Archived).New(property).Set(setTrue)
+					)
+					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
+				}
 			}
 			wg.Wait()
 			close(out)
@@ -65,5 +69,5 @@ var repoSetTopicCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetCmd.AddCommand(repoSetTopicCmd)
+	initTrueFalse(setCmd, archiveCmd)
 }

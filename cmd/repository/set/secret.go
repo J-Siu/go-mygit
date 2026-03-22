@@ -20,23 +20,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
+	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/J-Siu/go-gitapi/v3/api"
+	"github.com/J-Siu/go-gitapi/v3/vendor"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
+	"github.com/J-Siu/go-mygit/v3/lib"
+
 	"github.com/spf13/cobra"
 )
 
-var repoSetWikiFalseCmd = &cobra.Command{
-	Use:     "false " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"f"},
-	Short:   "Set to false.",
-	Long:    "Set to false.  " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+// setCmd represents the set command
+var secretCmd = &cobra.Command{
+	Use:     "secret " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"s"},
+	Short:   "Set action secret",
+	Long:    "Set action secret. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			out = make(chan *string, 10)
@@ -49,11 +55,31 @@ var repoSetWikiFalseCmd = &cobra.Command{
 		go func() {
 			for _, workPath := range args {
 				for _, remote := range global.Conf.MergedRemotes {
-					var (
-						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Wiki).New(property).Set(false)
-					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+					if !strings.EqualFold(remote.Vendor, vendor.Github.String()) {
+						fmt.Printf("%s(%s) action secret not supported.\n", remote.Name, remote.Vendor)
+					} else {
+						// "GET" public key
+						ezlog.Log().N(remote.Name).Out()
+						var (
+							property = remote.GitApiProperty(&workPath, global.Flag.Debug)
+						)
+						var secretsP *lib.Secrets
+						if global.Flag.Secret.Name != "" && global.Flag.Secret.Value != "" {
+							// Use command line value
+							secretsP = &lib.Secrets{global.Flag.Secret}
+						} else {
+							// Use Conf secrets
+							secretsP = &global.Conf.Secrets
+						}
+						// Use config secrets
+						for _, secret := range *secretsP {
+							ezlog.Log().N("secret").M(secret).Out()
+							var (
+								ga = new(api.EncryptedPair).New(property).Set(secret.Name, secret.Value)
+							)
+							helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
+						}
+					}
 				}
 			}
 			wg.Wait()
@@ -68,5 +94,9 @@ var repoSetWikiFalseCmd = &cobra.Command{
 }
 
 func init() {
-	repoSetWikiCmd.AddCommand(repoSetWikiFalseCmd)
+	cmd := secretCmd
+	setCmd.AddCommand(cmd)
+	cmd.Flags().StringVarP(&global.Flag.Secret.Name, "name", "n", "", "Secret name")
+	cmd.Flags().StringVarP(&global.Flag.Secret.Value, "value", "v", "", "Secret value")
+	cmd.MarkFlagsRequiredTogether("name", "value")
 }

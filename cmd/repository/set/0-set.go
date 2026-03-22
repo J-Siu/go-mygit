@@ -20,53 +20,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package set
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/J-Siu/go-mygit/v3/helper"
+	"github.com/J-Siu/go-mygit/v3/cmd/repository"
 	"github.com/spf13/cobra"
 )
 
-var repoSetWikiTrueCmd = &cobra.Command{
-	Use:     "true " + global.TXT_REPO_DIR_USE,
-	Aliases: []string{"t"},
-	Short:   "Set to true.",
-	Long:    "Set to true. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
-	Run: func(cmd *cobra.Command, args []string) {
-		var (
-			out = make(chan *string, 10)
-			wg  sync.WaitGroup
-		)
-		// If no repo/dir specified in command line, add a ""
-		if len(args) == 0 {
-			args = []string{"."}
-		}
-		go func() {
-			for _, workPath := range args {
-				for _, remote := range global.Conf.MergedRemotes {
-					var (
-						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Wiki).New(property).Set(true)
-					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
-				}
-			}
-			wg.Wait()
-			close(out)
-		}()
-		global.Flag.SingleLine = true
-		global.Flag.StatusOnly = true
-		for o := range out {
-			ezlog.Log().Se().M(o).Out()
-		}
-	},
+// repo set
+var setCmd = &cobra.Command{
+	Use:     "set",
+	Aliases: []string{"s"},
+	Short:   "Set information",
+	Long:    "Set information.",
 }
 
 func init() {
-	repoSetWikiCmd.AddCommand(repoSetWikiTrueCmd)
+	repository.RepositoryCmd.AddCommand(setCmd)
+}
+
+var (
+	setFalse bool
+	setTrue  bool
+)
+
+func initTrueFalse(parent *cobra.Command, cmd *cobra.Command) {
+	parent.AddCommand(cmd)
+	cmd.Flags().BoolVarP(&setFalse, "false", "f", false, "false")
+	cmd.Flags().BoolVarP(&setTrue, "true", "t", false, "true")
+	cmd.MarkFlagsOneRequired("false", "true")
+}
+
+// public: setTrue:=true
+// public: setTrue:=false
+func initPublicPrivate(parent *cobra.Command, cmd *cobra.Command) {
+	parent.AddCommand(cmd)
+	cmd.Flags().BoolVarP(&setFalse, "private", "", false, "private")
+	cmd.Flags().BoolVarP(&setTrue, "public", "", false, "public")
+	cmd.MarkFlagsOneRequired("private", "public")
 }
