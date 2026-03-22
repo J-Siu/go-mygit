@@ -51,7 +51,7 @@ var topicCmd = &cobra.Command{
 				)
 				ga.Info.Topics = &args
 				ga.Info.Names = &args
-				helper.GitApiRunWrapper(&global.Flag, &wg, out,ga)
+				helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 			}
 			wg.Wait()
 			close(out)
