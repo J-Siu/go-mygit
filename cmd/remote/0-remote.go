@@ -23,7 +23,7 @@ THE SOFTWARE.
 package remote
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
+	"github.com/J-Siu/go-mygit/v3/cmd/root"
 	"github.com/spf13/cobra"
 )
 
@@ -35,5 +35,5 @@ var remoteCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(remoteCmd)
+	root.RootCmd.AddCommand(remoteCmd)
 }

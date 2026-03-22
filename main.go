@@ -23,15 +23,15 @@ THE SOFTWARE.
 package main
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
 	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
 	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
 	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
 	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
 	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
 	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"github.com/J-Siu/go-mygit/v3/cmd/root"
 )
 
 func main() {
-	cmd.Execute()
+	root.Execute()
 }

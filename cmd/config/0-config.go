@@ -23,7 +23,7 @@ THE SOFTWARE.
 package config
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
+	"github.com/J-Siu/go-mygit/v3/cmd/root"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/spf13/cobra"
 )
@@ -36,6 +36,6 @@ var configCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(configCmd)
+	root.RootCmd.AddCommand(configCmd)
 	configCmd.PersistentFlags().BoolVarP(&global.FlagConf.Secret, "secret", "s", false, "Print secret, tokens")
 }

@@ -20,53 +20,51 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package root
 
 import (
-	"os"
 	"sync"
 
 	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
+	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
 )
 
-// Mass git clone
-var cloneCmd = &cobra.Command{
-	Use:     "clone " + global.TXT_REPO_CLONE_USE,
-	Aliases: []string{"cl"},
-	Short:   "Git clone",
-	Long:    "Git clone. " + global.TXT_REPO_CLONE_LONG,
-	PreRun: func(cmd *cobra.Command, args []string) {
-		// Check flag
-		if len(global.Flag.Groups) != 0 || // should not have --group
-			len(global.Flag.Remotes) != 1 || // need exactly 1 --remote
-			len(args) == 0 { // need >0 repo name
-			ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
-			os.Exit(1)
-		}
-		// Check remote name exist
-		var remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
-		if remote == nil {
-			ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
-			os.Exit(1)
-		}
-	},
+// Mass git push
+var pushCmd = &cobra.Command{
+	Use:     "push " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"p"}, // rootPushCmd
+	Short:   "Git push",
+	Long:    "Git push. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			out    = make(chan *string, 10)
-			remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
-			wg     sync.WaitGroup
+			out         = make(chan *string, 10)
+			remoteQueue = new(lib.RemoteQueue)
+			wg          sync.WaitGroup
 		)
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+		remoteQueue.New(&args, &global.Conf.MergedRemotes)
 		go func() {
-			for _, repoName := range args {
+			for _, remote := range remoteQueue.Queue {
 				var (
-					options = []string{remote.Ssh + ":/" + remote.User + "/" + repoName} // construct url
-					gc      = new(gitcmd.GitCmd).New("").Clone(options)
+					wp       = *remote.WorkPath
+					gc1      = new(gitcmd.GitCmd).New(wp)
+					gc2      = new(gitcmd.GitCmd).New(wp)
+					options1 = []string{*remote.Name}
+					options2 = append(options1, "--tags")
 				)
-				helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc, "")
+				if global.Flag.PushAll {
+					options1 = append(options1, "--all")
+				}
+				helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc1.Push(options1), wp)
+				if global.Flag.Tag {
+					helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc2.Push(options2), wp)
+				}
 			}
 			wg.Wait()
 			close(out)
@@ -78,5 +76,7 @@ var cloneCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(cloneCmd)
+	RootCmd.AddCommand(pushCmd)
+	pushCmd.Flags().BoolVarP(&global.Flag.PushAll, "all", "a", false, "Push all branches")
+	pushCmd.Flags().BoolVarP(&global.Flag.Tag, "tags", "t", false, "Push with tags")
 }

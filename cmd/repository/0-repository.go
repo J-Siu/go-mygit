@@ -23,7 +23,7 @@ THE SOFTWARE.
 package repository
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
+	"github.com/J-Siu/go-mygit/v3/cmd/root"
 	"github.com/spf13/cobra"
 )
 
@@ -35,5 +35,5 @@ var RepositoryCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(RepositoryCmd)
+	root.RootCmd.AddCommand(RepositoryCmd)
 }

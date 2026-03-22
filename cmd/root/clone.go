@@ -20,35 +20,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package root
 
 import (
 	"os"
-	"strings"
 	"sync"
 
 	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
 	"github.com/J-Siu/go-helper/v2/ezlog"
 	"github.com/J-Siu/go-mygit/v3/global"
 	"github.com/J-Siu/go-mygit/v3/helper"
-	"github.com/J-Siu/go-mygit/v3/lib"
 	"github.com/spf13/cobra"
 )
 
-// Mass git pull
-var pullCmd = &cobra.Command{
-	Use:   "pull " + global.TXT_REPO_DIR_USE,
-	Short: "Git pull",
-	Long:  "Git pull. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+// Mass git clone
+var cloneCmd = &cobra.Command{
+	Use:     "clone " + global.TXT_REPO_CLONE_USE,
+	Aliases: []string{"cl"},
+	Short:   "Git clone",
+	Long:    "Git clone. " + global.TXT_REPO_CLONE_LONG,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Check flag
 		if len(global.Flag.Groups) != 0 || // should not have --group
-			len(global.Flag.Remotes) != 1 { // need exactly 1 --remote
+			len(global.Flag.Remotes) != 1 || // need exactly 1 --remote
+			len(args) == 0 { // need >0 repo name
 			ezlog.Log().M(global.TXT_REPO_CLONE_LONG).Out()
 			os.Exit(1)
 		}
 		// Check remote name exist
-		var remote *lib.Remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
+		var remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 		if remote == nil {
 			ezlog.Log().N("Remote not configured").M(global.Flag.Remotes[0]).Out()
 			os.Exit(1)
@@ -60,24 +60,13 @@ var pullCmd = &cobra.Command{
 			remote = global.Conf.Remotes.GetByName(&global.Flag.Remotes[0])
 			wg     sync.WaitGroup
 		)
-		if len(args) == 0 {
-			args = []string{"."}
-		}
 		go func() {
-			for _, workPath := range args {
+			for _, repoName := range args {
 				var (
-					wp       = workPath
-					branch   = strings.TrimSpace(gitcmd.BranchCurrent(wp).Stdout.String())
-					gc1      = new(gitcmd.GitCmd).New(wp)
-					gc2      = new(gitcmd.GitCmd).New(wp)
-					options1 = []string{remote.Name, branch}
-					options2 = append(options1, "--tags")
+					options = []string{remote.Ssh + ":/" + remote.User + "/" + repoName} // construct url
+					gc      = new(gitcmd.GitCmd).New("").Clone(options)
 				)
-				helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc1.Pull(options1), wp)
-				if global.Flag.Tag {
-					helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc2.Pull(options2), wp)
-				}
-				// }
+				helper.GitCmdRunWrapper(&global.Flag, &wg, out, gc, "")
 			}
 			wg.Wait()
 			close(out)
@@ -89,7 +78,5 @@ var pullCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(pullCmd)
-	// Re-use push flags
-	pullCmd.Flags().BoolVarP(&global.Flag.Tag, "tags", "t", false, "Pull all tags")
+	RootCmd.AddCommand(cloneCmd)
 }
