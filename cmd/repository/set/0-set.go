@@ -38,24 +38,3 @@ var setCmd = &cobra.Command{
 func init() {
 	repository.RepositoryCmd.AddCommand(setCmd)
 }
-
-var (
-	setFalse bool
-	setTrue  bool
-)
-
-func initTrueFalse(parent *cobra.Command, cmd *cobra.Command) {
-	parent.AddCommand(cmd)
-	cmd.Flags().BoolVarP(&setFalse, "false", "f", false, "false")
-	cmd.Flags().BoolVarP(&setTrue, "true", "t", false, "true")
-	cmd.MarkFlagsOneRequired("false", "true")
-}
-
-// public: setTrue:=true
-// public: setTrue:=false
-func initPublicPrivate(parent *cobra.Command, cmd *cobra.Command) {
-	parent.AddCommand(cmd)
-	cmd.Flags().BoolVarP(&setFalse, "private", "", false, "private")
-	cmd.Flags().BoolVarP(&setTrue, "public", "", false, "public")
-	cmd.MarkFlagsOneRequired("private", "public")
-}

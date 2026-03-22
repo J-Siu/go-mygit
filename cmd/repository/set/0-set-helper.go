@@ -23,51 +23,33 @@ THE SOFTWARE.
 package set
 
 import (
-	"sync"
-
-	"github.com/J-Siu/go-gitapi/v3/api"
-	"github.com/J-Siu/go-helper/v2/ezlog"
-	"github.com/J-Siu/go-mygit/v3/global"
-	"github.com/J-Siu/go-mygit/v3/helper"
 	"github.com/spf13/cobra"
 )
 
-var wikiCmd = &cobra.Command{
-	Use:     "wiki",
-	Aliases: []string{"w"},
-	Short:   global.TXT_SET_TRUE_FALSE_SHORT,
-	Long:    global.TXT_SET_TRUE_FALSE_LONG,
-	Run: func(cmd *cobra.Command, args []string) {
-		var (
-			out = make(chan *string, 10)
-			wg  sync.WaitGroup
-		)
-		// If no repo/dir specified in command line, add a ""
-		if len(args) == 0 {
-			args = []string{"."}
-		}
-		go func() {
-			for _, workPath := range args {
-				for _, remote := range global.Conf.MergedRemotes {
-					var (
-						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Wiki).New(property).Set(tf.setTrue)
-					)
-					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
-				}
-			}
-			wg.Wait()
-			close(out)
-		}()
-		global.Flag.SingleLine = true
-		global.Flag.StatusOnly = true
-		for o := range out {
-			ezlog.Log().Se().M(o).Out()
-		}
-	},
+var (
+	tf flagsTF
+)
+
+// struct to setup True/False flags
+type flagsTF struct {
+	setFalse bool
+	setTrue  bool
 }
 
-func init() {
-	setCmd.AddCommand(wikiCmd)
-	tf.initTrueFalse(wikiCmd)
+// initialize mutual exclusive and require one true/false flags for cobra command
+func (t *flagsTF) initTrueFalse(cmd *cobra.Command) {
+	cmd.Flags().BoolVarP(&t.setFalse, "false", "f", false, "false")
+	cmd.Flags().BoolVarP(&t.setTrue, "true", "t", false, "true")
+	cmd.MarkFlagsMutuallyExclusive("false", "true")
+	cmd.MarkFlagsOneRequired("false", "true")
+}
+
+// initialize mutual exclusive and require one public/private flags for cobra command
+// public: setTrue:=true
+// public: setTrue:=false
+func (t *flagsTF) initPublicPrivate(cmd *cobra.Command) {
+	cmd.Flags().BoolVarP(&t.setFalse, "private", "", false, "private")
+	cmd.Flags().BoolVarP(&t.setTrue, "public", "", false, "public")
+	cmd.MarkFlagsMutuallyExclusive("private", "public")
+	cmd.MarkFlagsOneRequired("private", "public")
 }

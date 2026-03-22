@@ -52,7 +52,7 @@ var visibilityCmd = &cobra.Command{
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Visibility).New(property).Set(true)
+						ga       = new(api.Visibility).New(property).Set(tf.setTrue)
 					)
 					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
@@ -69,5 +69,6 @@ var visibilityCmd = &cobra.Command{
 }
 
 func init() {
-	initPublicPrivate(setCmd, visibilityCmd)
+	setCmd.AddCommand(visibilityCmd)
+	tf.initPublicPrivate(visibilityCmd)
 }

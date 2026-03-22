@@ -52,7 +52,7 @@ var privateCmd = &cobra.Command{
 				for _, remote := range global.Conf.MergedRemotes {
 					var (
 						property = remote.GitApiProperty(&workPath, global.Flag.Debug)
-						ga       = new(api.Private).New(property).Set(setTrue)
+						ga       = new(api.Private).New(property).Set(tf.setTrue)
 					)
 					helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
 				}
@@ -69,5 +69,6 @@ var privateCmd = &cobra.Command{
 }
 
 func init() {
-	initTrueFalse(setCmd, privateCmd)
+	setCmd.AddCommand(privateCmd)
+	tf.initTrueFalse(privateCmd)
 }
