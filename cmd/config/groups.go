@@ -20,18 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package config
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+// groupCmd represents the group command
+var groupsCmd = &cobra.Command{
+	Use:     "group",
+	Aliases: []string{"g", "grp"},
+	Short:   "Print groups configuration",
+	Run: func(cmd *cobra.Command, args []string) {
+		ezlog.Log().N("Groups").Lm(&global.Conf.Groups).Out()
+	},
+}
+
+func init() {
+	configCmd.AddCommand(groupsCmd)
 }

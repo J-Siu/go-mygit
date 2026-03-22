@@ -20,18 +20,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package set
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"sync"
+
+	"github.com/J-Siu/go-gitapi/v3/api"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+// repo topics
+var topicCmd = &cobra.Command{
+	Use:     "topic",
+	Aliases: []string{"t"},
+	Short:   "Set topics",
+	Long:    "Set topics. " + global.TXT_FLAGS_USE,
+	Run: func(cmd *cobra.Command, args []string) {
+		var (
+			out = make(chan *string, 10)
+			wg  sync.WaitGroup
+		)
+		go func() {
+			for _, remote := range global.Conf.MergedRemotes {
+				var (
+					property = remote.GitApiProperty(nil, global.Flag.Debug)
+					ga       = new(api.Topics).New(property).Set()
+				)
+				ga.Info.Topics = &args
+				ga.Info.Names = &args
+				helper.GitApiRunWrapper(&global.Flag, &wg, out, ga)
+			}
+			wg.Wait()
+			close(out)
+		}()
+		global.Flag.SingleLine = true
+		global.Flag.StatusOnly = true
+		for o := range out {
+			ezlog.Log().Se().M(o).Out()
+		}
+	},
+}
+
+func init() {
+	setCmd.AddCommand(topicCmd)
 }

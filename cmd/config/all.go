@@ -20,18 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package config
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+// remoteCmd represents the remote command
+var allCmd = &cobra.Command{
+	Use:     "all",
+	Aliases: []string{"a"},
+	Short:   "Print all configurations",
+	Run: func(cmd *cobra.Command, args []string) {
+		ezlog.Log().N("Config").Lm(global.Conf.SafeCopy(!global.FlagConf.Secret).Remotes).Out()
+	},
+}
+
+func init() {
+	configCmd.AddCommand(allCmd)
 }

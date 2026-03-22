@@ -20,18 +20,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package cmd
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/J-Siu/go-mygit/v3/helper"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+// Mass git init
+var initCmd = &cobra.Command{
+	Use:     "init " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"i"}, // rootInitCmd
+	Short:   "Git init and reset remotes",
+	Long:    "Git init. Reset and add remotes. " + global.TXT_REPO_DIR_LONG + global.TXT_FLAGS_USE,
+	Run: func(cmd *cobra.Command, args []string) {
+		var (
+			out = make(chan *string, 10)
+		)
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+		go func() {
+			for _, workPath := range args {
+				gitcmd.Init(workPath)
+				gitcmd.RemoteRemoveAll(workPath)
+				for _, remote := range global.Conf.MergedRemotes {
+					var (
+						gc = new(gitcmd.GitCmd).New(workPath).RemoteAdd(remote.Name, remote.GitUrl(workPath))
+					)
+					helper.GitCmdRunWrapper(&global.Flag, nil, out, gc, workPath)
+				}
+			}
+			close(out)
+		}()
+		for o := range out {
+			ezlog.Log().Se().M(o).Out()
+		}
+	},
+}
+
+func init() {
+	RootCmd.AddCommand(initCmd)
 }

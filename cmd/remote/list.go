@@ -20,18 +20,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package remote
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"github.com/J-Siu/go-gitcmd/v3/gitcmd"
+	"github.com/J-Siu/go-helper/v2/ezlog"
+	"github.com/J-Siu/go-mygit/v3/global"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+// addCmd represents the add command
+var listCmd = &cobra.Command{
+	Use:     "list " + global.TXT_REPO_DIR_USE,
+	Aliases: []string{"l", "ls"},
+	Short:   "List git remote",
+	Long:    "List git remote. " + global.TXT_FLAGS_USE,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			args = []string{"."}
+		}
+		for _, workPath := range args {
+			if gitcmd.Root(workPath) == "" {
+				ezlog.Log().N(workPath).M("is not a git repository").Out()
+				continue
+			}
+			var gitRemoteList *[]string = gitcmd.Remote(workPath, true)
+			var title string
+			if !global.Flag.NoTitle {
+				title = workPath
+			}
+			ezlog.Log().N(title).Lm(gitRemoteList).Out()
+		}
+	},
+}
+
+func init() {
+	remoteCmd.AddCommand(listCmd)
 }

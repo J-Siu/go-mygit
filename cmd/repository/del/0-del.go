@@ -20,18 +20,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package del
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"github.com/J-Siu/go-mygit/v3/cmd/repository"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+// deleteCmd represents the delete command
+var delCmd = &cobra.Command{
+	Use:     "del",
+	Aliases: []string{"delete"},
+	Short:   "Delete",
+}
+
+func init() {
+	repository.RepositoryCmd.AddCommand(delCmd)
 }

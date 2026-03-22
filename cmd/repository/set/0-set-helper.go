@@ -20,18 +20,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package set
 
 import (
-	"github.com/J-Siu/go-mygit/v3/cmd"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/config"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/remote"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/del"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/get"
-	_ "github.com/J-Siu/go-mygit/v3/cmd/repository/set"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+var (
+	tf flagsTF
+)
+
+// struct to setup True/False flags
+type flagsTF struct {
+	setFalse bool
+	setTrue  bool
+}
+
+// initialize mutual exclusive and require one true/false flags for cobra command
+func (t *flagsTF) initTrueFalse(cmd *cobra.Command) {
+	cmd.Flags().BoolVarP(&t.setFalse, "false", "f", false, "false")
+	cmd.Flags().BoolVarP(&t.setTrue, "true", "t", false, "true")
+	cmd.MarkFlagsMutuallyExclusive("false", "true")
+	cmd.MarkFlagsOneRequired("false", "true")
+}
+
+// initialize mutual exclusive and require one public/private flags for cobra command
+// public: setTrue:=true
+// public: setTrue:=false
+func (t *flagsTF) initPublicPrivate(cmd *cobra.Command) {
+	cmd.Flags().BoolVarP(&t.setFalse, "private", "", false, "private")
+	cmd.Flags().BoolVarP(&t.setTrue, "public", "", false, "public")
+	cmd.MarkFlagsMutuallyExclusive("private", "public")
+	cmd.MarkFlagsOneRequired("private", "public")
 }
