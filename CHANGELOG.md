@@ -146,3 +146,11 @@
   - update go-gitapi, go-helper
 - 3.0.8
   - fix git init url
+- 3.0.9
+  - repo set
+    - add true/false, public/private usage text constants
+    - mark true/flag flags mutual exclusive
+    - reflector true/false flags into flagsTF struct
+    - simplify and combine true/false, public/private commands to parent options
+  - update dependencies
+  - use subcommand folders
