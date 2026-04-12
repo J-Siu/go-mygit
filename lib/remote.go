@@ -32,15 +32,15 @@ import (
 
 // Remote entry in config file
 type Remote struct {
-	Group  string `json:"group,omitempty"`  // Group name
-	Name   string `json:"name,omitempty"`   // Name of remote entry, also use as git remote name
-	Ssh    string `json:"ssh,omitempty"`    // Ssh url for git server
-	Vendor string `json:"vendor,omitempty"` // Api vendor/brand
+	Group  string `json:"group"`  // Group name
+	Name   string `json:"name"`   // Name of remote entry, also use as git remote name
+	Ssh    string `json:"ssh"`    // Ssh url for git server
+	Vendor string `json:"vendor"` // Api vendor/brand
 
-	EntryPoint string `json:"entrypoint,omitempty"` // Api entrypoint url
-	Private    bool   `json:"private,omitempty"`    // Default private value
-	Token      string `json:"token,omitempty"`      // Api token.
-	User       string `json:"user,omitempty"`       // Api user
+	EntryPoint string `json:"entrypoint"` // Api entrypoint url
+	Private    bool   `json:"private"`    // Default private value
+	Token      string `json:"token"`      // Api token.
+	User       string `json:"user"`       // Api user
 
 	NoTitle    bool `json:"no_title,omitempty"`   // This is pass from global.Flag
 	SkipVerify bool `json:"skipverify,omitempty"` // Api request skip cert verify (allow self-signed cert)

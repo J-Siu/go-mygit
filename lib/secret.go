@@ -25,7 +25,7 @@ package lib
 // Secret entry in config file
 type Secret struct {
 	Name  string `json:"name"`
-	Value string `json:"value,omitempty"`
+	Value string `json:"value"`
 }
 
 type Secrets []Secret
