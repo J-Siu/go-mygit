@@ -154,3 +154,7 @@
     - simplify and combine true/false, public/private commands to parent options
   - update dependencies
   - use subcommand folders
+- 3.0.10
+  - put root commands into subfolder
+  - remove omitempty from struct
+  - update dependencies
