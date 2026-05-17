@@ -29,9 +29,9 @@ import "github.com/J-Siu/go-helper/v2/str"
 // Embedded in TypeConf. No initialization
 type Groups []string
 
-func (t *Groups) Add(groupP *string) {
-	if groupP != nil && !t.Has(groupP) {
-		*t = append(*t, (string)(*groupP))
+func (t *Groups) Add(group string) {
+	if !t.Has(group) {
+		*t = append(*t, group)
 	}
 }
 
@@ -44,6 +44,6 @@ func (t *Groups) Get(name string) *string {
 	return nil
 }
 
-func (t *Groups) Has(groupP *string) bool {
-	return str.ArrayContains((*[]string)(t), groupP, false)
+func (t *Groups) Has(group string) bool {
+	return str.ArrayContains((*[]string)(t), group, false)
 }

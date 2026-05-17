@@ -64,10 +64,10 @@ func (t *Remotes) GetByName(nameP *string) *Remote {
 }
 
 // Get all Remote in a group
-func (t *Remotes) GetByGroup(groupP *string) *Remotes {
+func (t *Remotes) GetByGroup(group string) *Remotes {
 	var tmpRemotes Remotes
 	for _, r := range *t {
-		if r.Group == *groupP {
+		if r.Group == group {
 			tmpRemotes.Add(&r)
 		}
 	}
@@ -78,7 +78,7 @@ func (t *Remotes) GetByGroup(groupP *string) *Remotes {
 func (t *Remotes) GetNames() *[]string {
 	var names []string
 	for _, r := range *t {
-		if !str.ArrayContains(&names, &r.Name, false) {
+		if !str.ArrayContains(&names, r.Name, false) {
 			names = append(names, r.Name)
 		}
 	}

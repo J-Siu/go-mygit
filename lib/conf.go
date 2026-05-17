@@ -124,19 +124,18 @@ func (t *TypeConf) setDefault() {
 //   - before merging remote
 func (t *TypeConf) initGroups() {
 	for _, r := range t.Remotes {
-		t.Groups.Add(&r.Group)
+		t.Groups.Add(r.Group)
 	}
 }
 
 // Calculate remotes base on flag
 func (t *TypeConf) mergeRemotes(flagGroups, flagRemotes *[]string) {
 	// Merge remote from flag "group"
-	for _, g := range *flagGroups {
-		group := &g
+	for _, group := range *flagGroups {
 		if t.Groups.Has(group) {
 			t.MergedRemotes.AddArray(t.Remotes.GetByGroup(group))
 		} else {
-			log.Fatal("Group not in config: " + g)
+			log.Fatal("Group not in config: " + group)
 			os.Exit(1)
 		}
 	}

@@ -3,16 +3,16 @@ module github.com/J-Siu/go-mygit/v3
 go 1.26.3
 
 require (
-	github.com/J-Siu/go-gitapi/v3 v3.0.7
-	github.com/J-Siu/go-gitcmd/v3 v3.0.0
-	github.com/J-Siu/go-helper/v2 v2.8.1
+	github.com/J-Siu/go-gitapi/v3 v3.0.8
+	github.com/J-Siu/go-gitcmd/v3 v3.0.1
+	github.com/J-Siu/go-helper/v2 v2.8.2
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 )
 
 require (
-	github.com/J-Siu/go-crypto v1.1.4 // indirect
-	github.com/J-Siu/go-restapi v1.0.4 // indirect
+	github.com/J-Siu/go-crypto v1.1.5 // indirect
+	github.com/J-Siu/go-restapi v1.0.5 // indirect
 	github.com/charlievieth/strcase v0.0.5 // indirect
 	github.com/edwardrf/symwalk v0.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect

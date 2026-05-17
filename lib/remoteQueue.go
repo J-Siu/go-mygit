@@ -47,7 +47,7 @@ func (t *RemoteQueue) New(workPaths *[]string, remotes *Remotes) *RemoteQueue {
 		remoteLocal = *gitcmd.Remote(workPath, false)
 		for _, remote := range *remotes {
 			// Only add to queue if exist locally
-			if str.ArrayContains(&remoteLocal, &remote.Name, false) {
+			if str.ArrayContains(&remoteLocal, remote.Name, false) {
 				item := RemoteQueueItem{Name: &remote.Name, WorkPath: &workPath}
 				t.Queue = append(t.Queue, &item)
 			} else {

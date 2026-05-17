@@ -144,9 +144,9 @@
 - v3.0.7
   - fix null WaitGroup check
   - update go-gitapi, go-helper
-- 3.0.8
+- v3.0.8
   - fix git init url
-- 3.0.9
+- v3.0.9
   - repo set
     - add true/false, public/private usage text constants
     - mark true/flag flags mutual exclusive
@@ -154,7 +154,8 @@
     - simplify and combine true/false, public/private commands to parent options
   - update dependencies
   - use subcommand folders
-- 3.0.10
+- v3.0.10
   - put root commands into subfolder
   - remove omitempty from struct
   - update dependencies
+- v3.0.11
