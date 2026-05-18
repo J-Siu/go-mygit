@@ -1,4 +1,28 @@
+# MacOS system files
 .DS_Store
-build
-go-mygit
-go.work*
+Thumbs.db
+
+# Binaries for programs and plugins
+*.dll
+*.dylib
+*.exe
+*.exe~
+*.so
+build/
+dist/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Code coverage profiles and other test artifacts
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env file
+.env
