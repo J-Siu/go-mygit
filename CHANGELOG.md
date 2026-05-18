@@ -159,3 +159,4 @@
   - remove omitempty from struct
   - update dependencies
 - v3.0.11
+  - update go-helper/v2
